@@ -7,7 +7,7 @@ VCR.configure do |c|
   c.hook_into :webmock # or :fakeweb
 end
 
-class BountyTest < Test::Unit::TestCase
+class BountybaseTest < Test::Unit::TestCase
   include Bountybase::TestCase
 
   def test_application_root
@@ -19,5 +19,15 @@ class BountyTest < Test::Unit::TestCase
 
     ENV["RACK_ROOT"] = "expected"
     assert_equal "expected", Bountybase.root
+  end
+
+  def test_environment
+    assert_equal "test", Bountybase.environment
+
+    Bountybase.environment "yadda" do
+      assert_equal "yadda", Bountybase.environment
+    end
+
+    assert_equal "test", Bountybase.environment
   end
 end
