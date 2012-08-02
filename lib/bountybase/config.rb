@@ -1,10 +1,10 @@
 require "ostruct"
 
-class Bountybase::Config < OpenStruct
+class Bountybase::Config
   class Missing < RuntimeError; end
   
   def initialize
-    super
+    @hash = {}
     @defaults = OpenStruct.new
   end
 
@@ -12,37 +12,41 @@ class Bountybase::Config < OpenStruct
   
   # returns the URL for the resque redis queue
   def resque
-    super ||
-      ENV["RESQUE_URL"] || 
-      default(:resque) ||
-      redis
+    ENV["RESQUE_URL"] || 
+    default(:resque) || 
+    redis
   end
 
   # returns the URL for the redis database
   def redis
-    super ||
-      ENV["REDIS_URL"] || 
-      ENV["REDISTOGO_URL"] || 
-      default!(:redis)
+    ENV["REDIS_URL"] || 
+    ENV["REDISTOGO_URL"] || 
+    default!(:redis)
   end
 
   private
 
   def method_missing(sym, *args, &block)    # :nodoc:
-    return super if !args.empty? || block_given?
-    default!(sym)
+    case !block_given? && args.length
+    when 0 then 
+      @hash[sym] || default!(sym)
+    when 1 then 
+      key = sym.to_s[0...-1].to_sym
+      @hash[key] = args.first
+    else        super
+    end
   end
   
-  def default(key)
-    case defaults = @defaults.send(key)    # :nodoc:
-    when Hash then  defaults[Bountybase.environment]
+  def default(key) # :nodoc:
+    case default_for_key = @defaults.send(key)
+    when Hash then  default_for_key[Bountybase.environment]
     when nil  then  nil
     else            raise "Invalid Bountybase.config.#{key} default"
     end
   end
 
   def default!(key)    # :nodoc:
-    default(key) || raise(Missing, "Missing config.#{key} value.")
+    default(key) || raise(Missing, "Missing config.#{key} value in #{Bountybase.environment.inspect} environment.")
   end
 end
 
