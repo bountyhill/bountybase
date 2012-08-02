@@ -1,5 +1,6 @@
 source :rubygems
 
+gem "addressable"
 gem "rake"
 
 group :test do

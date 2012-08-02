@@ -1,0 +1,61 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://16b.org/
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      !binary "U2VydmVy":
+      - !binary |-
+        bmdpbngvMS4xLjE5
+      !binary "RGF0ZQ==":
+      - !binary |-
+        V2VkLCAwMSBBdWcgMjAxMiAxMjowMjozNSBHTVQ=
+      Content-Type:
+      - !binary |-
+        dGV4dC9odG1s
+      Content-Length:
+      - !binary |-
+        MTUx
+      Last-Modified:
+      - !binary |-
+        TW9uLCAwNCBPY3QgMjAwNCAxNTowNDowNiBHTVQ=
+      !binary "Q29ubmVjdGlvbg==":
+      - !binary |-
+        a2VlcC1hbGl2ZQ==
+      Accept-Ranges:
+      - !binary |-
+        Ynl0ZXM=
+    body:
+      encoding: US-ASCII
+      string: ! '<html>
+
+        <head>
+
+        <title>Welcome to nginx!</title>
+
+        </head>
+
+        <body bgcolor="white" text="black">
+
+        <center><h1>Welcome to nginx!</h1></center>
+
+        </body>
+
+        </html>
+
+'
+    http_version: 
+  recorded_at: Wed, 01 Aug 2012 12:02:34 GMT
+recorded_with: VCR 2.1.1

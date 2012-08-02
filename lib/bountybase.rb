@@ -11,3 +11,5 @@ module Bountybase
     @@config
   end
 end
+
+require_relative "bountybase/http"

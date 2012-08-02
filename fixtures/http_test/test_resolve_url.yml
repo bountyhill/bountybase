@@ -1,0 +1,614 @@
+---
+http_interactions:
+- request:
+    method: head
+    uri: https://google.com/
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      !binary "TG9jYXRpb24=":
+      - !binary |-
+        aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8=
+      Content-Type:
+      - !binary |-
+        dGV4dC9odG1sOyBjaGFyc2V0PVVURi04
+      !binary "RGF0ZQ==":
+      - !binary |-
+        V2VkLCAwMSBBdWcgMjAxMiAxMzozNjoxNSBHTVQ=
+      !binary "RXhwaXJlcw==":
+      - !binary |-
+        RnJpLCAzMSBBdWcgMjAxMiAxMzozNjoxNSBHTVQ=
+      Cache-Control:
+      - !binary |-
+        cHVibGljLCBtYXgtYWdlPTI1OTIwMDA=
+      !binary "U2VydmVy":
+      - !binary |-
+        Z3dz
+      Content-Length:
+      - !binary |-
+        MjIw
+      X-Xss-Protection:
+      - !binary |-
+        MTsgbW9kZT1ibG9jaw==
+      X-Frame-Options:
+      - !binary |-
+        U0FNRU9SSUdJTg==
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: 
+  recorded_at: Wed, 01 Aug 2012 13:36:14 GMT
+- request:
+    method: head
+    uri: https://www.google.com/
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 302
+      message: Found
+    headers:
+      !binary "TG9jYXRpb24=":
+      - !binary |-
+        aHR0cHM6Ly93d3cuZ29vZ2xlLmRlLw==
+      Cache-Control:
+      - !binary |-
+        cHJpdmF0ZQ==
+      Content-Type:
+      - !binary |-
+        dGV4dC9odG1sOyBjaGFyc2V0PVVURi04
+      Set-Cookie:
+      - !binary |-
+        TklEPTYyPW0tRzZ0dUI3RXZKYXkxU0hGa1ltMk82UVFqb1hHYmNXLVdiV004
+        UmFCd1dMdFlTYkdHX2w1S2hMeE5jV0tVX2JwWkVYbUJRMTlqcnJlMld2NUNn
+        ZFVSMWxBc3dxdDlmMUUza1l5YTZ5bmVZaUUxdUozUFpvUEdFeDFfdGo0dEds
+        OyBleHBpcmVzPVRodSwgMzEtSmFuLTIwMTMgMTM6MzY6MTUgR01UOyBwYXRo
+        PS87IGRvbWFpbj0uZ29vZ2xlLmNvbTsgSHR0cE9ubHk=
+      - !binary |-
+        UFJFRj1JRD1mMTA0ODc3ZDc4NWJmMTYyOkZGPTA6VE09MTM0MzgyODE3NTpM
+        TT0xMzQzODI4MTc1OlM9VXNDSWRQY2tiSGpSVWlXUjsgZXhwaXJlcz1Gcmks
+        IDAxLUF1Zy0yMDE0IDEzOjM2OjE1IEdNVDsgcGF0aD0vOyBkb21haW49Lmdv
+        b2dsZS5jb20=
+      - !binary |-
+        ZG9tYWluPTsgZXhwaXJlcz1Nb24sIDAxLUphbi0xOTkwIDAwOjAwOjAwIEdN
+        VDsgcGF0aD0vOyBkb21haW49Lmdvb2dsZS5jb20=
+      - !binary |-
+        ZG9tYWluPTsgZXhwaXJlcz1Nb24sIDAxLUphbi0xOTkwIDAwOjAwOjAwIEdN
+        VDsgcGF0aD0vOyBkb21haW49Lmdvb2dsZS5jb20=
+      - !binary |-
+        ZG9tYWluPTsgZXhwaXJlcz1Nb24sIDAxLUphbi0xOTkwIDAwOjAwOjAwIEdN
+        VDsgcGF0aD0vOyBkb21haW49Lnd3dy5nb29nbGUuY29t
+      - !binary |-
+        ZG9tYWluPTsgZXhwaXJlcz1Nb24sIDAxLUphbi0xOTkwIDAwOjAwOjAwIEdN
+        VDsgcGF0aD0vOyBkb21haW49Lnd3dy5nb29nbGUuY29t
+      - !binary |-
+        ZG9tYWluPTsgZXhwaXJlcz1Nb24sIDAxLUphbi0xOTkwIDAwOjAwOjAwIEdN
+        VDsgcGF0aD0vOyBkb21haW49Z29vZ2xlLmNvbQ==
+      - !binary |-
+        ZG9tYWluPTsgZXhwaXJlcz1Nb24sIDAxLUphbi0xOTkwIDAwOjAwOjAwIEdN
+        VDsgcGF0aD0vOyBkb21haW49Z29vZ2xlLmNvbQ==
+      - !binary |-
+        ZG9tYWluPTsgZXhwaXJlcz1Nb24sIDAxLUphbi0xOTkwIDAwOjAwOjAwIEdN
+        VDsgcGF0aD0vOyBkb21haW49d3d3Lmdvb2dsZS5jb20=
+      - !binary |-
+        ZG9tYWluPTsgZXhwaXJlcz1Nb24sIDAxLUphbi0xOTkwIDAwOjAwOjAwIEdN
+        VDsgcGF0aD0vOyBkb21haW49d3d3Lmdvb2dsZS5jb20=
+      - !binary |-
+        ZXhwaXJlcz07IGV4cGlyZXM9TW9uLCAwMS1KYW4tMTk5MCAwMDowMDowMCBH
+        TVQ7IHBhdGg9LzsgZG9tYWluPS5nb29nbGUuY29t
+      - !binary |-
+        ZXhwaXJlcz07IGV4cGlyZXM9TW9uLCAwMS1KYW4tMTk5MCAwMDowMDowMCBH
+        TVQ7IHBhdGg9LzsgZG9tYWluPS5nb29nbGUuY29t
+      - !binary |-
+        ZXhwaXJlcz07IGV4cGlyZXM9TW9uLCAwMS1KYW4tMTk5MCAwMDowMDowMCBH
+        TVQ7IHBhdGg9LzsgZG9tYWluPS53d3cuZ29vZ2xlLmNvbQ==
+      - !binary |-
+        ZXhwaXJlcz07IGV4cGlyZXM9TW9uLCAwMS1KYW4tMTk5MCAwMDowMDowMCBH
+        TVQ7IHBhdGg9LzsgZG9tYWluPS53d3cuZ29vZ2xlLmNvbQ==
+      - !binary |-
+        ZXhwaXJlcz07IGV4cGlyZXM9TW9uLCAwMS1KYW4tMTk5MCAwMDowMDowMCBH
+        TVQ7IHBhdGg9LzsgZG9tYWluPWdvb2dsZS5jb20=
+      - !binary |-
+        ZXhwaXJlcz07IGV4cGlyZXM9TW9uLCAwMS1KYW4tMTk5MCAwMDowMDowMCBH
+        TVQ7IHBhdGg9LzsgZG9tYWluPWdvb2dsZS5jb20=
+      - !binary |-
+        ZXhwaXJlcz07IGV4cGlyZXM9TW9uLCAwMS1KYW4tMTk5MCAwMDowMDowMCBH
+        TVQ7IHBhdGg9LzsgZG9tYWluPXd3dy5nb29nbGUuY29t
+      - !binary |-
+        ZXhwaXJlcz07IGV4cGlyZXM9TW9uLCAwMS1KYW4tMTk5MCAwMDowMDowMCBH
+        TVQ7IHBhdGg9LzsgZG9tYWluPXd3dy5nb29nbGUuY29t
+      - !binary |-
+        cGF0aD07IGV4cGlyZXM9TW9uLCAwMS1KYW4tMTk5MCAwMDowMDowMCBHTVQ7
+        IHBhdGg9LzsgZG9tYWluPS5nb29nbGUuY29t
+      - !binary |-
+        cGF0aD07IGV4cGlyZXM9TW9uLCAwMS1KYW4tMTk5MCAwMDowMDowMCBHTVQ7
+        IHBhdGg9LzsgZG9tYWluPS5nb29nbGUuY29t
+      - !binary |-
+        cGF0aD07IGV4cGlyZXM9TW9uLCAwMS1KYW4tMTk5MCAwMDowMDowMCBHTVQ7
+        IHBhdGg9LzsgZG9tYWluPS53d3cuZ29vZ2xlLmNvbQ==
+      - !binary |-
+        cGF0aD07IGV4cGlyZXM9TW9uLCAwMS1KYW4tMTk5MCAwMDowMDowMCBHTVQ7
+        IHBhdGg9LzsgZG9tYWluPS53d3cuZ29vZ2xlLmNvbQ==
+      - !binary |-
+        cGF0aD07IGV4cGlyZXM9TW9uLCAwMS1KYW4tMTk5MCAwMDowMDowMCBHTVQ7
+        IHBhdGg9LzsgZG9tYWluPWdvb2dsZS5jb20=
+      - !binary |-
+        cGF0aD07IGV4cGlyZXM9TW9uLCAwMS1KYW4tMTk5MCAwMDowMDowMCBHTVQ7
+        IHBhdGg9LzsgZG9tYWluPWdvb2dsZS5jb20=
+      - !binary |-
+        cGF0aD07IGV4cGlyZXM9TW9uLCAwMS1KYW4tMTk5MCAwMDowMDowMCBHTVQ7
+        IHBhdGg9LzsgZG9tYWluPXd3dy5nb29nbGUuY29t
+      - !binary |-
+        cGF0aD07IGV4cGlyZXM9TW9uLCAwMS1KYW4tMTk5MCAwMDowMDowMCBHTVQ7
+        IHBhdGg9LzsgZG9tYWluPXd3dy5nb29nbGUuY29t
+      !binary "UDNw":
+      - !binary |-
+        Q1A9IlRoaXMgaXMgbm90IGEgUDNQIHBvbGljeSEgU2VlIGh0dHA6Ly93d3cu
+        Z29vZ2xlLmNvbS9zdXBwb3J0L2FjY291bnRzL2Jpbi9hbnN3ZXIucHk/aGw9
+        ZW4mYW5zd2VyPTE1MTY1NyBmb3IgbW9yZSBpbmZvLiI=
+      !binary "RGF0ZQ==":
+      - !binary |-
+        V2VkLCAwMSBBdWcgMjAxMiAxMzozNjoxNSBHTVQ=
+      !binary "U2VydmVy":
+      - !binary |-
+        Z3dz
+      Content-Length:
+      - !binary |-
+        MjE5
+      X-Xss-Protection:
+      - !binary |-
+        MTsgbW9kZT1ibG9jaw==
+      X-Frame-Options:
+      - !binary |-
+        U0FNRU9SSUdJTg==
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: 
+  recorded_at: Wed, 01 Aug 2012 13:36:14 GMT
+- request:
+    method: head
+    uri: https://www.google.de/
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Set-Cookie:
+      - !binary |-
+        TklEPTYyPVR2cFBTaS15OUhVcnotQ0huS1V4eDg4a3JiemE2SWhJdEpmdnh2
+        ZEVDdVludmx4SmhMZFVLRUpKZXZWdV9mQ1ZmaWdoeUgtZGtERmk3ZzJXc1Rj
+        ODZQQjVxdDJUcHJsOGtBY1FTVFk5U0lXSVIzRk1xOGt6S2RHYVF6SFhoM3gy
+        OyBleHBpcmVzPVRodSwgMzEtSmFuLTIwMTMgMTM6MzY6MTUgR01UOyBwYXRo
+        PS87IGRvbWFpbj0uZ29vZ2xlLmRlOyBIdHRwT25seQ==
+      - !binary |-
+        TklEPTYyPVR2cFBTaS15OUhVcnotQ0huS1V4eDg4a3JiemE2SWhJdEpmdnh2
+        ZEVDdVludmx4SmhMZFVLRUpKZXZWdV9mQ1ZmaWdoeUgtZGtERmk3ZzJXc1Rj
+        ODZQQjVxdDJUcHJsOGtBY1FTVFk5U0lXSVIzRk1xOGt6S2RHYVF6SFhoM3gy
+        OyBleHBpcmVzPVRodSwgMzEtSmFuLTIwMTMgMTM6MzY6MTUgR01UOyBwYXRo
+        PS87IGRvbWFpbj0uZ29vZ2xlLmRlOyBIdHRwT25seQ==
+      - !binary |-
+        UFJFRj1JRD03Yjc2OGM4YmNmMjMxNGE2OkZGPTA6VE09MTM0MzgyODE3NTpM
+        TT0xMzQzODI4MTc1OlM9WGlIbHgyS0J6akNYMnI4dzsgZXhwaXJlcz1Gcmks
+        IDAxLUF1Zy0yMDE0IDEzOjM2OjE1IEdNVDsgcGF0aD0vOyBkb21haW49Lmdv
+        b2dsZS5kZQ==
+      !binary "RGF0ZQ==":
+      - !binary |-
+        V2VkLCAwMSBBdWcgMjAxMiAxMzozNjoxNSBHTVQ=
+      !binary "RXhwaXJlcw==":
+      - !binary |-
+        LTE=
+      Cache-Control:
+      - !binary |-
+        cHJpdmF0ZSwgbWF4LWFnZT0w
+      Content-Type:
+      - !binary |-
+        dGV4dC9odG1sOyBjaGFyc2V0PUlTTy04ODU5LTE=
+      !binary "UDNw":
+      - !binary |-
+        Q1A9IlRoaXMgaXMgbm90IGEgUDNQIHBvbGljeSEgU2VlIGh0dHA6Ly93d3cu
+        Z29vZ2xlLmNvbS9zdXBwb3J0L2FjY291bnRzL2Jpbi9hbnN3ZXIucHk/aGw9
+        ZW4mYW5zd2VyPTE1MTY1NyBmb3IgbW9yZSBpbmZvLiI=
+      !binary "U2VydmVy":
+      - !binary |-
+        Z3dz
+      X-Xss-Protection:
+      - !binary |-
+        MTsgbW9kZT1ibG9jaw==
+      X-Frame-Options:
+      - !binary |-
+        U0FNRU9SSUdJTg==
+      Transfer-Encoding:
+      - !binary |-
+        Y2h1bmtlZA==
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: 
+  recorded_at: Wed, 01 Aug 2012 13:36:14 GMT
+- request:
+    method: head
+    uri: http://sosfunds.org/500
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 500
+      message: Internal Server Error
+    headers:
+      !binary "U2VydmVy":
+      - !binary |-
+        bmdpbngvMS4xLjE5
+      !binary "RGF0ZQ==":
+      - !binary |-
+        V2VkLCAwMSBBdWcgMjAxMiAxMzozNjoxNSBHTVQ=
+      Content-Type:
+      - !binary |-
+        dGV4dC9odG1sO2NoYXJzZXQ9dXRmLTg=
+      Content-Length:
+      - !binary |-
+        MzA=
+      !binary "Q29ubmVjdGlvbg==":
+      - !binary |-
+        a2VlcC1hbGl2ZQ==
+      X-Frame-Options:
+      - !binary |-
+        c2FtZW9yaWdpbg==
+      X-Xss-Protection:
+      - !binary |-
+        MTsgbW9kZT1ibG9jaw==
+      Content-Language:
+      - !binary |-
+        ZW4=
+      Set-Cookie:
+      - !binary |-
+        cmFjay5zZXNzaW9uPUJBaDdDRWtpRDNObGMzTnBiMjVmYVdRR09nWkZSaUpG
+        Tmpnd01UazBOVGhrTURKak5UVmpNek15TlRKbSUwQU16SXdaVGs0T0dSbFpX
+        WmlNalEwWVdVMU1tSTJOVGsyWW1ObVkyTXhZVFprT1RCa01EVTJZbVEzWlVr
+        aSUwQURYUnlZV05yYVc1bkJqc0FSbnNJU1NJVVNGUlVVRjlWVTBWU1gwRkhS
+        VTVVQmpzQVJpSXRZakl4TjJVNSUwQU9HTXpZbVkzTUdZelkyWTBOak16WVRV
+        ME5EZGtOalU0TjJWbFlUazNOR0poTVVraUdVaFVWRkJmUVVORCUwQVJWQlVY
+        MFZPUTA5RVNVNUhCanNBUmlJdFpHRXpPV0V6WldVMVpUWmlOR0l3WkRNeU5U
+        VmlabVZtT1RVMiUwQU1ERTRPVEJoWm1RNE1EY3dPVWtpR1VoVVZGQmZRVU5E
+        UlZCVVgweEJUa2RWUVVkRkJqc0FSaUl0WkdFeiUwQU9XRXpaV1UxWlRaaU5H
+        SXdaRE15TlRWaVptVm1PVFUyTURFNE9UQmhabVE0TURjd09Va2lDWFZ6WlhJ
+        RyUwQU93Qkdld1k2REdOdmRXNTBjbmxKSWdkRVJRWTdBRlElM0QlMEEtLTgx
+        ZGEyNDA5MjYzM2Y5Yzc3YTVmYmUyNmQzN2IyYjNhNjE2MDYwOGQ7IHBhdGg9
+        LzsgSHR0cE9ubHk=
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: 
+  recorded_at: Wed, 01 Aug 2012 13:36:14 GMT
+- request:
+    method: head
+    uri: http://google.de/
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      !binary "TG9jYXRpb24=":
+      - !binary |-
+        aHR0cDovL3d3dy5nb29nbGUuZGUv
+      Content-Type:
+      - !binary |-
+        dGV4dC9odG1sOyBjaGFyc2V0PVVURi04
+      !binary "RGF0ZQ==":
+      - !binary |-
+        V2VkLCAwMSBBdWcgMjAxMiAxMzozNjoxNSBHTVQ=
+      !binary "RXhwaXJlcw==":
+      - !binary |-
+        RnJpLCAzMSBBdWcgMjAxMiAxMzozNjoxNSBHTVQ=
+      Cache-Control:
+      - !binary |-
+        cHVibGljLCBtYXgtYWdlPTI1OTIwMDA=
+      !binary "U2VydmVy":
+      - !binary |-
+        Z3dz
+      Content-Length:
+      - !binary |-
+        MjE4
+      X-Xss-Protection:
+      - !binary |-
+        MTsgbW9kZT1ibG9jaw==
+      X-Frame-Options:
+      - !binary |-
+        U0FNRU9SSUdJTg==
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: 
+  recorded_at: Wed, 01 Aug 2012 13:36:14 GMT
+- request:
+    method: head
+    uri: http://www.google.de/
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Set-Cookie:
+      - !binary |-
+        TklEPTYyPWg4Vi10OU1lTV9rSk9FeUJmYmp6cFdhc3U3VmFrU2o5OGdjWGRM
+        TGszQ2pTN1VTaHFFajJ5aWM2MlQyYkwwNkgwekswZWk4QUZvLWpzalhHVVZL
+        TmlKeXQwTXg4emZWUVktNnFJZ1VwdFBFVzFiZE5sNkpwOS1YVkF4cHN2Nnho
+        OyBleHBpcmVzPVRodSwgMzEtSmFuLTIwMTMgMTM6MzY6MTUgR01UOyBwYXRo
+        PS87IGRvbWFpbj0uZ29vZ2xlLmRlOyBIdHRwT25seQ==
+      - !binary |-
+        TklEPTYyPWg4Vi10OU1lTV9rSk9FeUJmYmp6cFdhc3U3VmFrU2o5OGdjWGRM
+        TGszQ2pTN1VTaHFFajJ5aWM2MlQyYkwwNkgwekswZWk4QUZvLWpzalhHVVZL
+        TmlKeXQwTXg4emZWUVktNnFJZ1VwdFBFVzFiZE5sNkpwOS1YVkF4cHN2Nnho
+        OyBleHBpcmVzPVRodSwgMzEtSmFuLTIwMTMgMTM6MzY6MTUgR01UOyBwYXRo
+        PS87IGRvbWFpbj0uZ29vZ2xlLmRlOyBIdHRwT25seQ==
+      - !binary |-
+        UFJFRj1JRD03OGM0YTg5ZjYzNmY4MTc2OkZGPTA6VE09MTM0MzgyODE3NTpM
+        TT0xMzQzODI4MTc1OlM9Z3BOWkx3LTJSeUxxYUJnNzsgZXhwaXJlcz1Gcmks
+        IDAxLUF1Zy0yMDE0IDEzOjM2OjE1IEdNVDsgcGF0aD0vOyBkb21haW49Lmdv
+        b2dsZS5kZQ==
+      !binary "RGF0ZQ==":
+      - !binary |-
+        V2VkLCAwMSBBdWcgMjAxMiAxMzozNjoxNSBHTVQ=
+      !binary "RXhwaXJlcw==":
+      - !binary |-
+        LTE=
+      Cache-Control:
+      - !binary |-
+        cHJpdmF0ZSwgbWF4LWFnZT0w
+      Content-Type:
+      - !binary |-
+        dGV4dC9odG1sOyBjaGFyc2V0PUlTTy04ODU5LTE=
+      !binary "UDNw":
+      - !binary |-
+        Q1A9IlRoaXMgaXMgbm90IGEgUDNQIHBvbGljeSEgU2VlIGh0dHA6Ly93d3cu
+        Z29vZ2xlLmNvbS9zdXBwb3J0L2FjY291bnRzL2Jpbi9hbnN3ZXIucHk/aGw9
+        ZW4mYW5zd2VyPTE1MTY1NyBmb3IgbW9yZSBpbmZvLiI=
+      !binary "U2VydmVy":
+      - !binary |-
+        Z3dz
+      X-Xss-Protection:
+      - !binary |-
+        MTsgbW9kZT1ibG9jaw==
+      X-Frame-Options:
+      - !binary |-
+        U0FNRU9SSUdJTg==
+      Transfer-Encoding:
+      - !binary |-
+        Y2h1bmtlZA==
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: 
+  recorded_at: Wed, 01 Aug 2012 13:36:15 GMT
+- request:
+    method: head
+    uri: http://t.co/ZczESpRE
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      !binary "RGF0ZQ==":
+      - !binary |-
+        V2VkLCAwMSBBdWcgMjAxMiAxMzozNjoxNSBHTVQ=
+      !binary "TG9jYXRpb24=":
+      - !binary |-
+        aHR0cDovL2JpdC5seS9PQ09nMkk=
+      Cache-Control:
+      - !binary |-
+        cHJpdmF0ZSxtYXgtYWdlPTMwMA==
+      !binary "RXhwaXJlcw==":
+      - !binary |-
+        V2VkLCAwMSBBdWcgMjAxMiAxMzo0MToxNSBHTVQ=
+      Content-Length:
+      - !binary |-
+        MA==
+      !binary "U2VydmVy":
+      - !binary |-
+        dGZl
+      !binary "Q29ubmVjdGlvbg==":
+      - !binary |-
+        Y2xvc2U=
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: 
+  recorded_at: Wed, 01 Aug 2012 13:36:15 GMT
+- request:
+    method: head
+    uri: http://bit.ly/OCOg2I
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 301
+      message: Moved
+    headers:
+      !binary "U2VydmVy":
+      - !binary |-
+        bmdpbng=
+      !binary "RGF0ZQ==":
+      - !binary |-
+        V2VkLCAwMSBBdWcgMjAxMiAxMzozNjoxNiBHTVQ=
+      Content-Type:
+      - !binary |-
+        dGV4dC9odG1sOyBjaGFyc2V0PXV0Zi04
+      !binary "Q29ubmVjdGlvbg==":
+      - !binary |-
+        a2VlcC1hbGl2ZQ==
+      Set-Cookie:
+      - !binary |-
+        X2JpdD01MDE5MzBkMC0wMDExZS0wMjY4YS0yODFjZjEwYTtkb21haW49LmJp
+        dC5seTtleHBpcmVzPU1vbiBKYW4gMjggMTM6MzY6MTYgMjAxMztwYXRoPS87
+        IEh0dHBPbmx5
+      Cache-Control:
+      - !binary |-
+        cHJpdmF0ZTsgbWF4LWFnZT05MA==
+      !binary "TG9jYXRpb24=":
+      - !binary |-
+        aHR0cDovL3d3dy5hdWRpb2hhY2tkYXkub3JnLw==
+      Mime-Version:
+      - !binary |-
+        MS4w
+      Content-Length:
+      - !binary |-
+        MTIw
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: 
+  recorded_at: Wed, 01 Aug 2012 13:36:15 GMT
+- request:
+    method: head
+    uri: http://www.audiohackday.org/
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      !binary "U2VydmVy":
+      - !binary |-
+        bmdpbngvMS4wLjEz
+      !binary "RGF0ZQ==":
+      - !binary |-
+        V2VkLCAwMSBBdWcgMjAxMiAxMzozNjoxNiBHTVQ=
+      Content-Type:
+      - !binary |-
+        dGV4dC9odG1s
+      Content-Length:
+      - !binary |-
+        MTg1
+      !binary "Q29ubmVjdGlvbg==":
+      - !binary |-
+        a2VlcC1hbGl2ZQ==
+      !binary "TG9jYXRpb24=":
+      - !binary |-
+        aHR0cDovL2F1ZGlvaGFja2RheS5vcmcv
+      !binary "RXhwaXJlcw==":
+      - !binary |-
+        VGh1LCAwMiBBdWcgMjAxMiAxMzozNjoxNiBHTVQ=
+      Cache-Control:
+      - !binary |-
+        bWF4LWFnZT04NjQwMA==
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: 
+  recorded_at: Wed, 01 Aug 2012 13:36:16 GMT
+- request:
+    method: head
+    uri: http://audiohackday.org/
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      !binary "U2VydmVy":
+      - !binary |-
+        bmdpbngvMS4wLjEz
+      !binary "RGF0ZQ==":
+      - !binary |-
+        V2VkLCAwMSBBdWcgMjAxMiAxMzozNjoxNyBHTVQ=
+      Content-Type:
+      - !binary |-
+        dGV4dC9odG1s
+      Content-Length:
+      - !binary |-
+        NDM2Nw==
+      Last-Modified:
+      - !binary |-
+        VHVlLCAzMSBKdWwgMjAxMiAxNDo1NTo0NSBHTVQ=
+      !binary "Q29ubmVjdGlvbg==":
+      - !binary |-
+        a2VlcC1hbGl2ZQ==
+      !binary "RXhwaXJlcw==":
+      - !binary |-
+        VGh1LCAwMiBBdWcgMjAxMiAxMzozNjoxNyBHTVQ=
+      Cache-Control:
+      - !binary |-
+        bWF4LWFnZT04NjQwMA==
+      Accept-Ranges:
+      - !binary |-
+        Ynl0ZXM=
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: 
+  recorded_at: Wed, 01 Aug 2012 13:36:16 GMT
+recorded_with: VCR 2.2.4

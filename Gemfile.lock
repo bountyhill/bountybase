@@ -33,6 +33,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  addressable
   rake
   ruby-debug19
   simplecov
