@@ -5,6 +5,8 @@ require_relative "bountybase/config"
 
 module Bountybase
   extend self
+
+  VERSION = "0.1"
   
   # -- register a tweet
 
@@ -17,7 +19,6 @@ module Bountybase
   def register_tweet(tweet)
   end
 end
-
 
 require_relative "bountybase/attr"
 require_relative "bountybase/http"
