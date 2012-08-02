@@ -9,4 +9,15 @@ end
 
 class BountyTest < Test::Unit::TestCase
   include Bountybase::TestCase
+
+  def test_application_root
+    assert_equal nil, ENV["RACK_ROOT"]
+    
+    assert_raise(RuntimeError) { 
+      Bountybase.root 
+    }
+
+    ENV["RACK_ROOT"] = "expected"
+    assert_equal "expected", Bountybase.root
+  end
 end
