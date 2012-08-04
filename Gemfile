@@ -2,6 +2,7 @@ source :rubygems
 
 gem "addressable"
 gem "rake"
+gem "remote_syslog_logger"
 
 group :test do
   gem "vcr"
