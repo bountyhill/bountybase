@@ -35,10 +35,14 @@ namespace :bountybase do
       require_relative "lib/bountybase"
       Bountybase::Event.setup
     end
+
+    task :test do
+      ENV["INSTANCE"] = "test"
+    end
   end
 end
 
-task :test => "bountybase:setup:logger" do
+task :test => [ "bountybase:setup:test", "bountybase:setup:logger" ] do
   Bountybase.logger.warn "Bountybase: running test"
 end
 

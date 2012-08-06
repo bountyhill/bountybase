@@ -19,6 +19,13 @@ module Bountybase
       "development"
   end
   
+  # returns the name of the running instance. This name describes the function of the
+  # running software component (i.e. bountytwirl). It defaults to the INSTANCE environment
+  # variable, and, if that is not set, to the name of the environment.
+  def instance
+    ENV["INSTANCE"] || environment
+  end
+  
   private
   
   def run_in_environment(environment, &block) # :nodoc:

@@ -228,7 +228,8 @@ class Event
 MSG
         exit 1
       end
-      @logger = RemoteSyslogLogger.new(host, port, :program => "bountyhill")
+      
+      @logger = RemoteSyslogLogger.new(host, port, :program => (options[:program] || "bountybase"))
       RemoteSyslogListener.install_at_exit_handler self
     end
 
@@ -253,8 +254,8 @@ MSG
     def self.install_at_exit_handler(instance)
       @installed_at_exit_handler ||= begin
         Kernel.at_exit do
-          # instance.logger.warn "Shutting down properly."
-          sleep 0.05 
+          instance.logger.warn "Shutting down RemoteSyslogListener."
+          sleep 0.05
         end
         true
       end
