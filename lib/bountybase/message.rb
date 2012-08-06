@@ -10,33 +10,44 @@ class Bountybase::Message
   class UnsupportedParameters < ArgumentError; end
   
   def perform
-    logger.warn "Missing implementation for #{self.class}##{perform}"
+    raise "Missing implementation for #{self.class.name}#perform"
   end
 
-  def self.perform(klassname, *args)
-    klass = message_klasses[klassname]
+  module Performer
+    extend self
     
-    instance = begin
-      klass.new(*args)
-    rescue ArgumentError
-      raise UnsupportedParameters, $!
+    def perform(klassname, *args)
+      klass = message_klasses[klassname]
+
+      instance = begin
+        klass.new(*args)
+      rescue ArgumentError
+        raise UnsupportedParameters, $!
+      end
+
+      instance.perform
     end
+
+    private
     
-    instance.perform
-  end
+    def message_klasses
+      @message_klasses ||= Hash.new do |hash, k| 
+        hash[k] = resolve_message_name(k) 
+      end
+    end
 
-  def self.message_klasses
-    @message_klasses ||= Hash.new do |hash, k| 
-      hash[k] = resolve_message_name(k) 
+    def resolve_message_name(name)
+      raise UnknownName, name unless name =~ /^[A-Z][A-Za-z0-9_]*$/
+
+      Bountybase::Message.const_get(name).tap do |klass|
+        next if klass.instance_methods.include? :perform
+        raise UnknownName, name
+      end
+    rescue NameError, TypeError
+      Bountybase.logger.error "Invalid Bountybase message name", name
+      raise UnknownName, $!
     end
   end
 
-  def self.resolve_message_name(name)
-    raise UnknownName, name unless name =~ /^[A-Z][A-Za-z0-9_]*$/
-
-    Bountybase::Message.const_get(name)
-  rescue NameError, TypeError
-    Bountybase.logger.error "Invalid Bountybase message name", name
-    raise UnknownName, $!
-  end
+  extend Performer
 end

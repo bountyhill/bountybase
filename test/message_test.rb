@@ -8,6 +8,12 @@ class MessageTest < Test::Unit::TestCase
     Bountybase::Message.perform "Heartbeat", 1, 2
   end
 
+  def test_dummy_implementation
+    assert_raise(RuntimeError) do
+      Bountybase::Message.new.perform
+    end
+  end
+
   def test_resolve_security
     assert_raise(Bountybase::Message::UnknownName) do
       Bountybase::Message.perform(1) 
@@ -19,6 +25,14 @@ class MessageTest < Test::Unit::TestCase
 
     assert_raise(Bountybase::Message::UnknownName) do 
       Bountybase::Message.perform("::Bountybase") 
+    end
+
+    assert_raise(Bountybase::Message::UnknownName) do 
+      Bountybase::Message.perform("Unknown") 
+    end
+
+    assert_raise(Bountybase::Message::UnknownName) do 
+      Bountybase::Message.perform("UnknownName") 
     end
 
     assert_raise(Bountybase::Message::UnsupportedParameters) do 
