@@ -151,7 +151,7 @@ class Event
     end
     
     def by_symbol(listener)
-      @@listeners.fetch listener
+      @@listeners[listener]
     end
 
     private
@@ -271,8 +271,11 @@ class Event
     # expect! routes => Hash
     
     routes.each do |pattern, target|
-      next unless target = Listeners.by_symbol(target)
-      @@routes.update pattern => target
+      if listener = Listeners.by_symbol(target)
+        @@routes.update pattern => listener
+      else
+        STDERR.puts "WARNING: No #{target.inspect} listener definition: ignoring route #{pattern.inspect} => #{target.inspect}"
+      end
     end
   end
   

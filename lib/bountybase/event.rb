@@ -36,11 +36,11 @@ module Bountybase
     end
     
     def test
-      ::Event::Listeners.add :syslog, "logs.papertrailapp.com", 39262, :program => Bountybase.instance
+#    ::Event::Listeners.add :syslog, "logs.papertrailapp.com", 39262, :program => Bountybase.instance
     end
     
     def development
-      ::Event::Listeners.add :syslog, "logs.papertrailapp.com", 61566, :program => Bountybase.instance
+#      ::Event::Listeners.add :syslog, "logs.papertrailapp.com", 61566, :program => Bountybase.instance
     end
   end
 
