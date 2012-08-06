@@ -29,4 +29,17 @@ Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
+namespace :bountybase do
+  namespace :setup do
+    task :logger do
+      require_relative "lib/bountybase"
+      Bountybase::Event.setup
+    end
+  end
+end
+
+task :test => "bountybase:setup:logger" do
+  Bountybase.logger.warn "Bountybase: running test"
+end
+
 task :default => [:test, :rdoc]

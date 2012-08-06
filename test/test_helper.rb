@@ -20,3 +20,5 @@ module Bountybase::TestCase
     assert true
   end
 end
+
+Bountybase.logger.warn "Bountybase: running test"
