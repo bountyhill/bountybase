@@ -11,3 +11,8 @@ group :test do
   gem "ruby-debug19"
   gem 'simplecov', :require => false
 end
+
+group :development do
+  gem "awesome_print"
+end
+

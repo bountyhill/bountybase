@@ -3,6 +3,7 @@ GEM
   specs:
     addressable (2.3.2)
     archive-tar-minitar (0.5.2)
+    awesome_print (1.0.2)
     columnize (0.3.6)
     crack (0.3.1)
     linecache19 (0.5.12)
@@ -37,6 +38,7 @@ PLATFORMS
 
 DEPENDENCIES
   addressable
+  awesome_print
   rake
   remote_syslog_logger
   ruby-debug19
