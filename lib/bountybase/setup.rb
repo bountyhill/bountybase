@@ -19,8 +19,8 @@ module Bountybase::Setup
   RESQUE = {
     :production   =>  "redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/", # TODO: use separate redis instance
     :staging      =>  "redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/", 
-    :test         =>  "redis://localhost:9617/1",
-    :development  =>  "redis://localhost:9617/2"
+    :test         =>  "redis://localhost:6379/1",
+    :development  =>  "redis://localhost:6379/2"
   }
 
   def self.logging
@@ -42,8 +42,13 @@ module Bountybase::Setup
   
   def self.resque
     url = RESQUE.fetch(Bountybase.environment.to_sym)
+    Bountybase.logger.info "Connecting to resque at", url
+
     Resque.redis = url
-    Bountybase.logger.warn "Resque using redis at #{url}"
+    Resque.redis.ping
+
+    Bountybase.logger.benchmark("Resque using redis at: #{url.inspect}", 0) do
+      Resque.redis.ping
+    end
   end
 end
-
