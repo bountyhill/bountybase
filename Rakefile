@@ -33,7 +33,7 @@ namespace :bountybase do
   namespace :setup do
     task :logger do
       require_relative "lib/bountybase"
-      Bountybase::Event.setup
+      Bountybase.setup
     end
 
     task :instance do
