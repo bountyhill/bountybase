@@ -5,13 +5,8 @@
 class Bountybase::Message::Heartbeat < Bountybase::Message
   INTERVAL = 10 # send heartbeat every 10 seconds.
 
-  def initialize(environment, instance)
-    super
-    @environment, @instance = environment, instance
-  end
-  
   # perform the heartbeat message.
   def perform
-    Bountybase.logger.warn "heartbeat: #{@environment} #{@instance}"
+    Bountybase.logger.warn "heartbeat: #{origin.environment} #{origin.instance}"
   end
 end

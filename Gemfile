@@ -3,6 +3,7 @@ source :rubygems
 gem "addressable"
 gem "rake"
 gem "remote_syslog_logger"
+gem "resque"
 
 group :test do
   gem "vcr"
