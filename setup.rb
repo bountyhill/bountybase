@@ -21,3 +21,5 @@ $: << File.join(bountybase, "lib")
 require "bountybase"
 
 STDERR.puts "Using bountybase#{bountybased ? "d" : ""} version #{Bountybase::VERSION}"
+
+Bountybase.setup
