@@ -325,18 +325,18 @@ class Event::Logger
       Event.deliver :warn, self, msg, *args
     end
 
-    def benchmark(msg = "benchmark", &block)
+    def benchmark(msg = "benchmark", min_runtime = 50, &block)
       start = Time.now
       yield 
     ensure
       runtime = ((Time.now - start) * 1000).to_i
-      Event.deliver :info, self, "#{msg}: #{runtime} msecs." if runtime > 50
+      Event.logger.info "#{msg}: #{runtime} msecs." if runtime >= min_runtime
     end
   end
 
   include LoggerMethods
 end
-  
+
 class Object
   def logger
     @logger ||= Event::Logger.new(self.class)
