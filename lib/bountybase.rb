@@ -23,3 +23,4 @@ end
 require_relative "bountybase/attr"
 require_relative "bountybase/http"
 require_relative "bountybase/event"
+require_relative "bountybase/message"

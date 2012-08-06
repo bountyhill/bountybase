@@ -7,6 +7,8 @@ require 'ruby-debug'
 require 'simplecov'
 require 'timecop'
 require 'test/unit'
+require 'mocha'
+
 SimpleCov.start do
   add_filter "test/*.rb"
   # the current setup does not properly measure usage in lib/event. 
