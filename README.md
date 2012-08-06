@@ -15,6 +15,7 @@ in a vendor/bountybase directory. This can be done using git submodules, i.e. `g
 The current user must be able to access the repository. For deployment on heroku I setup the bh-deployment github user account;
 
     git submodule add https://bh-deployment:eadbcef59d7a40310b576cc2a453ccba@github.com/bountyhill/bountybase.git vendor/bountybase
+    git submodule update
 
 In a startup script add the following line
 
@@ -26,3 +27,7 @@ A developer may link a local bountybase repository into the target project in `v
 the "vendor/bountybase" submodule is ignored completely, and the code in vendor/bountybased is used instead. E.g.
 
     ln -sf /Users/eno/projects/bountyhill/bountybase/ vendor/bountybased
+
+## Updating a vendored bountybase package to the latest version
+
+    (pushd vendor/bountybase; git pull)
