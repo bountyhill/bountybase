@@ -9,6 +9,8 @@ require 'timecop'
 require 'test/unit'
 SimpleCov.start do
   add_filter "test/*.rb"
+  # the current setup does not properly measure usage in lib/event. 
+  add_filter "lib/event.rb"
 end
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
