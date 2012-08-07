@@ -62,4 +62,18 @@ class MessageTest < Test::Unit::TestCase
   def test_message_queue
     assert_equal("heartbeat", Bountybase::Message::Heartbeat.queue)
   end
+
+  def test_heartbeat
+    Bountybase.logger.expects :warn
+    Bountybase::Message.perform "Heartbeat", HEARTBEAT_PAYLOAD, ORIGIN
+  end
+  
+  def test_origin_hash
+    freeze_time Time.at(12345678)
+    
+    with_settings "INSTANCE" => "test-bountybase" do
+      assert_equal Bountybase::Message::Origin.create_hash, 
+        :instance => "bountybase", :environment => "test", :timestamp => 12345678
+    end
+  end
 end

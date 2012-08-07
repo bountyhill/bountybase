@@ -7,7 +7,6 @@ gem "resque"
 
 group :test do
   gem "vcr"
-  gem "timecop"
   gem "webmock"
   gem "mocha"
   gem "ruby-debug19"

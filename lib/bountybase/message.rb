@@ -38,12 +38,9 @@ class Bountybase::Message
     end
     
     def self.create_hash
-      @instance ||= Bountybase.instance
-      @environment ||= Bountybase.environment
-
       {
-        :instance     => @instance,
-        :environment  => @environment,
+        :instance     => Bountybase.instance,
+        :environment  => Bountybase.environment,
         :timestamp    => Time.now.to_i
       }
     end

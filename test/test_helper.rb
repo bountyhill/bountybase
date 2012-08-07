@@ -5,7 +5,6 @@ ENV["RACK_ENV"] ||= "test"
 
 require 'ruby-debug'
 require 'simplecov'
-require 'timecop'
 require 'test/unit'
 require 'mocha'
 
@@ -47,6 +46,11 @@ module Bountybase::TestCase
     yield
   ensure
     ENV.update old_env
+  end
+
+  # Huh? The timecop gem no longer works with Ruby 1.9??
+  def freeze_time(time)
+    Time.stubs(:now).returns time
   end
 end
 
