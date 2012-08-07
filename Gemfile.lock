@@ -6,12 +6,20 @@ GEM
     awesome_print (1.0.2)
     columnize (0.3.6)
     crack (0.3.1)
+    faraday (0.7.6)
+      addressable (~> 2.2)
+      multipart-post (~> 1.1)
+      rack (~> 1.1)
+    librato-metrics (0.5.0)
+      faraday (~> 0.7.6)
+      multi_json
     linecache19 (0.5.12)
       ruby_core_source (>= 0.1.4)
     metaclass (0.0.1)
     mocha (0.11.0)
       metaclass (~> 0.0.1)
     multi_json (1.3.6)
+    multipart-post (1.1.5)
     rack (1.4.1)
     rack-protection (1.2.0)
       rack
@@ -59,6 +67,7 @@ PLATFORMS
 DEPENDENCIES
   addressable
   awesome_print
+  librato-metrics
   mocha
   rake
   remote_syslog_logger

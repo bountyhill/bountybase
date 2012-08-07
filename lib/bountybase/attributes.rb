@@ -62,7 +62,11 @@ module Bountybase::Attributes
   def instance
     @instance ||= begin
       _, _, instance = *Attributes.parse_instance
-      instance || raise(Missing, "Cannot determine instance setting.")
+      instance || if environment == "test"
+        "test"
+      else
+        raise(Missing, "Cannot determine instance setting.")
+      end
     end
   end
 
