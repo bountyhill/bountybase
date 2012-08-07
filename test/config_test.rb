@@ -4,8 +4,6 @@ class ConfigTest < Test::Unit::TestCase
   include Bountybase::TestCase
 
   def test_config
-    Bountybase.reset_attributes!
-
     assert_raise(Bountybase::Config::Missing) do
       Bountybase.config.foo!
     end

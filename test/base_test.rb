@@ -32,13 +32,11 @@ class BountybaseTest < Test::Unit::TestCase
 
       # read environment from "RAILS_ENV" or "RACK_ENV", when ste
       with_settings "RACK_ENV" => "KJH", "RAILS_ENV" => "KJH" do
-        Bountybase.reset_attributes!
         assert_equal "KJH", Bountybase.environment
       end
 
       # read environment from "INSTANCE" when RAILS_ENV" and "RACK_ENV" are not set
       with_settings "RACK_ENV" => nil, "RAILS_ENV" => nil do
-        Bountybase.reset_attributes!
         assert_equal "a", Bountybase.environment
       end
     end
@@ -46,18 +44,18 @@ class BountybaseTest < Test::Unit::TestCase
   
   def test_nil_instance
     with_settings "INSTANCE" => nil do
-      assert_raise(Bountybase::Attributes::Missing) { Bountybase.instance }
+      # Bountybase.instance defaults to test, if INSTANCE is not set.
+      assert_equal "test", Bountybase.instance
+
       assert_raise(Bountybase::Attributes::Missing) { Bountybase.role }
 
       # read environment from "RAILS_ENV" or "RACK_ENV", when set
       with_settings "RACK_ENV" => "KJH", "RAILS_ENV" => "KJH" do
-        Bountybase.reset_attributes!
         assert_equal "KJH", Bountybase.environment
       end
 
       # default to development when RAILS_ENV" and "RACK_ENV" are not set
       with_settings "RACK_ENV" => nil, "RAILS_ENV" => nil do
-        Bountybase.reset_attributes!
         assert_equal "development", Bountybase.environment
       end
     end

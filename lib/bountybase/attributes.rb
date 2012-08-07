@@ -81,6 +81,35 @@ module Bountybase::Attributes
     [ $1, $2, "#{$2}#{$3}" ]
   rescue Missing
   end
+  
+  # -- modify settings ---------------------------------------------------------------
+  
+  def with_environment(environment, &block) # :nodoc:
+    with_settings "RACK_ENV" => environment, "RAILS_ENV" => environment, &block
+  end
+
+  def with_settings(settings, &block)
+    reset_attributes!
+
+    old_env = {}
+    settings.each { |key, value| 
+      old_env[key] = ENV[key]
+      ENV[key] = value 
+    }
+
+    yield
+  ensure
+    ENV.update old_env
+    reset_attributes!
+  end
+
+  private
+  
+  # resets the name of the environment setting for the duration of a block. 
+  # This method should not be used outside of tests.
+  def reset_attributes!
+    @root = @environment = @role = @instance = nil
+  end
 end
 
 module Bountybase
