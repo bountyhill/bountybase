@@ -9,25 +9,15 @@ module Bountybase
   end
 end
 
+# The Bountybase setup module initializes all services needed by several Bountybase components.
+# The configuration for those is read from Bountybase.config, which in turns reads it from
+# lib/bountybase/config.rb.
 module Bountybase::Setup
-  # setup logging
-  SYSLOG = {
-    :production =>  [ "logs.papertrailapp.com", 11905 ],
-    :staging =>     [ "logs.papertrailapp.com", 22076 ]
-  }
-
-  RESQUE = {
-    :production   =>  "redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/", # TODO: use separate redis instance
-    :staging      =>  "redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/", 
-    :test         =>  "redis://localhost:6379/1",
-    :development  =>  "redis://localhost:6379/2"
-  }
-
   def self.logging
     # setup listeners
     ::Event::Listeners.add :console
 
-    if syslog_args = SYSLOG[Bountybase.environment.to_sym]
+    if syslog_args = Bountybase.config.syslog
       ::Event::Listeners.add :syslog, *syslog_args
     end
 
@@ -40,7 +30,7 @@ module Bountybase::Setup
   end
   
   def self.resque
-    url = RESQUE.fetch(Bountybase.environment.to_sym)
+    url = Bountybase.config.resque || raise("Missing resque configuration")
     Bountybase.logger.info "Connecting to resque at", url
 
     Resque.redis = url
