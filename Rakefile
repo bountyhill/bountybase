@@ -9,6 +9,9 @@ rescue Bundler::BundlerError => e
   $stderr.puts "Run `bundle install` to install missing gems"
   exit e.status_code
 end
+
+require_relative "lib/bountybase/tasks"
+
 # require 'rake'
 # 
 require 'rake/testtask'
@@ -27,21 +30,6 @@ RDoc::Task.new do |rdoc|
   rdoc.title = "bhttp #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
-end
-
-namespace :bountybase do
-  namespace :setup do
-    task :logger do
-      require_relative "lib/bountybase"
-      Bountybase.setup
-    end
-
-    task :instance do
-      ENV["RACK_ENV"] = "test"
-    end
-
-    task :test => %w(instance logger)
-  end
 end
 
 task :test => "bountybase:setup:test" do

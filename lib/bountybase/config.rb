@@ -1,4 +1,5 @@
 require "ostruct"
+require "yaml"
 
 module Bountybase
   # returns the configuration object. This object is an OpenStruct object (i.e. you
