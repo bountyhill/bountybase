@@ -28,7 +28,6 @@ module Bountybase::Setup
     ::Event::Listeners.add :console
 
     if syslog_args = SYSLOG[Bountybase.environment.to_sym]
-      syslog_args.push :program => Bountybase.instance
       ::Event::Listeners.add :syslog, *syslog_args
     end
 

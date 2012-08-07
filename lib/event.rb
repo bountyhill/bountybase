@@ -229,7 +229,11 @@ MSG
         exit 1
       end
       
-      @logger = RemoteSyslogLogger.new(host, port, :program => (options[:program] || "bountybase"))
+      # The :program option is logged, at least in papertrailapp.com, next to the 
+      # name of the logging destination, which, according to Bountybase.setup, matches 
+      # the environment name. Therefore the :program option will be set to the Bountybase
+      # identity (e.g. "mailer", "web1", etc.)
+      @logger = RemoteSyslogLogger.new(host, port, :program => Bountybase.identity)
       RemoteSyslogListener.install_at_exit_handler self
     end
 
