@@ -41,17 +41,7 @@ module Bountybase::Attributes
   def environment
     @environment ||= Attributes.read("RAILS_ENV", "RACK_ENV") ||    # try to read from process environment
       Attributes.parse_instance.first ||                            # try to read from instance setting
-      "development"                                           # default to development
-  end
-
-  # adjusts the name of the environment setting for the duration of a block. 
-  # This method should not be used outside of tests.
-  def in_environment(environment, &block) # :nodoc:
-    old = @environment
-    @environment = environment
-    yield
-  ensure
-    @environment = old
+      "development"                                                 # default to development
   end
 
   # returns the role of the running instance. The role describes the general workload
@@ -61,7 +51,7 @@ module Bountybase::Attributes
   # They would not share the instance, which would probably be "twirl1" or  "twirl2".
   def role
     @role ||= begin
-      _, role, _ = *parse_instance
+      _, role, _ = *Attributes.parse_instance
       role || raise(Missing, "Cannot determine role.")
     end
   end
@@ -70,13 +60,16 @@ module Bountybase::Attributes
   # both the role to desccribe the type of instance, and a number to discriminate
   # amongst components running the same role.
   def instance
-    _, _, instance = *parse_instance
-    instance || raise(Missing, "Cannot determine instance.")
+    @instance ||= begin
+      _, _, instance = *Attributes.parse_instance
+      instance || raise(Missing, "Cannot determine instance setting.")
+    end
   end
 
   # parses the name of the INSTANCE environment variable. 
   def self.parse_instance
-    instance = Attributes.read("INSTANCE")
+    return [] unless instance = Attributes.read("INSTANCE")
+    
     unless instance.to_s =~ /^([a-zA-Z]+)-([a-zA-Z]+)(\d*)$/
       raise ArgumentError, "Invalid INSTANCE environment setting: #{instance.inspect} "
     end
