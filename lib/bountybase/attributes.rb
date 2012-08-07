@@ -94,7 +94,7 @@ module Bountybase::Attributes
     old_env = {}
     settings.each { |key, value| 
       old_env[key] = ENV[key]
-      ENV[key] = value.to_s
+      ENV[key] = value.is_a?(Symbol) ? value.to_s : value
     }
 
     yield
