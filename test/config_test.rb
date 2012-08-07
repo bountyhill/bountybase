@@ -26,7 +26,7 @@ class Bountyconfig < Test::Unit::TestCase
         Bountybase.config.redis
       end
     
-      Bountybase.environment "development" do
+      Bountybase.in_environment "development" do
         assert_equal "localhost:6379", Bountybase.config.redis
       end
     end
@@ -43,7 +43,7 @@ class Bountyconfig < Test::Unit::TestCase
       end
     end
 
-    Bountybase.environment "development" do
+    Bountybase.in_environment "development" do
       assert_equal "localhost:6379", Bountybase.config.resque
     end
   end

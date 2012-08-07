@@ -13,7 +13,7 @@ class BountybaseTest < Test::Unit::TestCase
   def test_application_root
     assert_equal nil, ENV["RACK_ROOT"]
     
-    assert_raise(RuntimeError) { 
+    assert_raise(Bountybase::Attributes::Missing) { 
       Bountybase.root 
     }
 
@@ -24,7 +24,7 @@ class BountybaseTest < Test::Unit::TestCase
   def test_environment
     assert_equal "test", Bountybase.environment
 
-    Bountybase.environment "yadda" do
+    Bountybase.in_environment "yadda" do
       assert_equal "yadda", Bountybase.environment
     end
 
