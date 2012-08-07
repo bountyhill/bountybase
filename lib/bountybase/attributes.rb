@@ -58,7 +58,7 @@ module Bountybase::Attributes
   # of the current process. There can be multiple processes with the same role:
   #
   # If there are two running twirl instances, they would both share the "twirl" role.
-  # They would not share the identity, which would probably be "twirl1" or  "twirl2".
+  # They would not share the instance, which would probably be "twirl1" or  "twirl2".
   def role
     @role ||= begin
       _, role, _ = *parse_instance
@@ -66,12 +66,12 @@ module Bountybase::Attributes
     end
   end
 
-  # returns the identity of the running instance. This name usually contains 
+  # returns the instance name of the running instance. This name usually contains 
   # both the role to desccribe the type of instance, and a number to discriminate
   # amongst components running the same role.
-  def identity
-    _, _, identity = *parse_instance
-    identity || raise(Missing, "Cannot determine instance.")
+  def instance
+    _, _, instance = *parse_instance
+    instance || raise(Missing, "Cannot determine instance.")
   end
 
   # parses the name of the INSTANCE environment variable. 
