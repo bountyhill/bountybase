@@ -54,15 +54,17 @@ class Event
     # Supported severity values. 
     #
     #     SEVERITIES = {
-    #       :error => 2,
-    #       :warn =>  1,
-    #       :info =>  0
+    #       :error  => 3,
+    #       :warn   => 2,
+    #       :info   => 1,
+    #       :debug  => 0
     #     }
     
     SEVERITIES = {
-      :error => 2,
-      :warn =>  1,
-      :info =>  0
+      :error  => 3,
+      :warn   => 2,
+      :info   => 1,
+      :debug  => 0
     }
 
     def self.to_number(severity)                              #:nodoc:
@@ -70,14 +72,24 @@ class Event
       SEVERITIES[severity] || raise(ArgumentError, "Invalid severity #{severity.inspect}")
     end
 
-    STRINGS = [ "*  ", "** ", "***" ]                         #:nodoc:
+    STRINGS = [ "   *", "  **", " ***", "****" ]              #:nodoc:
     
     def self.to_string(severity)                              #:nodoc:
       STRINGS[to_number(severity)] || severity.to_s
     end
-  end
 
-  # the event severity, usually :error, :warn, or :info
+    def severity
+      @severity ||= Event::Severity.to_number(:warn)
+    end
+
+    def severity=(severity)
+      @severity = Event::Severity.to_number(severity)
+    end
+  end
+  
+  extend Severity
+
+  # the event severity, usually :error, :warn, :info, :debug
   attr :severity
   
   # the event's source object.
@@ -171,7 +183,7 @@ class Event
 
     def initialize(options = {})
       @options = options
-      @severity = Event::Severity.to_number(options[:severity] || :warn)
+      @severity = Event::Severity.to_number(options[:severity] || :debug)
     end
   end
   
@@ -294,6 +306,8 @@ class Event
   # Routes an event: sends the event to all matching event listeners, that accept
   # events of a given severity.
   def deliver                                                 #:nodoc:
+    return unless Event.severity <= severity
+    
     @@routes.each do |pattern, listener|
       next unless listener.severity <= severity
       next unless self.matches?(pattern)
@@ -326,7 +340,11 @@ class Event::Logger
     end
 
     def info(msg, *args)
-      Event.deliver :warn, self, msg, *args
+      Event.deliver :info, self, msg, *args
+    end
+
+    def debug(msg, *args)
+      Event.deliver :debug, self, msg, *args
     end
 
     def benchmark(msg = "benchmark", min_runtime = 50, &block)
