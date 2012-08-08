@@ -17,33 +17,18 @@ class MetricsTest < Test::Unit::TestCase
   end
   
   def test_counters
-    assert_raise(NameError) {  
-      Bountybase.metrics.pageviews 1
-    }
-
-    # define a counter
-    Bountybase.metrics.counter! :pageviews
-
-    # use the counter
-    Bountybase.metrics.pageviews 3
-
+    Bountybase.metrics.pageviews!
     assert_equal(1, queued(:counters).length)
 
-    # use the counter, with a default value of 1
-    Bountybase.metrics.pageviews
+    # use the counter
+    Bountybase.metrics.pageviews! 3
 
     assert_equal(2, queued(:counters).length)
 
-    assert_equal [3,1], queued_attrs(:counters, :value)
+    assert_equal [1,3], queued_attrs(:counters, :value)
   end
 
   def test_gauges
-    assert_raise(NameError) {  
-      Bountybase.metrics.processing_time 20
-    }
-
-    # define a gauge
-    Bountybase.metrics.gauge! :processing_time
     Bountybase.metrics.processing_time 20
 
     assert_equal(1, queued(:gauges).length)

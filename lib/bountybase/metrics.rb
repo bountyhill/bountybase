@@ -31,7 +31,6 @@ module Bountybase
     def initialize(username, apikey)
       Librato::Metrics.authenticate username, apikey
       @queue = Librato::Metrics::Queue.new(:autosubmit_interval => AUTOSUBMIT_INTERVAL)
-      @metrics_types = {}
       @source = Bountybase.instance
       
       at_exit { submit }
@@ -48,36 +47,25 @@ module Bountybase
       queue.submit
     end
 
-    # setup a named counter
-    def counter!(name)
-      @metrics_types[name] = :counter
-    end
-    
-    # setup a named gauge
-    def gauge!(name)
-      @metrics_types[name] = :gauge
-    end
-
     def method_missing(sym, *args)
       return super if block_given? || args.length > 2
-      queue! sym, *args
+      
+      if sym.to_s =~ /^(.*)!$/
+        count! sym, *args
+      else
+        gauge! sym, *args
+      end
     end
     
-    def queue!(name, value = nil, options = nil)
-      type = @metrics_types[name] || raise(NameError, "Unknown metrics value #{name.inspect}")
+    def count!(name, value = 1, options = nil)
+      data = { :value => value, :source => @source, :type => :counter }
+      data = options.merge(data) if options
 
-      case value || type
-      when :gauge   then raise(ArgumentError, "Missing value for #{name.inspect} gauge")
-      when :counter then value = 1
-      else          # value is already set
-      end
-
-      data = {
-        :value => value,
-        :source => @source,
-        :type => type
-      }
-
+      queue.add name => data
+    end
+    
+    def gauge!(name, value, options = nil)
+      data = { :value => value, :source => @source, :type => :gauge }
       data = options.merge(data) if options
 
       queue.add name => data
