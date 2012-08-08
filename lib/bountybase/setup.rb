@@ -31,6 +31,15 @@ module Bountybase::Setup
   
   def self.resque
     url = Bountybase.config.resque || raise("Missing resque configuration")
+    if url == "none"
+      def Resque.redis
+        raise "Cannot use resque in #{Bountybase.environment} mode"
+      end
+      return
+    end
+    
+    # set resque URL, ping once (to resolve name), and ping a second time for
+    # an initial roundtrip measurement.
     Bountybase.logger.info "Connecting to resque at", url
 
     Resque.redis = url

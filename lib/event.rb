@@ -278,7 +278,7 @@ class Event
       if listener = Listeners.by_symbol(target)
         @@routes.update pattern => listener
       else
-        STDERR.puts "WARNING: No #{target.inspect} listener definition: ignoring route #{pattern.inspect} => #{target.inspect}"
+        logger.info "No #{target.inspect} listener definition: ignoring route #{pattern.inspect} => #{target.inspect}"
       end
     end
   end

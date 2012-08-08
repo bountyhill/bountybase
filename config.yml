@@ -3,6 +3,9 @@
 
 # The syslog configuration, per environment an array of [ hostname, port ] 
 syslog:
+  deployment:
+    - logs.papertrailapp.com
+    - 61566
   production:
     - logs.papertrailapp.com
     - 11905
@@ -13,12 +16,18 @@ syslog:
 # The resque configuration, one URL per environment.
 # TODO: setup redis instance for production
 resque:
+  deployment:   none
   production:   redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
   staging:      redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
   test:         redis://localhost:6379/1
   development:  redis://localhost:6379/2
 
+# The librato metrics credentials. Even though they are the same we cannot use a "default"
+# setting because development and test do not generate metrics.
 librato:
+  deployment:
+    username:   deployment@bountyhill.com
+    apikey:     d903064769ddf800ce3d8b7b7dcb64c368d9b7d02ebd6c24b03c57b3ff90049b
   production:
     username:   deployment@bountyhill.com
     apikey:     d903064769ddf800ce3d8b7b7dcb64c368d9b7d02ebd6c24b03c57b3ff90049b
