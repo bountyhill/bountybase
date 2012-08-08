@@ -87,7 +87,7 @@ MSG
     @scale ||= File.read("Procfile").                   # read Procfile
       split("\n").                                      # split in lines
       reject do |line| line =~ /#/ end.                 # remove comments
-      inject("web" => 0) do |hash, line|                # merge into a hash
+      inject({}) do |hash, line|                # merge into a hash
         hash.update line.split(":").first => 1 
       end.
       map do |kv| kv.join("=") end                      # build "NAME=VALUE" parts
