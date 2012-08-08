@@ -1,4 +1,8 @@
 module Deployment
+  def self.event_source_name
+    Dir.getwd.sub(ENV["HOME"], "~")
+  end
+
   extend self
   
   attr :target, true
@@ -24,6 +28,8 @@ module Deployment
     "deployment-#{target}"
   end
   
+  attr :application
+  
   def run
     # deploy in $deployment_target
     die "Usage: rake staging deploy" unless Deployment.target
@@ -33,12 +39,17 @@ module Deployment
       Bountybase.setup
       
       Event.severity = :debug
-
+      
       prepare_deployment
 
       applications.each do |application|
-        prepare_application(application)
-        deploy_application(application)
+        @application = application
+        
+        prepare_application
+        deploy_application
+        scale_application
+        
+        @application = nil
       end
     end
   end
@@ -71,23 +82,39 @@ MSG
   def prepare_deployment
     verify_bountybase_versions
   end
-    
-  def prepare_application(application)
-    remote_instance = sys! "heroku config:get INSTANCE --app #{application}"
+  
+  def scale_application
+    @scale ||= File.read("Procfile").                   # read Procfile
+      split("\n").                                      # split in lines
+      reject do |line| line =~ /#/ end.                 # remove comments
+      inject("web" => 0) do |hash, line|                # merge into a hash
+        hash.update line.split(":").first => 1 
+      end.
+      map do |kv| kv.join("=") end                      # build "NAME=VALUE" parts
+
+    heroku "ps:scale #{@scale.join(" ")}"               # scale heroku dynos
+  end
+
+  def prepare_application
+    remote_instance = heroku "config:get INSTANCE"
     unless remote_instance == application
       logger.warn "Setting INSTANCE config at remote to #{application}"
-      sys! "heroku config:set INSTANCE=#{application} --app #{application}"
+      heroku "config:set INSTANCE=#{application}"
     end
   end
 
-  def deploy_application(application)
+  def deploy_application
     sys! "git push #{application} master"
     logger.warn "Deployed", application
   end
 
+  def heroku(cmd)
+    sys! "heroku #{cmd} --app #{application}"
+  end
+
   def sys(cmd)
     logger.debug cmd
-    stdout = Kernel.send "`", "bash -c '#{cmd}'"
+    stdout = Kernel.send "`", "bash -c \"#{cmd}\""
     
     stdout.chomp if $?.exitstatus == 0
   end
