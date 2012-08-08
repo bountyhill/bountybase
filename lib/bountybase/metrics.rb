@@ -51,7 +51,7 @@ module Bountybase
       return super if block_given? || args.length > 2
       
       if sym.to_s =~ /^(.*)!$/
-        count! sym, *args
+        count! $1, *args
       else
         gauge! sym, *args
       end

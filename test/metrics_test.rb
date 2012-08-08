@@ -25,6 +25,7 @@ class MetricsTest < Test::Unit::TestCase
 
     assert_equal(2, queued(:counters).length)
 
+    assert_equal(%w(pageviews pageviews), queued_attrs(:counters, :name))
     assert_equal [1,3], queued_attrs(:counters, :value)
   end
 
