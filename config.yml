@@ -34,3 +34,41 @@ librato:
   staging:
     username:   deployment@bountyhill.com
     apikey:     d903064769ddf800ce3d8b7b7dcb64c368d9b7d02ebd6c24b03c57b3ff90049b
+
+#
+# Twitter authentication keys. Authentication needs consumer_* and access_token* values;
+# urls are for reference purposes only and denote the twitter app URL. They are currently
+# set on default. While this is good for bountytick, bountytwirl instances must be run 
+# via separate applications.
+twitter:
+  default:
+    bountytwirl1:
+      url:                  https://dev.twitter.com/apps/2982201
+      consumer_key:         c6cvEkq8dHMaTa9F2y2w
+      consumer_secret:      6UdPXY4Wx9AgXH9YL65Ev3gCZgZ0lEop8ylsVRXjGE
+      access_token:         744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI
+      access_token_secret:  IhoMD0O9VRLZTwYkBPJT9jRcvd0K5kgVgVPmH5sQ
+    bountytwirl2:
+      url:                  https://dev.twitter.com/apps/2982201
+      consumer_key:         hucvNtFL6gDA6t5XjlD1A
+      consumer_secret:      YotJBuBSLTaP8IUhbkUU46nKPtCmcI6BFL53oaRQQI
+      access_token:         744854762-0AOIW3nminJYWUZrThOQGpJvQYb30BeAMCLJp06S
+      access_token_secret:  mnmcR4RWhR6xvMxu6yzJ3NGRf3jzdvOUQzn22Ndo
+    bountytick:
+      url:                  https://dev.twitter.com/apps/2982207
+      consumer_key:         auDWHPRoc7egQgHsMbUjg
+      consumer_secret:      9qFMRghFa5F0s06CxYvFn22mXNpmrzzrBhbrzO7FA7M
+      access_token:         744854762-zImMVMa47UrGbmvfjHz5w3gTXeYgtMeO44GFEnMZ
+      access_token_secret:  FetfXPlK0dyRhQUd98OoFDC7CQI1s17FjlGpJwRXDQ
+
+#
+# Listen for which tags?
+twirl_tags:
+  default:   
+    - Berlin
+    - Vollmond
+    - Staatsanleihen
+    - "#Pressemitteilung"
+    - "#London2012" 
+    - "#Olympia2012"
+    - "@big_ben_clock"
