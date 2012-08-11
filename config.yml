@@ -24,6 +24,8 @@ resque:
 
 # The librato metrics credentials. Even though they are the same we cannot use a "default"
 # setting because development and test do not generate metrics.
+#
+# CURRENTLY NOT IN USE!
 librato:
   deployment:
     username:   deployment@bountyhill.com
@@ -68,3 +70,16 @@ twirl_tags:
     - Berlin
     - "#Olympia2012"
     - "@big_ben_clock"
+
+#
+# redis connection for fnordmetric statistics.
+fnordmetric:
+  default:
+    redis_url:          redis://localhost:6379
+    redis_prefix:       dev
+  staging:
+    redis_url:          redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
+    redis_prefix:       staging
+  production:
+    redis_url:          redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
+    redis_prefix:       pro

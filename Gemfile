@@ -4,7 +4,7 @@ gem "addressable"
 gem "rake"
 gem "remote_syslog_logger"
 gem "resque"
-gem "librato-metrics"
+gem "fnordmetric"
 
 group :test do
   gem "vcr"

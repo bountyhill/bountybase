@@ -1,8 +1,13 @@
-require "librato/metrics"
+require "fnordmetric"
+require "fnordmetric/api"
 
 module Bountybase
   def metrics
-    Thread.current["bountybase-metrics"] ||= Metrics.create_instance
+    @metrics ||= if config = Bountybase.config.fnordmetric
+        Metrics.new(config)
+      else
+        Metrics::Dummy
+      end
   end
 
   class Metrics
@@ -10,65 +15,42 @@ module Bountybase
       def self.method_missing(*args); end
     end
 
-    def self.config
-      if config = Bountybase.config.librato
-        config.values_at("username", "apikey")
-      end
-    end
+    # The api attribute is needed for testing. 
+    attr :api #:nodoc:
     
-    def self.create_instance
-      if config = self.config
-        Metrics.new(*config)
-      else
-        Metrics::Dummy
-      end
-    end
+    # Creates a new Metrics instance. The config parameter is a Hash with these keys:
+    #
+    # - "redis_url": the URL of the redis instance to talk to the fnordmetric instance
+    # - "redis_prefix": the redis_prefix to use when talking to the fnordmetric instance
+    # - "event_queue_ttl": how long should events live?
+    #
+    # These values are usually read from Bountybase.config.fnordmetric
+    def initialize(config)
+      # @source = Bountybase.instance
+      @api = FnordMetric::API.new :redis_url       => config["redis_url"], 
+                                  :redis_prefix    => config["redis_prefix"],  
+                                  :event_queue_ttl => config["event_queue_ttl"] || 20
 
-    AUTOSUBMIT_INTERVAL = 60
-    
-    attr :queue
-    
-    def initialize(username, apikey)
-      Librato::Metrics.authenticate username, apikey
-      @queue = Librato::Metrics::Queue.new(:autosubmit_interval => AUTOSUBMIT_INTERVAL)
-      @source = Bountybase.instance
-      
-      at_exit { submit }
-    end
-
-    # clears the queue
-    def clear #:nodoc:
-      queue.clear
-    end
-
-    # submits the queue
-    def submit
-      return if queue.empty?
-      queue.submit
+      Bountybase.logger.info "Connected to stats queue", config
     end
 
     def method_missing(sym, *args)
-      return super if block_given? || args.length > 2
+      api.event build_event(sym, *args)
+    end
+    
+    def build_event(sym, *args)
+      # parse arguments. These are valid combinations: [value, Hash], [value], [Hash], [none]
+      options = args.last.is_a?(Hash) ? args.pop : {} 
+
+      options[:_type] = sym.to_s =~ /^(.*)!$/ ? $1.to_sym : sym
       
-      if sym.to_s =~ /^(.*)!$/
-        count! $1, *args
-      else
-        gauge! sym, *args
+      case args.length
+      when 0 then :nop 
+      when 1 then options[:value] = args.first
+      else        raise ArgumentError, "Invalid number of arguments"
       end
-    end
-    
-    def count!(name, value = 1, options = nil)
-      data = { :value => value, :source => @source, :type => :counter }
-      data = options.merge(data) if options
 
-      queue.add name => data
-    end
-    
-    def gauge!(name, value, options = nil)
-      data = { :value => value, :source => @source, :type => :gauge }
-      data = options.merge(data) if options
-
-      queue.add name => data
+      options
     end
   end
 end

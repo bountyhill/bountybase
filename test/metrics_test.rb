@@ -3,60 +3,33 @@ require_relative 'test_helper'
 class MetricsTest < Test::Unit::TestCase
   include Bountybase::TestCase
 
-  def setup
-    # stub an ok config
-    Bountybase::Metrics.stubs(:config).returns(["user", "key"])
-  end
-  
-  def teardown
-    Bountybase.metrics.clear
-  end
-
   def test_metrics
     assert_not_nil(Bountybase.metrics)
   end
   
   def test_counters
+    Bountybase.metrics.api.expects(:event).with(:_type => :pageviews)
     Bountybase.metrics.pageviews!
-    assert_equal(1, queued(:counters).length)
+  end
 
-    # use the counter
-    Bountybase.metrics.pageviews! 3
-
-    assert_equal(2, queued(:counters).length)
-
-    assert_equal(%w(pageviews pageviews), queued_attrs(:counters, :name))
-    assert_equal [1,3], queued_attrs(:counters, :value)
+  def test_counters_w_parameters
+    Bountybase.metrics.api.expects(:event).with(:_type => :pageviews, :a => :b)
+    Bountybase.metrics.pageviews! :a => :b
   end
 
   def test_gauges
+    Bountybase.metrics.api.expects(:event).with(:_type => :processing_time, :value => 20)
     Bountybase.metrics.processing_time 20
-
-    assert_equal(1, queued(:gauges).length)
-  
-    # no default value for gauges
-    assert_raise(ArgumentError) {  
-      Bountybase.metrics.processing_time 
-    }
   end
 
-  def test_submit
-    Bountybase.metrics.queue.expects(:submit).never
-    Bountybase.metrics.submit
-
-    Bountybase.metrics.queue.expects(:submit).once
-
-    Bountybase.metrics.pageviews 3
-    Bountybase.metrics.submit
-  end
-  
-  def queued(type)
-    Bountybase.metrics.queue.queued[type] || []
+  def test_gauges_w_parameters
+    Bountybase.metrics.api.expects(:event).with(:_type => :processing_time, :value => 20, :a => :b)
+    Bountybase.metrics.processing_time 20, :a => :b
   end
 
-  def queued_attrs(type, attr)
-    queued(type).map do |hash|
-      hash[attr]
+  def test_invalid_number_of_arguments
+    assert_raise(ArgumentError) do
+      Bountybase.metrics.processing_time 20, 30
     end
   end
 end
