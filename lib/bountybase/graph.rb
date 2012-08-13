@@ -1,23 +1,13 @@
 require_relative "../event"
 require 'neography'
-
-class Neography::Rest
-  # The ping method tries to contact the Neo4J server and verifies the expected result.
-  def ping
-    url = @protocol + @server + ':' + @port.to_s + @directory
-    ping = evaluate_response HTTParty.get(url, @authentication.merge(@parser))
-    
-    raise "Cannt ping neo4j database at #{ping_url}" unless ping.is_a?(Hash) && ping.keys.include?("data")
-    ping
-  end
-end
+require_relative "graph/neography_extensions"
 
 #
 # The Graph module deals with everything related to building and querying the Bountytweet graph.
 module Bountybase::Graph
   extend self
   
-  module Neo4J
+  module Neo4j
     extend self
     
     # returns a connection. Each thread has its own connection
@@ -28,7 +18,7 @@ module Bountybase::Graph
     # Executes a Cypher query with a single return value per returned selection. 
     # Returns an array of hashes. 
     def query(query)
-      result = connection.execute_query(query)
+      result = connection.execute_query(query) || {"data" => []}
       expect! result => Hash
       nodes, columns = *result.values_at("data", "columns")
       nodes
@@ -49,7 +39,7 @@ module Bountybase::Graph
     #
     # Parameters: see nodes
     def count(pattern = "*")
-      execute_query("start n=node(#{pattern}) return n").length
+      query("start n=node(#{pattern}) return n").length
     end
     
     # purges all nodes and their relationships.
@@ -82,14 +72,14 @@ module Bountybase::Graph
     end
   end
   
-  # Purge all nodes in the Neo4J database
+  # Purge all nodes in the Neo4j database
   def purge!
-    Neo4J.purge!
+    Neo4j.purge!
   end
     
-  # Connect this thread to Neo4J
+  # Connect this thread to Neo4j
   def setup
-    Neo4J.connection
+    Neo4j.connection
   end
   
   # whenever a bountytweet is found we add some connections in the graph database.
