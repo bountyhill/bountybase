@@ -1,6 +1,9 @@
 require_relative 'test_helper'
 
-class MetricsTest < Test::Unit::TestCase
+# ::Event::Listeners.add :console
+# ::Event.route :all => :console
+
+class GraphTest < Test::Unit::TestCase
   include Bountybase::TestCase
 
   def test_parse_options
@@ -17,12 +20,10 @@ class MetricsTest < Test::Unit::TestCase
     assert_equal({:a => :b, :c => :d}, options)
   end
 
-  def test_neo4j
-    assert_not_nil Bountybase::Graph.connection
+  def setup
+    Bountybase::Graph.purge!
   end
-
-  def test_neo4j_all
-    Bountybase::Graph.clear!
-    #assert_not_nil Bountybase::Graph.connection
+  
+  def teardown
   end
 end

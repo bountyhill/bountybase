@@ -2,8 +2,13 @@ require_relative "../event"
 require 'neography'
 
 class Neography::Rest
+  # The ping method tries to contact the Neo4J server and verifies the expected result.
   def ping
-    get(configuration)
+    url = @protocol + @server + ':' + @port.to_s + @directory
+    ping = evaluate_response HTTParty.get(url, @authentication.merge(@parser))
+    
+    raise "Cannt ping neo4j database at #{ping_url}" unless ping.is_a?(Hash) && ping.keys.include?("data")
+    ping
   end
 end
 
@@ -12,37 +17,79 @@ end
 module Bountybase::Graph
   extend self
   
-  def create_connection
-    url = Bountybase.config.neo4j
-    connection = Neography::Rest.new(url)
-
-    unless @created_first_connection
-      Bountybase.logger.benchmark :warn, "Connected to neo4j at", url, :min => 0 do
-        connection.ping
-      end
-
-      @created_first_connection = true
+  module Neo4J
+    extend self
+    
+    # returns a connection. Each thread has its own connection
+    def connection
+      Thread.current[:neography_connection] ||= connect!
     end
     
-    connection
-  end
-  
-  def connection
-    Thread.current[:neography_connection] ||= create_connection
-  end
+    # Executes a Cypher query with a single return value per returned selection. 
+    # Returns an array of hashes. 
+    def query(query)
+      result = connection.execute_query(query)
+      expect! result => Hash
+      nodes, columns = *result.values_at("data", "columns")
+      nodes
+    end
+    
+    # returns the URLs of all matching nodes.
+    #
+    # Parameters: 
+    # - pattern the pattern to match
+    def nodes(pattern = "*")
+      query("start n=node(#{pattern}) return n").map do |node|
+        hash = node.first
+        hash["self"]
+      end
+    end
+    
+    # returns the number of matching nodes.
+    #
+    # Parameters: see nodes
+    def count(pattern = "*")
+      execute_query("start n=node(#{pattern}) return n").length
+    end
+    
+    # purges all nodes and their relationships.
+    #
+    # Parameters: see nodes
+    def purge!(pattern = '*')
+      logger.benchmark :error, "purge" do
+        nodes(pattern).map do |node|
+          connection.delete_node! node
+        end
+      end
+    end
+    
+    private
+    
+    # connect to a database, return connection object
+    def connect! #:nodoc:
+      url = Bountybase.config.neo4j
+      expect! url => /[^\/]$/
 
-  def execute_query(query)
-    connection.execute_query(query)
+      Neography::Rest.new(url).tap do |connection|
+        next if @created_first_connection
+
+        Bountybase.logger.benchmark :warn, "Connected to neo4j at", url, :min => 0 do
+          connection.ping
+        end
+
+        @created_first_connection = true
+      end
+    end
   end
   
-  def clear!
-    all = execute_query("start n=node(0) return n")
-    # logger.error "all", all
-    # connection.find("start n=node(*) return n")
+  # Purge all nodes in the Neo4J database
+  def purge!
+    Neo4J.purge!
   end
-  
+    
+  # Connect this thread to Neo4J
   def setup
-    connection
+    Neo4J.connection
   end
   
   # whenever a bountytweet is found we add some connections in the graph database.
