@@ -1,0 +1,52 @@
+# Author::    radiospiel  (mailto:eno@radiospiel.org)
+# Copyright:: Copyright (c) 2011, 2012 radiospiel
+# License::   Distributes under the terms  of the Modified BSD License, see LICENSE.BSD for details.
+require_relative 'test_helper'
+
+class ExpectationsTest < Test::Unit::TestCase
+  def assert_expectation(*expectation)
+    expect! *expectation
+  end
+  
+  def assert_failed_expectation(*expectation)
+    assert_raise(ArgumentError) {  
+      expect! *expectation
+    }
+  end
+  
+  def test_int_expectations
+    assert_expectation 1 => 1
+    assert_expectation 1 => Fixnum
+    assert_expectation 1 => Integer
+    assert_expectation 1 => 0..2
+    assert_expectation 1 => 0..1
+    assert_expectation 1 => 1..10
+    assert_expectation 1 => [0,1,2]
+    assert_expectation 1 => lambda { |i| i.odd? }
+    
+    assert_failed_expectation 1 => 2
+    assert_failed_expectation 1 => Float
+    assert_failed_expectation 1 => 0...1
+    assert_failed_expectation 1 => 3..5
+    assert_failed_expectation 1 => [3,4,5]
+    assert_failed_expectation 1 => lambda { |i| i.even? }
+  end
+  
+  def test_regexp_expectations
+    assert_expectation " foo" => /foo/
+    assert_failed_expectation " foo" => /^foo/
+
+    assert_expectation 1 => /1/
+    assert_failed_expectation 1 => /2/
+  end
+  
+  def test_multiple_expectations
+    assert_expectation 1 => 1, :a => :a
+    assert_failed_expectation 1 => 2, :a => :a
+  end
+
+  def test_array_expectations
+    assert_expectation [ 1, 1 ], [ 1, /1/ ]
+    assert_failed_expectation [ 1, 1 ], [ 1, /2/ ]
+  end
+end

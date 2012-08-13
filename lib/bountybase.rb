@@ -1,3 +1,5 @@
+require_relative "expectations"
+
 # The Bountybase namespace organizes data access patterns for the Bountyhill application.
 module Bountybase; end
 
