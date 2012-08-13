@@ -2,7 +2,11 @@
 # Copyright:: Copyright (c) 2011, 2012 radiospiel
 # License::   Distributes under the terms  of the Modified BSD License, see LICENSE.BSD for details.
 module Expectations
-  def expect!(*expectations)
+  def expect!(*expectations, &block)
+    if block_given?
+      Expectations.verify! true, block
+    end
+    
     expectations.each do |expectation|
       enumerator = case expectation
         when Hash   then expectation.each
@@ -19,12 +23,12 @@ module Expectations
   def self.met?(value, expectation)
     case expectation
     when Array  then expectation.any? { |e| met?(value, e) }
-    when Proc   then expectation.call(value)
+    when Proc   then expectation.arity == 0 ? expectation.call : expectation.call(value)
     when Regexp then expectation =~ value.to_s
     else             expectation === value
     end
   end
-  
+
   def self.verify!(value, expectation)
     return if met?(value, expectation)
 

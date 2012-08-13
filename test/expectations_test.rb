@@ -4,13 +4,15 @@
 require_relative 'test_helper'
 
 class ExpectationsTest < Test::Unit::TestCase
-  def assert_expectation(*expectation)
-    expect! *expectation
+  def assert_expectation(*expectation, &block)
+    assert_nothing_raised do
+      expect! *expectation, &block
+    end
   end
   
-  def assert_failed_expectation(*expectation)
+  def assert_failed_expectation(*expectation, &block)
     assert_raise(ArgumentError) {  
-      expect! *expectation
+      expect! *expectation, &block
     }
   end
   
@@ -48,5 +50,11 @@ class ExpectationsTest < Test::Unit::TestCase
   def test_array_expectations
     assert_expectation [ 1, 1 ], [ 1, /1/ ]
     assert_failed_expectation [ 1, 1 ], [ 1, /2/ ]
+  end
+
+  def test_block_expectations
+    assert_expectation do true end
+    assert_failed_expectation do false end
+    assert_failed_expectation do nil end
   end
 end
