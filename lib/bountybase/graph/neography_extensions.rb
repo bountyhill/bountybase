@@ -11,5 +11,9 @@ class Neography::Rest
       ping
     end
   end
+
+  def delete_node_index(name)
+    delete("/index/node/#{name}")
+  end
 end
 
