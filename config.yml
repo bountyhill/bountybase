@@ -83,3 +83,7 @@ fnordmetric:
   production:
     redis_url:          redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
     redis_prefix:       pro
+
+neo4j:
+  development:          http://localhost:7474/bountybasedev
+  test:                 http://localhost:7474/bountybasetest

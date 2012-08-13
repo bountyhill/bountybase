@@ -1,12 +1,48 @@
 require_relative "../event"
+require 'neography'
+
+class Neography::Rest
+  def ping
+    get(configuration)
+  end
+end
 
 #
 # The Graph module deals with everything related to building and querying the Bountytweet graph.
 module Bountybase::Graph
   extend self
   
+  def create_connection
+    url = Bountybase.config.neo4j
+    connection = Neography::Rest.new(url)
+
+    unless @created_first_connection
+      Bountybase.logger.benchmark :warn, "Connected to neo4j at", url, :min => 0 do
+        connection.ping
+      end
+
+      @created_first_connection = true
+    end
+    
+    connection
+  end
+  
+  def connection
+    Thread.current[:neography_connection] ||= create_connection
+  end
+
+  def execute_query(query)
+    connection.execute_query(query)
+  end
+  
+  def clear!
+    all = execute_query("start n=node(0) return n")
+    # logger.error "all", all
+    # connection.find("start n=node(*) return n")
+  end
+  
   def setup
-    # connect to neo4j database
+    connection
   end
   
   # whenever a bountytweet is found we add some connections in the graph database.

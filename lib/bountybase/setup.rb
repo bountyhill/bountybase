@@ -6,6 +6,7 @@ module Bountybase
   def self.setup
     Bountybase::Setup.logging
     Bountybase::Setup.resque
+    Bountybase::Setup.neo4j
   end
 end
 
@@ -48,5 +49,9 @@ module Bountybase::Setup
     Bountybase.logger.benchmark(:warn, "Resque using redis at", url, :min => 0) do
       Resque.redis.ping
     end
+  end
+  
+  def self.neo4j
+    Bountybase::Graph.setup
   end
 end
