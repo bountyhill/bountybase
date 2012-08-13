@@ -7,6 +7,7 @@ require 'ruby-debug'
 require 'simplecov'
 require 'test/unit'
 require 'mocha'
+require 'awesome_print'
 
 SimpleCov.start do
   add_filter "test/*.rb"
