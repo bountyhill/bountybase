@@ -45,7 +45,7 @@ module Bountybase::Setup
     Resque.redis = url
     Resque.redis.ping
 
-    Bountybase.logger.benchmark("Resque using redis at: #{url.inspect}", 0) do
+    Bountybase.logger.benchmark(:warn, "Resque using redis at", url, :min => 0) do
       Resque.redis.ping
     end
   end

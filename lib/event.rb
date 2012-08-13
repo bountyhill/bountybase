@@ -347,12 +347,25 @@ class Event::Logger
       Event.deliver :debug, self, msg, *args
     end
 
-    def benchmark(msg = "benchmark", min_runtime = 50, &block)
+    def benchmark(*args, &block)
+      severity = args.shift if Event::Severity::SEVERITIES.key?(args.first)
+      severity ||= :info
+      
+      min_runtime = args.pop[:min] if args.last.is_a?(Hash) && args.last.keys == [:min]
+      min_runtime ||= 50
+
+      msg = args.shift || "benchmark"
+      msg += " #{args.map(&:inspect).join(", ")}" if args.length > 0
+
       start = Time.now
       yield 
-    ensure
+
       runtime = ((Time.now - start) * 1000).to_i
-      Event.logger.info "#{msg}: #{runtime} msecs." if runtime >= min_runtime
+      Event.deliver severity, self, "#{msg}: #{runtime} msecs." if runtime >= min_runtime
+    rescue
+      runtime = ((Time.now - start) * 1000).to_i
+      Event.deliver severity, self, "#{msg}: failed after #{runtime} msecs." if runtime >= min_runtime
+      raise
     end
   end
 
@@ -364,8 +377,8 @@ class Object
     @logger ||= Event::Logger.new(self.class)
   end
 
-  def benchmark(msg = "benchmark", &block)
-    logger.benchmark(msg, &block)
+  def benchmark(*args, &block)
+    logger.benchmark(*args, &block)
   end
 
   def event_source_name
