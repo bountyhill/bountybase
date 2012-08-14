@@ -83,8 +83,10 @@ module Bountybase::Graph::Neo4j
   # b) creates the node uniquely with the given uid within this index
   #
   def create_node(index, uid, options = {})
-    expect! { options.keys.all? { |k| k.is_a?(String) } }
-    
+    options.keys.each do |key|
+      expect! key => String
+    end
+
     create_node_index index
     
     options.update "uid" => uid
