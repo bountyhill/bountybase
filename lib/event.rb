@@ -101,14 +101,24 @@ class Event
   # event options
   attr :options
   
-  def initialize(severity, source, msg, *values)              #:nodoc:
+  def initialize(severity, source, *values, &block)              #:nodoc:
     @severity = Severity.to_number(severity)
     @source = source
-    
-    # turn msg, values into @msg and @options
     @options = values.pop if values.last.is_a?(Hash)
-    msg += " #{values.map(&:inspect).join(", ")}" if values.length > 0
-    @msg = msg
+    
+    if block_given?
+      values.push yield
+    end
+
+    if values.empty?
+      raise ArgumentError, "Missing arguments"
+    end
+
+    @msg = values.shift.to_s
+
+    if values.length > 0
+      @msg += " " + values.map { |value| format_value(value) }.join(", ")
+    end
   end
   
   # returns a stringified version of this object. Depending on the _mode_ parameter
@@ -119,7 +129,7 @@ class Event
   # [everything else]     source_name and message
   #
   def to_s(mode = :short)
-    if source_name = source.event_source_name
+    if source && source_name = source.event_source_name
       source_name = "[#{source_name}] "
     end
     
@@ -140,11 +150,30 @@ class Event
   def formatted_options                                       #:nodoc:
     case options && options.length
     when nil, 0 then nil
-    when 1      then ": " + options.values.first.inspect
-    else             options.map { |k,v| "#{k}: #{v.inspect}" }.sort.join(", ")
+    when 1      then ": " + format_value(options.values.first)
+    else             format_hash_inner(options)
     end
   end
 
+  def format_value(value)
+    case value
+    when Array      then "[ " + value.map { |v| format_value(v) }.join(", ") + " ]"
+    when Hash       then "{ " + format_hash_inner(value) + " }"
+    when OpenStruct then format_hash_inner(value.instance_variable_get("@table"))
+    else            value.inspect
+    end
+  end
+
+  def format_hash_inner(hash)
+    hash.map do |k,v| 
+      if k.to_s =~ /(secret|password)/ 
+        "#{k}: xxxxxxxx" 
+      else
+        "#{k}: #{v.inspect}" 
+      end
+    end.sort.join(", ")
+  end
+  
   public
   
   # The Event::Listeners module organizes all event listeners during an application
@@ -316,14 +345,7 @@ class Event
 
   def self.deliver(severity, logger, *values, &block)            #:nodoc:
     return unless Event.severity <= Severity.to_number(severity)
-    
-    if block_given?
-      values.push yield
-    elsif values.empty?
-      raise ArgumentError, "Missing arguments"
-    end
-
-    new(severity, logger.event_source, *values).deliver
+    new(severity, logger.event_source, *values, &block).deliver
   end
 end
 
@@ -398,6 +420,12 @@ class Event
   end
 end
 
+module Bountybase
+  def self.event_source_name
+    nil
+  end
+end
+  
 class Module
   def logger
     @logger ||= Event::Logger.new(self)
