@@ -284,13 +284,13 @@ class Event
 
   # set up an event route
   def self.route(routes)
-    # expect! routes => Hash
+    expect! routes => Hash
     
     routes.each do |pattern, target|
       if listener = Listeners.by_symbol(target)
         @@routes.update pattern => listener
       else
-        logger.info "No #{target.inspect} listener definition: ignoring route #{pattern.inspect} => #{target.inspect}"
+        STDERR.puts "No #{target.inspect} listener definition: ignoring route #{pattern.inspect} => #{target.inspect}"
       end
     end
   end
@@ -306,8 +306,6 @@ class Event
   # Routes an event: sends the event to all matching event listeners, that accept
   # events of a given severity.
   def deliver                                                 #:nodoc:
-    return unless Event.severity <= severity
-    
     @@routes.each do |pattern, listener|
       next unless listener.severity <= severity
       next unless self.matches?(pattern)
@@ -316,8 +314,16 @@ class Event
     end
   end
 
-  def self.deliver(severity, logger, msg, *values)            #:nodoc:
-    new(severity, logger.event_source, msg, *values).deliver
+  def self.deliver(severity, logger, *values, &block)            #:nodoc:
+    return unless Event.severity <= Severity.to_number(severity)
+    
+    if block_given?
+      values.push yield
+    elsif values.empty?
+      raise ArgumentError, "Missing arguments"
+    end
+
+    new(severity, logger.event_source, *values).deliver
   end
 end
 
@@ -331,20 +337,20 @@ class Event::Logger
   end
   
   module LoggerMethods
-    def error(msg, *args)
-      Event.deliver :error, self, msg, *args
+    def error(*args, &block)
+      Event.deliver :error, self, *args, &block
     end
 
-    def warn(msg, *args)
-      Event.deliver :warn, self, msg, *args
+    def warn(*args, &block)
+      Event.deliver :warn, self, *args, &block
     end
 
-    def info(msg, *args)
-      Event.deliver :info, self, msg, *args
+    def info(*args, &block)
+      Event.deliver :info, self, *args, &block
     end
 
-    def debug(msg, *args)
-      Event.deliver :debug, self, msg, *args
+    def debug(*args, &block)
+      Event.deliver :debug, self, *args, &block
     end
 
     def benchmark(*args, &block)
@@ -397,3 +403,8 @@ class Module
     @logger ||= Event::Logger.new(self)
   end
 end
+
+def E(*args, &block); Event.deliver :error, Bountybase.logger, *args, &block; end
+def W(*args, &block); Event.deliver :warn,  Bountybase.logger, *args, &block; end
+def I(*args, &block); Event.deliver :info,  Bountybase.logger, *args, &block; end
+def D(*args, &block); Event.deliver :debug, Bountybase.logger, *args, &block; end

@@ -60,4 +60,15 @@ class BountybaseTest < Test::Unit::TestCase
       end
     end
   end
+
+  def no_test_logging
+    ::Event::Listeners.add :console
+    ::Event.route :all => :console
+    
+    E "!!!! Bountybase: running test"
+
+    W "AB" do
+      "Bountybase: running test"
+    end
+  end
 end

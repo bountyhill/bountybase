@@ -20,7 +20,6 @@ end
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'bountybase'
-
 require "forwardable"
 
 module Bountybase::TestCase
@@ -35,4 +34,3 @@ module Bountybase::TestCase
   end
 end
 
-Bountybase.logger.warn "Bountybase: running test"
