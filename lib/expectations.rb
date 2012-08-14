@@ -8,24 +8,24 @@ module Expectations
     end
     
     expectations.each do |expectation|
-      enumerator = case expectation
-        when Hash   then expectation.each
-        when Array  then expectation.each_slice(2)
-        else        raise ArgumentError, "Invalid expectation: #{expectation.inspect}"
-      end
-
-      enumerator.each do |value, e|
-        Expectations.verify! value, e
+      case expectation
+      when Hash
+        expectation.each do |value, e|
+          Expectations.verify! value, e
+        end
+      else
+        Expectations.verify! expectation, :truish
       end
     end
   end
 
   def self.met?(value, expectation)
     case expectation
-    when Array  then expectation.any? { |e| met?(value, e) }
-    when Proc   then expectation.arity == 0 ? expectation.call : expectation.call(value)
-    when Regexp then expectation =~ value.to_s
-    else             expectation === value
+    when :truish  then !!value
+    when Array    then expectation.any? { |e| met?(value, e) }
+    when Proc     then expectation.arity == 0 ? expectation.call : expectation.call(value)
+    when Regexp   then expectation =~ value.to_s
+    else          expectation === value
     end
   end
 

@@ -48,8 +48,12 @@ class ExpectationsTest < Test::Unit::TestCase
   end
 
   def test_array_expectations
-    assert_expectation [ 1, 1 ], [ 1, /1/ ]
-    assert_failed_expectation [ 1, 1 ], [ 1, /2/ ]
+    assert_expectation 1, 1, 1, /1/
+    assert_expectation 1, 1, 1 => /1/
+    
+    assert_failed_expectation 1, 1, 1 => /2/
+    assert_failed_expectation 1, nil, 1 => /1/
+    assert_failed_expectation 1, false, 1 => /1/
   end
 
   def test_block_expectations
