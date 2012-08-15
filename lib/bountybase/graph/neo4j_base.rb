@@ -47,64 +47,6 @@ module Bountybase::Graph::Neo4j
     end
   end
   
-  NODE_INDEX_NAME = "node_index"
-  
-  def node_index
-    @node_index_created ||= begin
-      unless node_indices.include?(NODE_INDEX_NAME)
-        connection.create_node_index(NODE_INDEX_NAME)
-      end
-      NODE_INDEX_NAME
-    end
-  end
-
-  def node_indices
-    connection.list_node_indexes.keys
-  end
-  
-  private
-  
-  def known_node_indices #:nodoc:
-    @known_node_indices ||= []
-  end
-  
-  def create_node_index(name)
-    unless known_node_indices.include?(name)
-      connection.create_node_index(name)
-      known_node_indices << name
-    end
-  end
-  
-  public
-  
-  # create a node of a given type. This
-  #
-  # a) creates an index for that type, if that is needed,
-  # b) creates the node uniquely with the given uid within this index
-  #
-  def create_node(index, uid, options = {})
-    options.keys.each do |key|
-      expect! key => String
-    end
-
-    create_node_index index
-    
-    options.update "uid" => uid
-
-    # Add node to index with the given key/value pair
-    connection.create_unique_node(index, "uid", uid, options).tap do |attrs|
-      if !attrs
-        raise("Object cannot be created: #{uid}")
-      elsif attrs["data"] != options
-        # ap attrs["data"]
-        # ap options
-        raise(DuplicateKeyError, "Object already exists #{uid}") 
-      end
-    end
-  end
-  
-  class DuplicateKeyError < RuntimeError; end
-  
   private
   
   # connect to a database, return connection object

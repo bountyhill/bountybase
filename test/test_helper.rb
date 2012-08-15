@@ -32,5 +32,11 @@ module Bountybase::TestCase
   def freeze_time(time)
     Time.stubs(:now).returns time
   end
-end
 
+  def assert!(*expectations, &block)
+    expect!(*expectations, &block)
+    assert true
+  rescue ArgumentError
+    assert false, $!.to_s
+  end
+end

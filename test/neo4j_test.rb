@@ -1,8 +1,17 @@
 require_relative 'test_helper'
 require 'vcr'
 
+::Event::Listeners.add :console
+::Event.route :all => :console
+
 class Neo4jTest < Test::Unit::TestCase
   include Bountybase::TestCase
+
+  Neo4j = Bountybase::Graph::Neo4j
+
+  def setup
+    Neo4j.purge!
+  end
 
   def neo4j(url=nil)
     @neo4j = nil if url
@@ -25,12 +34,104 @@ class Neo4jTest < Test::Unit::TestCase
     end
   end
 
-  def test_index_creation_and_deletion
-    neo4j.create_node_index("foo_index")
-    assert_equal true, Bountybase::Graph::Neo4j.node_indices.include?("foo_index")
+  def test_create_node_wo_attributes
+    freeze_time(123456)
+    
+    node = Neo4j::Node.create "foo", 1
+    assert! node => Neo4j::Node,
+      node.url => /http:\/\/.*\/data\/node/,
+      node.type => "foo"
 
-    neo4j.delete_node_index("foo_index")
-    assert_equal false, Bountybase::Graph::Neo4j.node_indices.include?("foo_index")
+    assert_equal node.attributes, "type"=>"foo", "uid"=>1, "created_at"=>123456
+
+    assert_equal(1, Neo4j.count)
+
+    # can create a different node
+    Neo4j::Node.create "foo", 2
+    assert_equal(2, Neo4j.count)
+
+    # creating an already existing identical node is ignored.
+    Neo4j::Node.create "foo", 1
+    assert_equal(2, Neo4j.count)
   end
   
+  def test_create_node_w_attributes
+    assert_equal(0, Neo4j.count)
+
+    freeze_time(123457)
+    
+    node = Neo4j::Node.create "foo", 1, :bar => "baz"
+    assert! node => Neo4j::Node,
+      node.url => /http:\/\/.*\/data\/node/,
+      node.type => "foo"
+
+    assert_equal node.attributes, "type"=>"foo", "uid"=>1, "created_at"=>123457, "bar" => "baz"
+
+    assert_equal(1, Neo4j.count)
+
+    # can create a different node
+    Neo4j::Node.create "foo", 2, :bar => "baz"
+    assert_equal(2, Neo4j.count)
+
+    # creating an already existing identical node is ignored.
+    node2 = Neo4j::Node.create "foo", 1, :bar => "baz"
+    assert_equal(2, Neo4j.count)
+    assert_equal node2.attributes, "type"=>"foo", "uid"=>1, "created_at"=>123457, "bar" => "baz"
+
+    # creating a node with identical key and different attributes fails.
+    assert_raise(Neo4j::DuplicateKeyError) {  
+      Neo4j::Node.create "foo", 1, :bar => "bazie"
+    }
+    assert_equal(2, Neo4j.count)
+
+    # creating an already existing semi-identical node is ignored, if the only differences
+    # are "created_at" and/or "updated_at" keys.
+
+    freeze_time(123458)
+
+    node2 = Neo4j::Node.create "foo", 1, :bar => "baz"
+    assert_equal(2, Neo4j.count)
+    assert_equal node2.attributes, "type"=>"foo", "uid"=>1, "created_at"=>123457, "bar" => "baz"
+  end
+
+  def test_node_crud
+    assert_equal(0, Neo4j.count)
+
+    freeze_time(123457)
+    
+    node = Neo4j::Node.create "foo", 1, :bar => "baz"
+    assert_equal(node.created_at, 123457)
+    assert_equal(node.updated_at, nil)
+
+    freeze_time(123458)
+
+    node.update :bar => "bazie"
+    assert_equal node.attributes, "bar"=>"bazie",
+                                  "type"=>"foo",
+                                  "uid"=>1,
+                                  "created_at"=>123457,
+                                  "updated_at"=>123458
+    assert_equal(node.created_at, 123457)
+    assert_equal(node.updated_at, 123458)
+
+    # --
+    freeze_time(123459)
+    
+    node2 = Neo4j::Node.find "foo", 1
+    assert_equal(node2.attributes, "uid"=>1,
+                                   "updated_at"=>123458,
+                                   "created_at"=>123457,
+                                   "type"=>"foo",
+                                   "bar"=>"bazie")
+
+    assert_equal(node.created_at, 123457)
+    assert_equal(node.updated_at, 123458)
+  end
+  
+  def test_node_cannot_find
+    Neo4j::Node.create "foo", 1, :bar => "baz"
+    assert_nil Neo4j::Node.find("foo", 2)
+    
+    assert_nil Neo4j::Node.find("foox", 1)
+  end
 end
