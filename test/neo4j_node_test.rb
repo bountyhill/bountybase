@@ -1,8 +1,7 @@
 require_relative 'test_helper'
-require 'vcr'
 
-::Event::Listeners.add :console
-::Event.route :all => :console
+# ::Event::Listeners.add :console
+# ::Event.route :all => :console
 
 class Neo4jTest < Test::Unit::TestCase
   include Bountybase::TestCase
@@ -13,28 +12,7 @@ class Neo4jTest < Test::Unit::TestCase
     Neo4j.purge!
   end
 
-  def neo4j(url=nil)
-    @neo4j = nil if url
-    @neo4j ||= Neography::Rest.new(url || Bountybase.config.neo4j)
-  end
-  
-  def test_ping
-    assert_nothing_raised() { neo4j.ping }
-  end
-
-  def test_ping_fails
-    VCR.use_cassette('test_neo4j_ping_fails', :record => :once, :allow_playback_repeats => true) do
-      assert_raise(SocketError) do 
-        neo4j("http://i.dont.exist.test").ping
-      end
-    end
-
-    assert_raise(Errno::ECONNREFUSED) do
-      neo4j("http://localhost:64642").ping
-    end
-  end
-
-  def test_create_node_wo_attributes
+  def test_create_wo_attributes
     freeze_time(123456)
     
     node = Neo4j::Node.create "foo", 1
@@ -55,7 +33,7 @@ class Neo4jTest < Test::Unit::TestCase
     assert_equal(2, Neo4j.count)
   end
 
-  def test_node_attributes
+  def test_attribute_shortcuts
     freeze_time(123457)
     
     node = Neo4j::Node.create "foo", 1, :bar => "baz"
@@ -64,7 +42,7 @@ class Neo4jTest < Test::Unit::TestCase
     assert_equal node.updated_at, nil
   end
   
-  def test_create_node_w_attributes
+  def test_create_w_attributes
     assert_equal(0, Neo4j.count)
 
     freeze_time(123457)
@@ -103,7 +81,7 @@ class Neo4jTest < Test::Unit::TestCase
     assert_equal node2.attributes, "type"=>"foo", "uid"=>1, "created_at"=>123457, "bar" => "baz"
   end
 
-  def test_node_crud
+  def test_crud
     assert_equal(0, Neo4j.count)
 
     # --- create node -------------------------------------------------
@@ -154,7 +132,7 @@ class Neo4jTest < Test::Unit::TestCase
     assert_equal(0, Neo4j.count)
   end
 
-  def test_node_destroy_class_methods
+  def test_destroy_class_methods
     Neo4j::Node.create "foo", 1, :bar => "baz"
     assert_equal(1, Neo4j.count)
 
@@ -168,7 +146,7 @@ class Neo4jTest < Test::Unit::TestCase
     assert_equal(0, Neo4j.count)
   end
   
-  def test_node_cannot_find
+  def test_cannot_find
     Neo4j::Node.create "foo", 1, :bar => "baz"
     assert_nil Neo4j::Node.find("foo", 2)
     
