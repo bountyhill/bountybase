@@ -21,8 +21,10 @@ module Bountybase::Graph
   #
   # - *tweet-id*: the tweet id
   # - *quest*: the URL of the quest
-  # - *sender*: the identity of the sender (e.g. "twitter://radiospiel"). This is the sender account.
-  # - *source*: the identity of the source (e.g. "twitter://radiospiel"). This is the in_reply_to account
+  # - *sender-id*: the identity of the sender (e.g. "twitter://radiospiel"). This is the sender account.
+  # - *sender-name*: the identity of the sender (e.g. "twitter://radiospiel"). This is the sender account.
+  # - *source-id*: the identity of the source (e.g. "twitter://radiospiel"). This is the in_reply_to account
+  # - *source-name*: the identity of the source (e.g. "twitter://radiospiel"). This is the in_reply_to account
   # - (e.g. "twitter://radiospiel"): an array of identities that we assume will have received the tweet (i.e. accounts
   #   that have been mentioned in the tweet.)
   # - *text*: the tweet text
@@ -35,6 +37,19 @@ module Bountybase::Graph
   # b) sender has been seen the quest, from source
   #
   def register_tweet(options = {})
+    expect! options, 
+      :tweet_id => Integer,
+      :quest_url => String,
+      :sender_id => Integer,
+      :sender => String,
+      :source_id => Integer,
+      :source => String,
+      :receivers => [Array, nil],
+      :text => String,
+      :lang => String
+      
+    return if registered_tweet?(tweet)
+    
     # register the tweet itself.
     connect tweet_root => tweet
 
