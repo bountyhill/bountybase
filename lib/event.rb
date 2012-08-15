@@ -98,13 +98,9 @@ class Event
   # event message
   attr :msg
   
-  # event options
-  attr :options
-  
   def initialize(severity, source, *values, &block)              #:nodoc:
     @severity = Severity.to_number(severity)
     @source = source
-    @options = values.pop if values.last.is_a?(Hash)
     
     if block_given?
       values.push yield
@@ -124,8 +120,7 @@ class Event
   # returns a stringified version of this object. Depending on the _mode_ parameter
   # it returns a string including:
   #
-  # [+:full+]             a severity marker, source_name, message, options
-  # [+:wo_severity+]      source_name, message, options 
+  # [+:full+]             a severity marker, source_name, message
   # [everything else]     source_name and message
   #
   def to_s(mode = :short)
@@ -134,8 +129,7 @@ class Event
     end
     
     case mode
-    when :full        then "#{Severity.to_string(severity)} #{source_name}#{msg}#{formatted_options}"
-    when :wo_severity then "#{source_name}#{msg}#{formatted_options}"
+    when :full        then "#{Severity.to_string(severity)} #{source_name}#{msg}"
     else                   "#{source_name}#{msg}"
     end
   end
@@ -145,15 +139,6 @@ class Event
   end
 
   private
-
-  # returns a string of formatted options (or nil)
-  def formatted_options                                       #:nodoc:
-    case options && options.length
-    when nil, 0 then nil
-    when 1      then ": " + format_value(options.values.first)
-    else             format_hash_inner(options)
-    end
-  end
 
   def format_value(value)
     case value
@@ -244,11 +229,7 @@ class Event
     end
     
     def deliver(event)                                        #:nodoc:
-      if event.options.nil?
-        FlurryAnalytics.logEvent event.msg
-      else
-        FlurryAnalytics.logEvent event.msg, withParameters: event.options
-      end
+      FlurryAnalytics.logEvent event.msg
     end
   end
   
@@ -279,10 +260,8 @@ MSG
     end
 
     def deliver(event)                                        #:nodoc:
-      msg = event.to_s(:wo_severity)
-
       method = severities_by_number[event.severity] || :info
-      @logger.send method, msg
+      @logger.send method, event.to_s
     end
 
     private
