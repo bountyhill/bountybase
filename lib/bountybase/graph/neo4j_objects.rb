@@ -20,12 +20,13 @@ module Bountybase::Graph::Neo4j
     end
   end
   
-  # A base class for Neo4j objects. Derived classes must implement
-  # the _fetch_attributes_ and _save_attributes_ instance methods and
-  # the _readonly_attribute_names_ class method.
+  # A base class for Neo4j objects. Derived classes must implement the
+  # _save_attributes_ instance method and the _readonly_attribute_names_
+  # class method.
   class Base
     
-    attr :url # Each Neo4j object is identified by an URL, for example "http://localhost:7474/db/data/node/4124".
+    attr :url           # Each Neo4j object is identified by an URL, for example "http://localhost:7474/db/data/node/4124".
+    attr :attributes    # The object's attributes.
 
     private
     
@@ -35,20 +36,27 @@ module Bountybase::Graph::Neo4j
     
     # Create a Neo4j object.
     #
-    # Parameter: 
+    # Parameters: 
     #
-    # - url ... the Neo4j URL.
+    # - url: the Neo4j URL.
+    # - attributes: the object attributes.
     def initialize(url, attributes)
       @url, @attributes = url, attributes
     end
     
     public
     
-    # returns the objects attributes.
-    def attributes
-      @attributes ||= fetch_attributes
+    # attribute shortcut for the "created_at" attribute.
+    def created_at
+      attributes["created_at"]
     end
 
+    # attribute shortcut for the "updated_at" attribute.
+    def updated_at
+      attributes["updated_at"]
+    end
+    
+    
     # replaces the object's attributes with the passed in attributes, 
     # with the exception of the read-only attributes, and saves the node.
     def update(updates)
@@ -71,18 +79,9 @@ module Bountybase::Graph::Neo4j
       end
     end
 
-    # fetch the attributes for this object (identified by its URL)
-    # from the database, and returns these.
-    def fetch_attributes
-      expect! false
-    end
-
     # saves the attributes for this object (identified by its URL)
     # to the database.
-    def save_attributes
-      expect! false
-    end
-    
+    def save_attributes; end
   end
   
   class Node < Base
@@ -99,19 +98,12 @@ module Bountybase::Graph::Neo4j
 
     public
 
-    # destroys a node.
+    # destroy the node and all its relationships.
     def destroy
-      implement!
+      connection.delete_node!(url)
     end
 
-    def created_at
-      self.attributes["created_at"]
-    end
-
-    def updated_at
-      attributes["updated_at"]
-    end
-    
+    # attribute shortcut for the "uid" attribute.
     def uid
       attributes["uid"]
     end
@@ -124,12 +116,7 @@ module Bountybase::Graph::Neo4j
       %w(type uid created_at)
     end
 
-    def fetch_attributes
-      implement!
-      return attributes
-    end
-    
-    def save_attributes(attributes)
+    def save_attributes(attributes) #:nodoc:
       connection.reset_node_properties(url, attributes)
       
       expect! do
@@ -140,24 +127,6 @@ module Bountybase::Graph::Neo4j
   end
 
   module Node::ClassMethods
-    private
-
-    extend Forwardable
-    delegate :connection => Bountybase::Graph::Neo4j
-    delegate :normalize_attributes => Bountybase::Graph::Neo4j
-    
-    def create_index_if_needed(name)
-      return if @indices && @indices.include?(name)
-      
-      @indices = connection.list_node_indexes.keys
-      return if @indices.include?(name)
-
-      connection.create_node_index(name)
-      @indices << name
-    end
-    
-    public
-    
     # creates a node, indexed in the *type* index with the given *uid* and
     # connects it to the root node. It raises an exception if the node cannot
     # be created because it already exists.
@@ -172,6 +141,8 @@ module Bountybase::Graph::Neo4j
       # Add node to index with the given key/value pair
       created_attributes = connection.create_unique_node(type, "uid", uid, attributes)
 
+      # Note: If the node cannot be created because it violates the unique index, the
+      # 'create_unique_node' function returns the currently existing node.
       if !created_attributes
         raise("Object cannot be created: #{uid}")
       end
@@ -184,6 +155,20 @@ module Bountybase::Graph::Neo4j
     end
     
     private
+    
+    extend Forwardable
+    delegate :connection => Bountybase::Graph::Neo4j
+    delegate :normalize_attributes => Bountybase::Graph::Neo4j
+    
+    def create_index_if_needed(name)
+      return if @indices && @indices.include?(name)
+      
+      @indices = connection.list_node_indexes.keys
+      return if @indices.include?(name)
+
+      connection.create_node_index(name)
+      @indices << name
+    end
     
     # returns true if actual and expected only differ in "created_at" or
     # "updated_at".

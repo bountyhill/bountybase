@@ -54,6 +54,15 @@ class Neo4jTest < Test::Unit::TestCase
     Neo4j::Node.create "foo", 1
     assert_equal(2, Neo4j.count)
   end
+
+  def test_node_attributes
+    freeze_time(123457)
+    
+    node = Neo4j::Node.create "foo", 1, :bar => "baz"
+    assert_equal node.uid, 1
+    assert_equal node.created_at, 123457
+    assert_equal node.updated_at, nil
+  end
   
   def test_create_node_w_attributes
     assert_equal(0, Neo4j.count)
@@ -97,11 +106,15 @@ class Neo4jTest < Test::Unit::TestCase
   def test_node_crud
     assert_equal(0, Neo4j.count)
 
+    # --- create node -------------------------------------------------
+    
     freeze_time(123457)
     
     node = Neo4j::Node.create "foo", 1, :bar => "baz"
     assert_equal(node.created_at, 123457)
     assert_equal(node.updated_at, nil)
+
+    # --- update node -------------------------------------------------
 
     freeze_time(123458)
 
@@ -114,7 +127,8 @@ class Neo4jTest < Test::Unit::TestCase
     assert_equal(node.created_at, 123457)
     assert_equal(node.updated_at, 123458)
 
-    # --
+    # --- find node ---------------------------------------------------
+
     freeze_time(123459)
     
     node2 = Neo4j::Node.find "foo", 1
@@ -126,6 +140,32 @@ class Neo4jTest < Test::Unit::TestCase
 
     assert_equal(node.created_at, 123457)
     assert_equal(node.updated_at, 123458)
+    
+    # --- delete node -------------------------------------------------
+
+    freeze_time(123460)
+
+    assert_equal(1, Neo4j.count)
+    
+    node.destroy
+    assert_equal(0, Neo4j.count)
+
+    node2.destroy
+    assert_equal(0, Neo4j.count)
+  end
+
+  def test_node_destroy_class_methods
+    Neo4j::Node.create "foo", 1, :bar => "baz"
+    assert_equal(1, Neo4j.count)
+
+    Neo4j::Node.destroy "foo", 2
+    assert_equal(1, Neo4j.count)
+
+    Neo4j::Node.destroy "foo", 1
+    assert_equal(0, Neo4j.count)
+
+    Neo4j::Node.destroy "foo", 1
+    assert_equal(0, Neo4j.count)
   end
   
   def test_node_cannot_find
