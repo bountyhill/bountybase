@@ -3,9 +3,6 @@ require_relative "../event"
 module Bountybase::Graph
 end
 
-require_relative "graph/neo4j_base"
-require_relative "graph/neo4j_objects"
-
 #
 # The Graph module deals with everything related to building and querying the Bountytweet graph.
 # The Bountytweet graph combines identities, tweets and quests.
@@ -92,7 +89,7 @@ module Bountybase::Graph
     
   # Connect this thread to Neo4j
   def setup
-    Neo4j.connection
+    Bountybase::Neo4j.connection
   end
   
   # whenever a bountytweet is found we add some connections in the graph database.

@@ -1,7 +1,7 @@
 require 'neography'
 require_relative "neography_extensions"
 
-module Bountybase::Graph::Neo4j
+module Bountybase::Neo4j
   extend self
   
   # returns a connection. Each thread has its own connection

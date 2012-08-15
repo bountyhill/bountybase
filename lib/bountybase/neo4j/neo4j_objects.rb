@@ -2,7 +2,7 @@ require 'neography'
 require_relative "neo4j_base"
 require "forwardable"
 
-module Bountybase::Graph::Neo4j
+module Bountybase::Neo4j
   class DuplicateKeyError < RuntimeError; end
   
   # def self.root_node
@@ -31,8 +31,8 @@ module Bountybase::Graph::Neo4j
     private
     
     extend Forwardable
-    delegate :normalize_attributes => Bountybase::Graph::Neo4j
-    delegate :connection => Bountybase::Graph::Neo4j
+    delegate :normalize_attributes => Bountybase::Neo4j
+    delegate :connection => Bountybase::Neo4j
     
     # Create a Neo4j object.
     #
@@ -157,8 +157,8 @@ module Bountybase::Graph::Neo4j
     private
     
     extend Forwardable
-    delegate :connection => Bountybase::Graph::Neo4j
-    delegate :normalize_attributes => Bountybase::Graph::Neo4j
+    delegate :connection => Bountybase::Neo4j
+    delegate :normalize_attributes => Bountybase::Neo4j
     
     def create_index_if_needed(name)
       return if @indices && @indices.include?(name)

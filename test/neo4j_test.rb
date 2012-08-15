@@ -7,7 +7,7 @@ require 'vcr'
 class Neo4jTest < Test::Unit::TestCase
   include Bountybase::TestCase
 
-  Neo4j = Bountybase::Graph::Neo4j
+  Neo4j = Bountybase::Neo4j
 
   def setup
     Neo4j.purge!
