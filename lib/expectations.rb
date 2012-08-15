@@ -2,7 +2,7 @@
 # Copyright:: Copyright (c) 2011, 2012 radiospiel
 # License::   Distributes under the terms  of the Modified BSD License, see LICENSE.BSD for details.
 module Expectations
-  def expect!(*expectations, &block)
+  def real_expect!(*expectations, &block)
     if block_given?
       Expectations.verify! true, block
     end
@@ -19,6 +19,9 @@ module Expectations
     end
   end
 
+  def dummy_expect!(*expectations, &block)
+  end
+  
   def self.met?(value, expectation)
     case expectation
     when :truish  then !!value
@@ -49,6 +52,15 @@ module Expectations
     end
     raise e
   end
+
+  def self.enable
+    alias_method :expect!, :real_expect!
+  end
+  
+  def self.disable
+    alias_method :expect!, :dummy_expect!
+  end
 end
 
+Expectations.enable
 Object.send :include, Expectations

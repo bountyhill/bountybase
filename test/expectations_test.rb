@@ -74,4 +74,14 @@ class ExpectationsTest < Test::Unit::TestCase
     assert_failed_expectation({ :key => "Foo" } => { :key => [Integer,"Bar"] })
     assert_expectation({ :other_key => "Foo" } => { :key => [nil, "Foo"] })
   end
+
+  def test_enable_and_disable
+    assert_failed_expectation "foo" => "bar"
+
+    Expectations.disable
+    assert_expectation "foo" => "bar"
+
+    Expectations.enable
+    assert_failed_expectation "foo" => "bar"
+  end
 end
