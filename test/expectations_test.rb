@@ -61,4 +61,17 @@ class ExpectationsTest < Test::Unit::TestCase
     assert_failed_expectation do false end
     assert_failed_expectation do nil end
   end
+
+  def test_hash_expectations
+    assert_failed_expectation({} => { :key => "Foo" })
+    assert_expectation({ :key => "Foo" } => { :key => "Foo" })
+
+    assert_failed_expectation({ :other_key => "Foo" } => { :key => "Foo" })
+    assert_failed_expectation({ :key => "Bar" } => { :key => "Foo" })
+
+    assert_expectation({ :key => "Foo" } => { :key => String })
+    assert_expectation({ :key => "Foo" } => { :key => [Integer,String] })
+    assert_failed_expectation({ :key => "Foo" } => { :key => [Integer,"Bar"] })
+    assert_expectation({ :other_key => "Foo" } => { :key => [nil, "Foo"] })
+  end
 end

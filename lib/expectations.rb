@@ -30,6 +30,15 @@ module Expectations
   end
 
   def self.verify!(value, expectation)
+    if expectation.is_a?(Hash)
+      verify! value, Hash
+      
+      expectation.each do |key, expectations_for_key|
+        verify! value[key], expectations_for_key
+      end
+      return
+    end
+    
     return if met?(value, expectation)
 
     backtrace = caller[3..-1]
