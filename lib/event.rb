@@ -354,6 +354,14 @@ class Event::Logger
       Event.deliver :debug, self, *args, &block
     end
 
+    class Benchmarker
+      attr :message, true
+      
+      def initialize(message)
+        @message = message
+      end
+    end
+    
     def benchmark(*args, &block)
       severity = args.shift if Event::Severity::SEVERITIES.key?(args.first)
       severity ||= :info
@@ -364,16 +372,24 @@ class Event::Logger
       msg = args.shift || "benchmark"
       msg += " #{args.map(&:inspect).join(", ")}" if args.length > 0
 
+      benchmarker = Benchmarker.new(msg)
+      lambda = Proc.new
+
       start = Time.now
-      r = yield 
+      
+      r = if lambda.arity == 0 
+        yield
+      else
+        yield benchmarker
+      end
 
       runtime = ((Time.now - start) * 1000).to_i
-      Event.deliver severity, self, "#{msg}: #{runtime} msecs." if runtime >= min_runtime
+      Event.deliver severity, self, "#{benchmarker.message}: #{runtime} msecs." if runtime >= min_runtime
     
       r
     rescue
       runtime = ((Time.now - start) * 1000).to_i
-      Event.deliver severity, self, "#{msg}: failed after #{runtime} msecs." if runtime >= min_runtime
+      Event.deliver severity, self, "#{benchmarker.message}: failed after #{runtime} msecs." if runtime >= min_runtime
       raise
     end
   end
