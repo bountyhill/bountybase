@@ -138,8 +138,13 @@ module Bountybase::Neo4j
     #
     # Parameters: 
     # - pattern the pattern to match
-    def nodes(pattern = "*")
-      nodes, _ = Neo4j.raw_query("start n=node(#{pattern}) return n")
+    def nodes(pattern = "*", options = {})
+      query = "START n=node(#{pattern}) RETURN n"
+      if limit = options[:limit]
+        query += " LIMIT #{limit}"
+      end
+      
+      nodes, _ = Neo4j.raw_query(query)
       nodes.map do |node|
         hash = node.first
         hash["self"]
@@ -158,10 +163,16 @@ module Bountybase::Neo4j
       #   connection.clean_database("yes_i_really_want_to_clean_the_database")
       #   return
       # end
-
-      nodes = self.nodes(pattern)
-      return if nodes.empty?
-      
+      while true do
+        nodes = self.nodes(pattern, :limit => 1000)
+        return if nodes.empty?
+        purge_nodes nodes
+      end
+    end
+    
+    private
+    
+    def purge_nodes(nodes)
       logger.benchmark :error, "purging #{nodes.length} nodes" do
         # This works in batches. We must first get all of the nodes' relationships,
         # because a node with relationships cannot be deleted. 
