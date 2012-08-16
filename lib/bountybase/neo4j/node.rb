@@ -1,5 +1,7 @@
 module Bountybase::Neo4j
   class Node < Base
+    # Neo4j = Bountybase::Neo4j
+    
     attr :type, :uid
 
     private
@@ -49,6 +51,8 @@ module Bountybase::Neo4j
   end
 
   module Node::ClassMethods
+    Neo4j = Bountybase::Neo4j
+    
     # creates a node, indexed in the *type* index with the given *uid* and
     # connects it to the root node. It raises an exception if the node cannot
     # be created because it already exists.
@@ -126,7 +130,20 @@ module Bountybase::Neo4j
     #
     # Parameters: see nodes
     def count(pattern = "*")
-      Bountybase::Neo4j.query("start n=node(#{pattern}) return n").length
+      nodes, _ = Neo4j.raw_query("start n=node(#{pattern}) return n")
+      nodes.length
+    end
+
+    # returns the URLs of all matching nodes.
+    #
+    # Parameters: 
+    # - pattern the pattern to match
+    def nodes(pattern = "*")
+      nodes, _ = Neo4j.raw_query("start n=node(#{pattern}) return n")
+      nodes.map do |node|
+        hash = node.first
+        hash["self"]
+      end
     end
 
     # purges all nodes and their relationships.
@@ -137,17 +154,6 @@ module Bountybase::Neo4j
         nodes(pattern).map do |node|
           connection.delete_node! node
         end
-      end
-    end
-    
-    # returns the URLs of all matching nodes.
-    #
-    # Parameters: 
-    # - pattern the pattern to match
-    def nodes(pattern = "*")
-      Bountybase::Neo4j.query("start n=node(#{pattern}) return n").map do |node|
-        hash = node.first
-        hash["self"]
       end
     end
   end
