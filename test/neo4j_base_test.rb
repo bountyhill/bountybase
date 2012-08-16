@@ -10,7 +10,7 @@ class Neo4jBaseTest < Test::Unit::TestCase
   Neo4j = Bountybase::Neo4j
   
   def setup
-    Neo4j.purge!
+    Neo4j::Node.purge!
   end
   
   def teardown
@@ -38,6 +38,6 @@ class Neo4jBaseTest < Test::Unit::TestCase
   end
 
   def test_database_is_empty
-    assert_equal(0, Neo4j.count)
+    assert_equal(0, Neo4j::Node.count)
   end
 end

@@ -9,7 +9,7 @@ class Neo4jConnectionsTest < Test::Unit::TestCase
   Neo4j = Bountybase::Neo4j
 
   def setup
-    Neo4j.purge!
+    Neo4j::Node.purge!
   end
 
   def test_connection_api

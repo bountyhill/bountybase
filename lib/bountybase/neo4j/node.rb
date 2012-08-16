@@ -120,5 +120,37 @@ module Bountybase::Neo4j
       end
     end
   end
+
+  module Node::ClassMethods
+    # returns the number of matching nodes.
+    #
+    # Parameters: see nodes
+    def count(pattern = "*")
+      Bountybase::Neo4j.query("start n=node(#{pattern}) return n").length
+    end
+
+    # purges all nodes and their relationships.
+    #
+    # Parameters: see nodes
+    def purge!(pattern = '*')
+      logger.benchmark :error, "purge" do
+        nodes(pattern).map do |node|
+          connection.delete_node! node
+        end
+      end
+    end
+    
+    # returns the URLs of all matching nodes.
+    #
+    # Parameters: 
+    # - pattern the pattern to match
+    def nodes(pattern = "*")
+      Bountybase::Neo4j.query("start n=node(#{pattern}) return n").map do |node|
+        hash = node.first
+        hash["self"]
+      end
+    end
+  end
+  
   Node.extend Node::ClassMethods
 end

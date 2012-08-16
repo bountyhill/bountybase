@@ -9,7 +9,7 @@ class Neo4jNodeTest < Test::Unit::TestCase
   Neo4j = Bountybase::Neo4j
 
   def setup
-    Neo4j.purge!
+    Neo4j::Node.purge!
   end
 
   def test_create_wo_attributes
@@ -22,15 +22,15 @@ class Neo4jNodeTest < Test::Unit::TestCase
 
     assert_equal node.attributes, "type"=>"foo", "uid"=>1, "created_at"=>123456
 
-    assert_equal(1, Neo4j.count)
+    assert_equal(1, Neo4j::Node.count)
 
     # can create a different node
     Neo4j::Node.create "foo", 2
-    assert_equal(2, Neo4j.count)
+    assert_equal(2, Neo4j::Node.count)
 
     # creating an already existing identical node is ignored.
     Neo4j::Node.create "foo", 1
-    assert_equal(2, Neo4j.count)
+    assert_equal(2, Neo4j::Node.count)
   end
 
   def test_attribute_shortcuts
@@ -43,7 +43,7 @@ class Neo4jNodeTest < Test::Unit::TestCase
   end
   
   def test_create_w_attributes
-    assert_equal(0, Neo4j.count)
+    assert_equal(0, Neo4j::Node.count)
 
     freeze_time(123457)
     
@@ -54,22 +54,22 @@ class Neo4jNodeTest < Test::Unit::TestCase
 
     assert_equal node.attributes, "type"=>"foo", "uid"=>1, "created_at"=>123457, "bar" => "baz"
 
-    assert_equal(1, Neo4j.count)
+    assert_equal(1, Neo4j::Node.count)
 
     # can create a different node
     Neo4j::Node.create "foo", 2, :bar => "baz"
-    assert_equal(2, Neo4j.count)
+    assert_equal(2, Neo4j::Node.count)
 
     # creating an already existing identical node is ignored.
     node2 = Neo4j::Node.create "foo", 1, :bar => "baz"
-    assert_equal(2, Neo4j.count)
+    assert_equal(2, Neo4j::Node.count)
     assert_equal node2.attributes, "type"=>"foo", "uid"=>1, "created_at"=>123457, "bar" => "baz"
 
     # creating a node with identical key and different attributes fails.
     assert_raise(Neo4j::DuplicateKeyError) {  
       Neo4j::Node.create "foo", 1, :bar => "bazie"
     }
-    assert_equal(2, Neo4j.count)
+    assert_equal(2, Neo4j::Node.count)
 
     # creating an already existing semi-identical node is ignored, if the only differences
     # are "created_at" and/or "updated_at" keys.
@@ -77,12 +77,12 @@ class Neo4jNodeTest < Test::Unit::TestCase
     freeze_time(123458)
 
     node2 = Neo4j::Node.create "foo", 1, :bar => "baz"
-    assert_equal(2, Neo4j.count)
+    assert_equal(2, Neo4j::Node.count)
     assert_equal node2.attributes, "type"=>"foo", "uid"=>1, "created_at"=>123457, "bar" => "baz"
   end
 
   def test_crud
-    assert_equal(0, Neo4j.count)
+    assert_equal(0, Neo4j::Node.count)
 
     # --- create node -------------------------------------------------
     
@@ -123,27 +123,27 @@ class Neo4jNodeTest < Test::Unit::TestCase
 
     freeze_time(123460)
 
-    assert_equal(1, Neo4j.count)
+    assert_equal(1, Neo4j::Node.count)
     
     node.destroy
-    assert_equal(0, Neo4j.count)
+    assert_equal(0, Neo4j::Node.count)
 
     node2.destroy
-    assert_equal(0, Neo4j.count)
+    assert_equal(0, Neo4j::Node.count)
   end
 
   def test_destroy_class_methods
     Neo4j::Node.create "foo", 1, :bar => "baz"
-    assert_equal(1, Neo4j.count)
+    assert_equal(1, Neo4j::Node.count)
 
     Neo4j::Node.destroy "foo", 2
-    assert_equal(1, Neo4j.count)
+    assert_equal(1, Neo4j::Node.count)
 
     Neo4j::Node.destroy "foo", 1
-    assert_equal(0, Neo4j.count)
+    assert_equal(0, Neo4j::Node.count)
 
     Neo4j::Node.destroy "foo", 1
-    assert_equal(0, Neo4j.count)
+    assert_equal(0, Neo4j::Node.count)
   end
   
   def test_cannot_find

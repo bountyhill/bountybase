@@ -18,35 +18,6 @@ module Bountybase::Neo4j
     nodes
   end
   
-  # returns the URLs of all matching nodes.
-  #
-  # Parameters: 
-  # - pattern the pattern to match
-  def nodes(pattern = "*")
-    query("start n=node(#{pattern}) return n").map do |node|
-      hash = node.first
-      hash["self"]
-    end
-  end
-  
-  # returns the number of matching nodes.
-  #
-  # Parameters: see nodes
-  def count(pattern = "*")
-    query("start n=node(#{pattern}) return n").length
-  end
-  
-  # purges all nodes and their relationships.
-  #
-  # Parameters: see nodes
-  def purge!(pattern = '*')
-    logger.benchmark :error, "purge" do
-      nodes(pattern).map do |node|
-        connection.delete_node! node
-      end
-    end
-  end
-  
   private
   
   # connect to a database, return connection object
