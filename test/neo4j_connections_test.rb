@@ -13,32 +13,53 @@ class Neo4jConnectionsTest < Test::Unit::TestCase
   end
 
   def test_connection_api
-    node1 = Neo4j::Node.create "foo", 1
-    node2 = Neo4j::Node.create "bar", 1
-    node3 = Neo4j::Node.create "foo2", 1
-    node4 = Neo4j::Node.create "bar2", 1
+    foo1 = Neo4j::Node.create "foo", 1
+    bar1 = Neo4j::Node.create "bar", 1
+    foo2 = Neo4j::Node.create "foo", 2
+    bar2 = Neo4j::Node.create "bar", 2
 
     # This builds two named connections
-    Neo4j::Connections.expects(:build).with "name", node1, node2, :attr => :value
-    Neo4j::Connections.expects(:build).with "name", node3, node4, :attr => :value
+    Neo4j::Connections.expects(:build).with "name", foo1, bar1, :attr => :value
+    Neo4j::Connections.expects(:build).with "name", foo2, bar2, :attr => :value
 
-    Neo4j.connect "name", node1 => node2, node3 => node4, :attr => :value
+    Neo4j.connect "name", foo1 => bar1, foo2 => bar2, :attr => :value
     
     # This builds two unnamed connections
-    Neo4j::Connections.expects(:build).with nil, node1, node2, :attr => :value
-    Neo4j::Connections.expects(:build).with nil, node3, node4, :attr => :value
+    Neo4j::Connections.expects(:build).with 'connects', foo1, bar1, :attr => :value
+    Neo4j::Connections.expects(:build).with 'connects', foo2, bar2, :attr => :value
 
-    Neo4j.connect node1 => node2, node3 => node4, :attr => :value
+    Neo4j.connect foo1 => bar1, foo2 => bar2, :attr => :value
     
     # This builds one unnamed connection
-    Neo4j::Connections.expects(:build).with nil, node1, node2, :attr => :value
+    Neo4j::Connections.expects(:build).with 'connects', foo1, bar1, :attr => :value
 
-    Neo4j.connect node1, node2, :attr => :value
+    Neo4j.connect foo1, bar1, :attr => :value
     
     # This builds two named connections
-    Neo4j::Connections.expects(:build).with "name", node1, node2, :attr => :value
-    Neo4j::Connections.expects(:build).with "name", node3, node4, :attr => :value
+    Neo4j::Connections.expects(:build).with "name", foo1, bar1, :attr => :value
+    Neo4j::Connections.expects(:build).with "name", foo2, bar2, :attr => :value
 
-    Neo4j.connect "name", node1, node2, node3, node4, :attr => :value
+    Neo4j.connect "name", foo1, bar1, foo2, bar2, :attr => :value
+  end
+  
+  def test_connection
+    foo1 = Neo4j::Node.create "foo", 1
+    bar1 = Neo4j::Node.create "bar", 1
+    foo2 = Neo4j::Node.create "foo", 2
+    bar2 = Neo4j::Node.create "bar", 2
+
+    # assert_equal 4, Neo4j::Node.count
+
+    Neo4j.connect foo1 => bar1, bar1 => bar2
+    Neo4j.connect foo1 => foo2, foo2 => bar2
+
+    # return the path
+    results = Neo4j.query <<-CYPHER
+    START src=node:foo(uid='1'), target=node:bar(uid='2')
+    MATCH path = src-[*]->target 
+    RETURN path
+CYPHER
+
+    ap results.inspect
   end
 end

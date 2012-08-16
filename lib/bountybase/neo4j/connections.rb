@@ -11,7 +11,7 @@ module Bountybase::Neo4j::Connections
   #   Bountybase::Neo4j.connect node1, node2, node1 => node3, :attr => :value
   def connect(*args)
     options = args.pop if args.last.is_a?(Hash)
-    name = args.shift if args.first.is_a?(String)
+    name = args.first.is_a?(String) ? args.shift : "connects"
     
     # There must be a odd number of remaining arguments.
     expect! args.length.even?
@@ -32,7 +32,7 @@ module Bountybase::Neo4j::Connections
   end
   
   def self.build(name, from, to, options)
-    expect! name => [String, nil], from => Neo4j::Node, to => Neo4j::Node, options => Hash
+    expect! name => String, from => Neo4j::Node, to => Neo4j::Node, options => Hash
     Neo4j.connection.create_relationship(name, from.url, to.url, options)
   end
 end
