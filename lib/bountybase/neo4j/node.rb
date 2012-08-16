@@ -150,10 +150,37 @@ module Bountybase::Neo4j
     #
     # Parameters: see nodes
     def purge!(pattern = '*')
-      logger.benchmark :error, "purge" do
-        nodes(pattern).map do |node|
-          connection.delete_node! node
-        end
+      # Possible improvement: There is a call which purges the entire database. 
+      # It requires the installation of the neo4j-clean-remote-db-addon 
+      # (https://github.com/jexp/neo4j-clean-remote-db-addon)
+      #
+      # if pattern == '*'
+      #   connection.clean_database("yes_i_really_want_to_clean_the_database")
+      #   return
+      # end
+
+      nodes = self.nodes(pattern)
+      return if nodes.empty?
+      
+      logger.benchmark :error, "purging #{nodes.length} nodes" do
+        # This works in batches. We must first get all of the nodes' relationships,
+        # because a node with relationships cannot be deleted. 
+        batch = nodes.map { |node| [ :get_node_relationships, node ] }
+
+        relationship_ids = connection.batch(*batch).compact.
+          map do |response|
+            response["body"].map do |relationship|
+              relationship["self"].split('/').last
+            end
+          end.flatten.uniq
+
+        # The next batch deletes all the relationships and all the nodes.
+        batch = []
+
+        relationship_ids.each { |rel_id| batch << [ :delete_relationship, rel_id ] }
+        nodes.each { |node| batch << [ :delete_node, node ] }
+
+        connection.batch *batch
       end
     end
   end

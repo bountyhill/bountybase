@@ -40,4 +40,18 @@ class Neo4jBaseTest < Test::Unit::TestCase
   def test_database_is_empty
     assert_equal(0, Neo4j::Node.count)
   end
+  
+  def test_purging_w_existing_relationships
+    foo1 = Neo4j::Node.create "foo", 1
+    bar1 = Neo4j::Node.create "bar", 1
+    foo2 = Neo4j::Node.create "foo", 2
+    bar2 = Neo4j::Node.create "bar", 2
+
+    Neo4j.connect foo1 => bar1, bar1 => bar2
+    Neo4j.connect foo1 => foo2, foo2 => bar2
+
+    assert_equal 4, Neo4j::Node.count
+    Neo4j::Node.purge!
+    assert_equal 0, Neo4j::Node.count
+  end
 end
