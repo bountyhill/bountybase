@@ -24,7 +24,7 @@ module Bountybase::Neo4j
     # attribute shortcut for the "type" attribute.
     def type; attributes["type"]; end
 
-    def inspect; "Node #{type}/#{uid}"; end
+    def inspect; "<#{type}##{uid}>"; end
     
     def ==(other)
       other.is_a?(Node) && other.type == self.type && other.uid == self.uid 
