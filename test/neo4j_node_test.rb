@@ -3,7 +3,7 @@ require_relative 'test_helper'
 # ::Event::Listeners.add :console
 # ::Event.route :all => :console
 
-class Neo4jTest < Test::Unit::TestCase
+class Neo4jNodeTest < Test::Unit::TestCase
   include Bountybase::TestCase
 
   Neo4j = Bountybase::Neo4j
@@ -151,5 +151,22 @@ class Neo4jTest < Test::Unit::TestCase
     assert_nil Neo4j::Node.find("foo", 2)
     
     assert_nil Neo4j::Node.find("foox", 1)
+  end
+  
+  def test_equality
+    foo = Neo4j::Node.create "foo", 1
+    bar = Neo4j::Node.create "bar", 1
+
+    assert_equal(foo, foo)
+    assert_not_equal(foo, bar)
+
+    foo1 = Neo4j::Node.create "foo", 1
+
+    assert_equal(foo, foo1)
+    assert_not_equal(foo1, bar)
+
+    foo2 = Neo4j::Node.create "foo2", 1
+
+    assert_not_equal(foo1, foo2)
   end
 end
