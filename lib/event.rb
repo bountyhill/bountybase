@@ -365,10 +365,12 @@ class Event::Logger
       msg += " #{args.map(&:inspect).join(", ")}" if args.length > 0
 
       start = Time.now
-      yield 
+      r = yield 
 
       runtime = ((Time.now - start) * 1000).to_i
       Event.deliver severity, self, "#{msg}: #{runtime} msecs." if runtime >= min_runtime
+    
+      r
     rescue
       runtime = ((Time.now - start) * 1000).to_i
       Event.deliver severity, self, "#{msg}: failed after #{runtime} msecs." if runtime >= min_runtime
