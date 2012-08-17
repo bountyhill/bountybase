@@ -5,81 +5,54 @@ module Bountybase::Neo4j
   # _save_attributes_ instance method and the _readonly_attribute_names_
   # class method.
   class Base
+    Neo4j = Bountybase::Neo4j
 
-    module Private #:nodoc:
-      private
+    extend Neo4j::Connection
+    include Neo4j::Connection
 
-      # Our attribute hashes should have String keys, no Symbol keys.
-      def normalize_attributes(attributes) #:nodoc:
-        attributes.inject({}) do |hash, (k,v)|
-          v = v.to_i if v.is_a?(Time)
-          hash.update k.to_s => v
-        end
-      end
-
-      # returns the current connection
-      def connection #:nodoc:
-        Bountybase::Neo4j.connection
-      end
+    # equality
+    def ==(other)
+      other.url == self.url
     end
 
-    extend Private
-    include Private
-
-    attr :url           # Each Neo4j object is identified by an URL, for example "http://localhost:7474/db/data/node/4124".
-    attr :attributes    # The object's attributes.
-
-    private
-
-
-    # Create a Neo4j object.
-    #
-    # Parameters: 
-    #
-    # - url: the Neo4j URL.
-    # - attributes: the object attributes.
-    def initialize(url, attributes)
-      @url, @attributes = url, attributes
-    end
-
+    attr :url
+    
     public
-
-    # attribute shortcut for the "created_at" attribute.
-    def created_at
-      attributes["created_at"]
+    
+    def self.build(neography)
+      url = case neography
+      when String then neography
+      when Hash   then neography["self"]
+      end
+      
+      kind = url.split("/")[-2]
+      expect! kind => [ "node" ]
+      Neo4j::Node.new neography
     end
-
-    # attribute shortcut for the "updated_at" attribute.
-    def updated_at
-      attributes["updated_at"]
-    end
-
-
-    # replaces the object's attributes with the passed in attributes, 
-    # with the exception of the read-only attributes, and saves the node.
-    def update(updates)
-      attributes = normalize_attributes(updates).
-        merge(readonly_attributes).
-        merge("updated_at" => Time.now.to_i)
-
-      save_attributes(attributes)
-
-      @attributes = attributes
-    end
-
+    
     private
-
-    # returns all values that are readonly. The name of the keys are
-    # returned by the readonly_attribute_names class method.
-    def readonly_attributes #:nodoc:
-      self.class.readonly_attribute_names.inject({}) do |hash, key|
-        hash.update key => attributes[key]
+    
+    # initialize this object with either a Hash or an URL. 
+    #
+    # Note that one can verify the type of the object from the URL, and one can
+    # get the URL from the Hash. Therefore one should always create the right
+    # kind of object (i.e. a Neo4j::Node or Neo4j::Relationship instead of of
+    # a Neo4j::Base object.) That is the reason that Base#initialize is
+    # private - just use Neo4j::Base.create(url_or_hash) instead.
+    def initialize(neography)
+      case neography
+      when String
+        expect! neography => /^http/
+        @url = neography
+      when Hash     
+        expect! neography => { "all_relationships" => String }
+        @neography, @url = neography, neography["self"]
       end
     end
-
-    # saves the attributes for this object (identified by its URL)
-    # to the database.
-    def save_attributes; end
+    
+    # returns the neography Hash
+    def neography  #:nodoc:
+      @neography ||= load_neography
+    end
   end
-
 end

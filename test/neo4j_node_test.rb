@@ -9,7 +9,7 @@ class Neo4jNodeTest < Test::Unit::TestCase
   Neo4j = Bountybase::Neo4j
 
   def setup
-    Neo4j::Node.purge!
+    Neo4j.purge!
   end
 
   def test_create_wo_attributes
@@ -38,7 +38,7 @@ class Neo4jNodeTest < Test::Unit::TestCase
     
     node = Neo4j::Node.create "foo", 1, :bar => "baz"
     assert_equal node.uid, 1
-    assert_equal node.created_at, 123457
+    assert_equal node.created_at, Time.at(123457)
     assert_equal node.updated_at, nil
   end
   
@@ -48,6 +48,8 @@ class Neo4jNodeTest < Test::Unit::TestCase
     freeze_time(123457)
     
     node = Neo4j::Node.create "foo", 1, :bar => "baz"
+    assert_kind_of(Neo4j::Node, node)
+    
     assert! node => Neo4j::Node,
       node.url => /http:\/\/.*\/data\/node/,
       node.type => "foo"
@@ -89,7 +91,7 @@ class Neo4jNodeTest < Test::Unit::TestCase
     freeze_time(123457)
     
     node = Neo4j::Node.create "foo", 1, :bar => "baz"
-    assert_equal(node.created_at, 123457)
+    assert_equal(node.created_at, Time.at(123457))
     assert_equal(node.updated_at, nil)
 
     # --- update node -------------------------------------------------
@@ -102,8 +104,8 @@ class Neo4jNodeTest < Test::Unit::TestCase
                                   "uid"=>1,
                                   "created_at"=>123457,
                                   "updated_at"=>123458
-    assert_equal(node.created_at, 123457)
-    assert_equal(node.updated_at, 123458)
+    assert_equal(node.created_at, Time.at(123457))
+    assert_equal(node.updated_at, Time.at(123458))
 
     # --- find node ---------------------------------------------------
 
@@ -116,12 +118,10 @@ class Neo4jNodeTest < Test::Unit::TestCase
                                    "type"=>"foo",
                                    "bar"=>"bazie")
 
-    assert_equal(node.created_at, 123457)
-    assert_equal(node.updated_at, 123458)
+    assert_equal(node.created_at, Time.at(123457))
+    assert_equal(node.updated_at, Time.at(123458))
     
     # --- delete node -------------------------------------------------
-
-    freeze_time(123460)
 
     assert_equal(1, Neo4j::Node.count)
     

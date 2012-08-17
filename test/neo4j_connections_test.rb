@@ -9,7 +9,7 @@ class Neo4jConnectionsTest < Test::Unit::TestCase
   Neo4j = Bountybase::Neo4j
 
   def setup
-    Neo4j::Node.purge!
+    Neo4j.purge!
   end
 
   def test_can_connect
@@ -143,7 +143,7 @@ CYPHER
     assert_equal([2,3,5].permutation.to_a.uniq.length, count_paths(1, 2*3*5))
     assert_equal([2,2,3,5].permutation.to_a.uniq.length, count_paths(1, 2*2*3*5))
 
-    Neo4j::Node.purge!
+    Neo4j.purge!
   end
   
   def test_huge_graphs
@@ -159,7 +159,7 @@ CYPHER
     find_paths 1, 9216
     find_paths 1, 61740
 
-    Neo4j::Node.purge!
+    Neo4j.purge!
   end
   
   def count_paths(from, to)

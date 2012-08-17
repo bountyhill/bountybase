@@ -4,7 +4,7 @@ module Bountybase::Neo4j
     def self.create(type, source, target, attributes = {})
       expect! type => String, source => [Node], target => [Node], attributes => Hash
 
-      attributes = Graph.normalize_attributes(updates)
+      attributes = Graph.Base::Attributes.normalize(updates)
       attributes.update "type" => type, "created_at" => Time.now.to_i
 
       new type, uid, attributes
