@@ -12,6 +12,45 @@ class Neo4jConnectionsTest < Test::Unit::TestCase
     Neo4j::Node.purge!
   end
 
+  def test_can_connect
+    foo1 = Neo4j::Node.create "foo", 1
+    bar1 = Neo4j::Node.create "bar", 1
+
+    assert_equal(0, Neo4j::Connections.count)
+
+    Neo4j.connect "name", foo1 => bar1
+    assert_equal(1, Neo4j::Connections.count)
+
+    Neo4j.connect "other_name", foo1 => bar1
+    assert_equal(2, Neo4j::Connections.count)
+  end
+
+  def test_cannot_connect_to_itself
+    foo1 = Neo4j::Node.create "foo", 1
+    foo2 = Neo4j::Node.create "foo", 1
+  
+    assert_equal(0, Neo4j::Connections.count)
+
+    Neo4j.connect "name", foo1 => foo2
+    assert_equal(0, Neo4j::Connections.count)
+  end
+  
+  def test_cannot_connect_twice
+    foo1 = Neo4j::Node.create "foo", 1
+    bar1 = Neo4j::Node.create "bar", 1
+
+    assert_equal(0, Neo4j::Connections.count)
+
+    Neo4j.connect "name", foo1 => bar1
+    assert_equal(1, Neo4j::Connections.count)
+
+    Neo4j.connect "other_name", foo1 => bar1
+    assert_equal(2, Neo4j::Connections.count)
+
+    Neo4j.connect "name", foo1 => bar1
+    assert_equal(2, Neo4j::Connections.count)
+  end
+  
   def test_connection_api
     foo1 = Neo4j::Node.create "foo", 1
     bar1 = Neo4j::Node.create "bar", 1

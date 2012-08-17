@@ -10,7 +10,11 @@ module Bountybase::Neo4j::Connections
   # This builds two unnamed connection
   #   Bountybase::Neo4j.connect node1, node2, node1 => node3, :attr => :value
   def connect(*args)
-    options = args.pop if args.last.is_a?(Hash)
+    options = {}
+    while args.last.is_a?(Hash)
+      options.update args.pop
+    end
+
     name = args.first.is_a?(String) ? args.shift : "connects"
     
     # There must be a odd number of remaining arguments.
@@ -33,7 +37,34 @@ module Bountybase::Neo4j::Connections
   
   def self.build(name, from, to, options)
     expect! name => String, from => Neo4j::Node, to => Neo4j::Node, options => Hash
-    Neo4j.connection.create_relationship(name, from.url, to.url, options)
+
+    return if from == to
+    
+    index, key, value = "#{name}", "rid", "-#{from.uuid}->#{to.uuid}"
+    create_index_if_needed index
+    
+    rel = connection.create_unique_relationship(index, key, value, name, from.url, to.url)
+    connection.reset_relationship_properties(rel, options) unless options.empty?
+    rel
+  end
+
+  def self.connection
+    Neo4j.connection
+  end
+  
+  def self.create_index_if_needed(name)
+    return if @indices && @indices.include?(name)
+    
+    @indices = (Neo4j.connection.list_relationship_indexes || {}).keys
+    return if @indices.include?(name)
+
+    Neo4j.connection.create_relationship_index(name)
+    @indices << name
+  end
+  
+  def self.count(pattern = '*')
+    rels, _ = Neo4j.raw_query("start n=rel(#{pattern}) return n")
+    rels.length
   end
 end
 
