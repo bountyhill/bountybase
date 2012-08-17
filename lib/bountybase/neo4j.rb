@@ -1,5 +1,6 @@
 require 'neography'
 require_relative "neo4j/neography_extensions"
+require_relative "neo4j/neography_curb"
 
 module Bountybase::Neo4j
   extend self

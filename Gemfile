@@ -6,6 +6,7 @@ gem "remote_syslog_logger"
 gem "resque"
 gem "fnordmetric"
 gem "neography"
+gem "curb"
 
 group :test do
   gem "vcr"

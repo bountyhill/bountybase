@@ -12,6 +12,7 @@ GEM
       bson (~> 1.6.4)
     columnize (0.3.6)
     crack (0.3.1)
+    curb (0.8.1)
     daemons (1.1.9)
     em-hiredis (0.1.1)
       hiredis (~> 0.4.0)
@@ -116,6 +117,7 @@ PLATFORMS
 DEPENDENCIES
   addressable
   awesome_print
+  curb
   fnordmetric
   mocha
   neography
