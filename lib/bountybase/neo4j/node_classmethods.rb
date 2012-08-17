@@ -26,7 +26,7 @@ module Bountybase::Neo4j
         raise(DuplicateKeyError, "Object already exists #{uid}") 
       end
 
-      Base.build created_attributes
+      Neo4j.build created_attributes
     end
     
     private

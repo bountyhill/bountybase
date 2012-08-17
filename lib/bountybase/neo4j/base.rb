@@ -17,19 +17,6 @@ module Bountybase::Neo4j
 
     attr :url
     
-    public
-    
-    def self.build(neography)
-      url = case neography
-      when String then neography
-      when Hash   then neography["self"]
-      end
-      
-      kind = url.split("/")[-2]
-      expect! kind => [ "node" ]
-      Neo4j::Node.new neography
-    end
-    
     private
     
     # initialize this object with either a Hash or an URL. 

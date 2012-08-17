@@ -4,6 +4,32 @@ require_relative "neo4j/neography_extensions"
 module Bountybase::Neo4j
   extend self
 
+  def build(neography)
+    expect! neography => [String, Hash]
+
+    case neography
+    when String then build_from_url(neography) 
+    when Hash   then 
+      if neography.key?("self")
+        build_from_url(neography["self"])
+      elsif neography.key?("start")
+        Path.new neography 
+      else
+        expect! neography => :fail
+      end
+    end
+  end
+  
+  private
+  
+  def build_from_url(url)
+    kind = url.split("/")[-2]
+    expect! kind => [ "node" ]
+    Node.new(url)
+  end
+  
+  public
+  
   # Executes a Cypher query with a single return value per returned selection. 
   # Returns an array of hashes. 
   def raw_query(query)
@@ -20,7 +46,9 @@ module Bountybase::Neo4j
     
     data = data.map do |row|
       row = row.map do |item|
-        item = Path.new(item) || item
+        if item.key?("start")
+          item = Path.new(item)
+        end
       end
     
       row = row.first if row.length == 1

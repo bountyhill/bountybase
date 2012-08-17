@@ -25,6 +25,31 @@ class Neo4jConnectionsTest < Test::Unit::TestCase
     assert_equal(2, Neo4j::Connections.count)
   end
 
+  def test_find_paths
+    foo1 = Neo4j::Node.create "foo", 1, :foo1 => "foo1"
+    bar1 = Neo4j::Node.create "bar", 1, :bar1 => "bar1"
+    Neo4j.connect "name", foo1 => bar1
+
+    results = Neo4j.query <<-CYPHER
+    START src=node:foo(uid='1'), target=node:bar(uid='1')
+    MATCH path = src-[*]->target 
+    RETURN path
+CYPHER
+
+    assert_equal(1, results.length)
+    path = results.first
+
+    assert_kind_of(Neo4j::Path, path)
+    
+    assert_equal foo1,            path.start
+    assert_equal foo1.attributes, path.start.attributes
+
+    assert_equal bar1,            path.end
+    assert_equal bar1.attributes, path.end.attributes
+
+    assert_equal 3, path.members.length
+  end
+  
   def test_cannot_connect_to_itself
     foo1 = Neo4j::Node.create "foo", 1
     foo2 = Neo4j::Node.create "foo", 1

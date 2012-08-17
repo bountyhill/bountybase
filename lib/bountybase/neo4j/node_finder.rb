@@ -27,7 +27,7 @@ module Bountybase::Neo4j
 
       nodes, _ = Neo4j.raw_query(query)
       nodes.map do |node|
-        Neo4j::Base.build node.first
+        Neo4j.build node.first
       end
     end
     
@@ -38,7 +38,7 @@ module Bountybase::Neo4j
       found = connection.get_node_index(type, "uid", uid)
       return unless found
       
-      Base.build found.first
+      Neo4j.build found.first
     end
   end
   

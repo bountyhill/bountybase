@@ -1,32 +1,49 @@
 module Bountybase::Neo4j
-  class Path < OpenStruct
-    def self.new(hash)
-      start, nodes, length, relationships, end_ = *hash.values_at(*%w(start nodes length relationships end))
-
-      return unless start && end_
-      super hash
+  class Path
+    Neo4j = Bountybase::Neo4j
+    
+    attr :start, :nodes, :length, :end, :relationships
+    
+    def initialize(hash)
+      @start = Neo4j::Node.new(hash["start"])
+      @nodes = hash["nodes"].map { |node| Neo4j::Node.new(node) }
+      @relationships = hash["relationships"]
+      @end = Neo4j::Node.new(hash["end"])
     end
 
-    def urls
-      urls = []
-      nodes.each_with_index do |node_url, index|
-        urls << relationships[index - 1] if index > 0
-        urls << node_url
-      end
-      urls
+    def length
+      @relationships.length
     end
+    
+    def members
+      @members ||= [].tap do |members|
+        expect! nodes.length => relationships.length + 1
 
-    def inspect
-      index = -1
-      "<" + urls.map do |url|
-        index += 1
-        url = url.gsub "http://localhost:7474/db/data/", ""
-        if index.even?
-          url
-        else
-          "--[#{url.gsub("relationship", "rel")}]-->"
+        relationships.each_with_index do |relationship, idx|
+          members << nodes[idx]
+          members << relationship
         end
-      end.join(" ") + ">"
+        
+        members << nodes.last
+      end
+    end
+    
+    def inspect
+      parts = []
+      expect! nodes.length => relationships.length + 1
+
+      relationships.each_with_index do |relationship, idx|
+        parts << nodes[idx].neo_id
+
+        # relationship_neo_id = relationship.neo_id
+        relationship_neo_id = relationship.split("/").last
+        
+        parts << "--[#{relationship_neo_id}]-->"
+      end
+        
+      parts << nodes.last.neo_id
+
+      "<#{parts.join(" ")}>"
     end
   end
 end

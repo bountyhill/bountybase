@@ -66,6 +66,10 @@ module Bountybase::Neo4j
       end
     end
 
+    def neo_id
+      url.split("/").last
+    end
+    
     def inspect #:nodoc:
       kind, neo_id = *url.split("/")[-2..-1]
 
