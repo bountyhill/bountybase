@@ -25,6 +25,7 @@ module Expectations
   def self.met?(value, expectation)
     case expectation
     when :truish  then !!value
+    when :fail    then false
     when Array    then expectation.any? { |e| met?(value, e) }
     when Proc     then expectation.arity == 0 ? expectation.call : expectation.call(value)
     when Regexp   then value.is_a?(String) && expectation =~ value
