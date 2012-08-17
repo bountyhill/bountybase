@@ -26,7 +26,9 @@ module Bountybase::Neo4j
     # attribute shortcut for the "type" attribute.
     def type; attributes["type"]; end
 
-    def inspect; "<#{type}##{uid}>"; end
+    def uuid; "#{type}/#{uid}"; end
+    
+    def inspect; "<#{uuid}>"; end
     
     def ==(other)
       other.is_a?(Node) && other.type == self.type && other.uid == self.uid 
@@ -85,7 +87,7 @@ module Bountybase::Neo4j
     def create_index_if_needed(name)
       return if @indices && @indices.include?(name)
       
-      @indices = connection.list_node_indexes.keys
+      @indices = (connection.list_node_indexes || {}).keys
       return if @indices.include?(name)
 
       connection.create_node_index(name)
