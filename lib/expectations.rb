@@ -27,7 +27,7 @@ module Expectations
     when :truish  then !!value
     when Array    then expectation.any? { |e| met?(value, e) }
     when Proc     then expectation.arity == 0 ? expectation.call : expectation.call(value)
-    when Regexp   then expectation =~ value.to_s
+    when Regexp   then value.is_a?(String) && expectation =~ value
     else          expectation === value
     end
   end
