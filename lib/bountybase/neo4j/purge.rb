@@ -5,7 +5,7 @@ module Bountybase::Neo4j
       # Possible improvement: There is a call which purges the entire database.
       # It requires the installation of the neo4j-clean-remote-db-addon 
       # (https://github.com/jexp/neo4j-clean-remote-db-addon)
-      logger.benchmark :error, "purging nodes" do |b|
+      logger.benchmark :error, "purging nodes", :min => 100 do |b|
         count = 0
         while true do
           nodes = Bountybase::Neo4j::Node.all(pattern, :limit => 1000)

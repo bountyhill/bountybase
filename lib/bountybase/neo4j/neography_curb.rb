@@ -11,15 +11,17 @@ class Neography::Rest
   end
   
   def http(verb, path, post_body = nil, put_data = nil, &block)
-    # STDERR.print verb.to_s[0,1]
     url = configuration + URI.encode(path)
 
     Curl.http(verb, url, post_body, put_data) do |curb|
+      if basic_auth = @authentication[:basic_auth]
+        curb.http_auth_types = :basic
+        curb.username, curb.password = *basic_auth.values_at(:username, :password)
+      end
+      
       curb.headers["Accept"] = "application/json"
       curb.headers["Content-Type"] = "application/json"
       curb.headers["Connection"] = "Keep-Alive"
-    end.tap do |easy|
-      puts easy.header_str
     end
   end
     

@@ -85,5 +85,7 @@ fnordmetric:
     redis_prefix:       pro
 
 neo4j:
-  development:          http://localhost:7474/bountybasedev
-  test:                 http://localhost:7474/bountybasetest
+  test:                 http://9e68fcc50:2bb6aea56@291fac8e1.hosted.neo4j.org:7289
+  production:           http://9e68fcc50:2bb6aea56@291fac8e1.hosted.neo4j.org:7289
+  # development:          http://localhost:7474/bountybasedev
+  # test:                 http://localhost:7474
