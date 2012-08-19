@@ -39,4 +39,8 @@ module Bountybase::TestCase
   rescue ArgumentError
     assert false, $!.to_s
   end
+
+  def performance_tests?
+    !ENV["PERFORMANCE"].nil?
+  end
 end

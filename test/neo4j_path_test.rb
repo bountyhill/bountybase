@@ -171,7 +171,24 @@ CYPHER
     Neo4j.purge!
   end
   
+  def test_graph_1000
+    return unless performance_tests?
+    
+    build_graph :count => 1_000, :factors => [2,3,5,7]
+
+    find_paths 1, 2
+    find_paths 1, 4
+    find_paths 1, 6
+    find_paths 1, 72
+    find_paths 1, 512
+    find_paths 0, 9216
+    find_paths 0, 61740
+
+    Neo4j.purge!
+  end
+  
   def test_huge_graphs
+    return unless performance_tests?
     return
     
     build_graph :count => 100_000, :factors => [2,3,5,7]
