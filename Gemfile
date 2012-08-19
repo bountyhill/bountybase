@@ -13,6 +13,7 @@ group :test do
   gem "webmock"
   gem "mocha"
   gem "ruby-debug19"
+  gem "test-unit"
   gem 'simplecov', :require => false
 end
 
