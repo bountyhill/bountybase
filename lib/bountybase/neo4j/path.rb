@@ -4,15 +4,23 @@ module Bountybase::Neo4j
     
     attr :start, :nodes, :length, :end, :relationships
     
-    def initialize(hash)
-      @start = Neo4j::Node.new(hash["start"])
-      @nodes = hash["nodes"].map { |node| Neo4j::Node.new(node) }
-      @relationships = hash["relationships"]
-      @end = Neo4j::Node.new(hash["end"])
-    end
+    def initialize(data)
+      @data = data
 
+      @start = Neo4j::Node.new(data["start"])
+      @end = Neo4j::Node.new(data["end"])
+    end
+    
+    def nodes
+      @nodes ||= @data["nodes"].map { |node| Neo4j::Node.new(node) }
+    end
+    
+    def relationships
+      @relationships ||= @data["relationships"].map { |rel| Neo4j::Relationship.new(rel) }
+    end
+    
     def length
-      @relationships.length
+      @data["relationships"].length
     end
     
     def members
@@ -28,21 +36,21 @@ module Bountybase::Neo4j
       end
     end
     
+    def fetch
+      nodes.each(&:attributes)
+      relationships.each(&:attributes)
+    end
+    
     def inspect
       parts = []
       expect! nodes.length => relationships.length + 1
 
       relationships.each_with_index do |relationship, idx|
-        parts << nodes[idx].neo_id
-
-        # relationship_neo_id = relationship.neo_id
-        relationship_neo_id = relationship.split("/").last
-        
-        parts << "--[#{relationship_neo_id}]-->"
+        parts << nodes[idx].inspect
+        parts << "--[#{relationship.inspect(:without_rid)}]-->"
       end
         
-      parts << nodes.last.neo_id
-
+      parts << nodes.last.inspect
       "<#{parts.join(" ")}>"
     end
   end

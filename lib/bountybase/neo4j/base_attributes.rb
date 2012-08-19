@@ -74,11 +74,12 @@ module Bountybase::Neo4j
       kind, neo_id = *url.split("/")[-2..-1]
 
       if attributes_loaded?
-        attributes = self.attributes.dup
-        type, uid = attributes.delete("type"), attributes.delete("uid")
-        inspected_attributes = attributes.map { |key, value| "#{key}: #{value.inspect}" }
+        inspected_attributes = attributes.map do |key, value| 
+          next if key == "type" || key == "uid"
+          "#{key}: #{value.inspect}" 
+        end
 
-        "<#{kind}##{neo_id}: #{type}##{uid} #{inspected_attributes.sort.join(", ")}>"
+        "<#{kind}##{neo_id}: #{type}##{uid} #{inspected_attributes.compact.sort.join(", ")}>"
       else
         "<#{kind}##{neo_id}>"
       end

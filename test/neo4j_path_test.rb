@@ -109,6 +109,32 @@ CYPHER
   def test_connection
     foo1 = Neo4j::Node.create "foo", 1
     bar1 = Neo4j::Node.create "bar", 1
+    bar2 = Neo4j::Node.create "bar", 2
+
+    Neo4j.connect foo1 => bar1, bar1 => bar2
+
+    # return the path
+    results = Neo4j.query <<-CYPHER
+    START src=node:foo(uid='1'), target=node:bar(uid='2')
+    MATCH path = src-[*]->target 
+    RETURN path
+CYPHER
+
+    # we should have two result.
+    assert_equal(1, results.length)
+    assert_equal([Neo4j::Path], results.map(&:class))
+    
+    path = results.first
+    insp = path.inspect
+    
+    path.fetch
+
+    assert path.inspect.length > insp.length
+  end
+
+  def test_two_connections
+    foo1 = Neo4j::Node.create "foo", 1
+    bar1 = Neo4j::Node.create "bar", 1
     foo2 = Neo4j::Node.create "foo", 2
     bar2 = Neo4j::Node.create "bar", 2
 
@@ -124,7 +150,9 @@ CYPHER
     RETURN path
 CYPHER
 
-    ap results.inspect
+    # we should have two result.
+    assert_equal(2, results.length)
+    assert_equal([Neo4j::Path, Neo4j::Path], results.map(&:class))
   end
 
   def build_graph(options)

@@ -24,9 +24,16 @@ module Bountybase::Neo4j
   private
   
   def build_from_url(url)
+    # the URL, as reported from Neo4j, describes the type of an object.
+    # URL examples are:
+    # - http://localhost:7474/db/data/node/1426  
+    # - http://localhost:7474/db/data/relationship/1426  
     kind = url.split("/")[-2]
-    expect! kind => [ "node" ]
-    Node.new(url)
+    expect! kind => [ "node", "relationship" ]
+    case kind
+    when "node"         then Node.new(url)
+    when "relationship" then Relationship.new(url)
+    end
   end
   
   public
