@@ -16,8 +16,8 @@ module Bountybase::Neo4j
       # Add node to index with the given key/value pair
       created_attributes = connection.create_unique_node(type, "uid", uid, attributes)
 
-      # Note: If the node cannot be created because it violates the unique index, the
-      # 'create_unique_node' function returns the currently existing node.
+      # Note: If the node cannot be created because it might violate the unique index, 
+      # or Neo4j doesn't like out attributes.
       if !created_attributes
         raise("Object cannot be created: #{uid}")
       end

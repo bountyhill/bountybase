@@ -86,122 +86,103 @@ end
 # 
 module Bountybase::Graph
   extend self
-    
+  
+  Neo4j = Bountybase::Neo4j
+
   # Connect this thread to Neo4j
   def setup
-    Bountybase::Neo4j.connection
+    Neo4j.connection
   end
   
-  # whenever a bountytweet is found we add some connections in the graph database.
-  #
-  # These are the parameters:
+  # Register a bountytweet. Takes a option hash with these parameters:
   #
   # - *tweet-id*: the tweet id
-  # - *quest*: the URL of the quest
   # - *sender-id*: the identity of the sender (e.g. "twitter://radiospiel"). This is the sender account.
-  # - *sender-name*: the identity of the sender (e.g. "twitter://radiospiel"). This is the sender account.
   # - *source-id*: the identity of the source (e.g. "twitter://radiospiel"). This is the in_reply_to account
-  # - *source-name*: the identity of the source (e.g. "twitter://radiospiel"). This is the in_reply_to account
-  # - (e.g. "twitter://radiospiel"): an array of identities that we assume will have received the tweet (i.e. accounts
-  #   that have been mentioned in the tweet.)
+  # - *quest_url*: the URL of the bounty quest
+  # - *receiver_ids*: an optional array of twitter user ids, that also receive this tweet
   # - *text*: the tweet text
-  # - *lang*: the tweet language 
-  #
-  # The sender and source parameters might seem confusing. This is their meaning:
-  # If the sender is just retweeting the source is who it is retweeting from.
-  
-  # a) source has been seen the quest, from an unknown source.
-  # b) sender has been seen the quest, from source
+  # - *lang*: the tweet language
   #
   def register_tweet(options = {})
-    expect! options, 
-      :tweet_id => Integer,
-      :quest_url => String,
-      :sender_id => Integer,
-      :sender => String,
-      :source_id => Integer,
-      :source => String,
-      :receivers => [Array, nil],
-      :text => String,
-      :lang => String
-      
-    return if registered_tweet?(tweet)
+    expect! options => {
+      :tweet_id => Integer,             # The id of the tweet 
+      :sender_id => Integer,            # The twitter user id of the user sent this tweet 
+      :source_id => [Integer, nil],     # The twitter user id of the user from where the sender knows about this bounty.
+      :quest_url => /http.*$/,          # The url for the quest.
+      :receiver_ids => [Array, nil],    # An array of user ids of twitter users, that also receive this tweet.
+      :text => String,                  # The tweet text
+      :lang => String                   # The tweet language
+    } 
+
+    tweet = "tweet://#{options[:tweet_id]}"
     
-    # register the tweet itself.
-    connect tweet_root => tweet
+    return if Neo4j::Node.find("tweets", tweet)
+    Neo4j::Node.create("tweets", tweet, options)
 
-    # How does sender know the quest? If it is not set, then probably from one of
-    # its followees.
-    source ||= if connection = oldest_connection(quest => sender.followees)
-      connection[:receiver]
+    connect_tweet(tweet, options)
+  end
+  
+  def resolve_quest_url(url)
+    7373
+  end
+  
+  def connect_tweet(tweet, options)
+    sender_id, source_id, receiver_ids = *options.values_at(:sender_id, :source_id, :receiver_ids)
+    
+    # ----
+    quest_id = resolve_quest_url(options[:quest_url])
+
+    # get a quest node. Note: As we don't supply any attributes, this would
+    # just return any existing node instead of recreating it.
+    quest = Neo4j::Node.create("quests", quest_id)
+
+    # we have a source id. Get a source node for it. Note: As we don't supply any
+    # attributes, this would just return any existing node instead of recreating it.
+    source = Neo4j::Node.create("identities", "twitter://#{source_id}")
+
+    # The source has seen the quest: connect it if there is none yet.
+    tweet_connection quest, source, :by => tweet
+
+    # TODO: How does the sender know the quest? If the sender_id is not yet set,
+    # then the sender probably knows it from one of its followees. find_sender_id
+    # picks the sender_id from the array of followees of the source_id that are
+    # known to have seen the quest, and then the followee that posted (or just
+    # received) the quest first.
+    sender_id ||= find_sender_id_for :quest_id => quest_id, :from_followees_of => source_id
+
+    # if we know a sender we connect the quest to it.
+    if sender_id
+      sender = Neo4j::Node.create("identities", "twitter://#{sender_id}") 
+      tweet_connection quest, sender, :by => tweet
     end
-    #
-    # If there is a source then we'll make sure the source is connected
-    # to the quest. 
-    if source
-      unless connected?(quest => source)
-        connect quest => source, :by => tweet        # source has seen the quest.
+
+    Neo4j.connect "forwarded_#{quest.uid}", (sender || quest) => source, :by => tweet
+  
+    # If there are a number of additional receivers (i.e. accounts that have been mentioned
+    # in the tweet, of which we assume that they will receive this tweet) we connect them
+    # from the sender.
+    if receiver_ids
+      receivers = receiver_ids.map do |receiver_id| 
+        expect! receiver_id => Integer
+        Neo4j::Node.create("identities", "twitter://#{sender_id}")
       end
-      unless connected?(quest => sender)
-        connect source => sender, :by => tweet       # sender has received the quest.
-      end
-    else
-      # if not, the sender will be directly connected to the quest.
-      unless connected?(quest, sender)
-        connect quest => sender, :by => tweet
-      end
-    end
-  end
-
-  #
-  # find a connection from quest to account. This returns an array with these entries:
-  #
-  # [ { :source => source, :dest => dest, :connected_at => Timestamp }]
-  #
-  def connections(options)
-    connections, options = *parse_options(options)
-    nil
-  end
-
-  def oldest_connection(options)
-    connections = self.connections(quest => sender.followees)
-    connections.sort_by { |connection| connection[:connected_at] }.first
-  end
-
-  # build connection(s)
-  def connect(options)
-    connections, options = *parse_options(options)
-    options = Hash[*options]
-
-    connections.each do |src, dest| 
-      Single.connect(source, dest, options)
+      
+      tweet_connection quest, source, *receivers, :by => tweet
     end
   end
   
-  # returns true if any of the passed in connections exist.
-  def connected?(options)
-    connections, options = *parse_options(options)
-    connections.any? do |source, dest|
-      Single.connected?(source, dest, options)
-    end
-  end
+  def tweet_connection(quest, source, *receivers)
+    options = receivers.pop if receivers.last.is_a?(Hash)
+    
+    expect! quest => Neo4j::Node, quest.type => "quests", source => Neo4j::Node, receivers => Array, options => { :by => String }
+    receivers.each { |receiver| expect! receiver => Neo4j::Node }
 
-  # Deal with individual connections.
-  module Single
-    def self.connected?(source, dest, options)
-      by = options[:by]
-    end
+    known_by     = [ quest, source ]
+    known_by    += receivers.map { |receiver| [ quest, receiver ] }.flatten
+    Neo4j.connect "known_by", *known_by, options
 
-    def self.connect(src, dest, options)
-      by = options[:by]
-    end
-  end
-  
-  # Splits all key/value pairs in the options hash depending on whether or not they
-  # have Symbol keys - meaning these are options instead of connections - and returns
-  # both groups. 
-  def parse_options(options) #:nodoc:
-    options, connections = options.partition { |k,v| k.is_a?(Symbol) }
-    [ connections, Hash[options] ]
+    forwarded_to = receivers.map { |receiver| [ source, receiver ] }.flatten
+    Neo4j.connect "forwarded_#{quest.uid}", *forwarded_to, options
   end
 end
