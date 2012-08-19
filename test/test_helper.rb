@@ -3,6 +3,8 @@ require 'bundler/setup'
 
 ENV["RACK_ENV"] ||= "test"
 
+require 'ruby-debug'
+require 'simplecov'
 require 'test/unit'
 require 'test/unit/ui/console/testrunner'   
 
@@ -10,9 +12,6 @@ class Test::Unit::UI::Console::TestRunner
   def guess_color_availability; true; end
 end
 
-require 'ruby-debug'
-require 'simplecov'
-require 'test/unit'
 require 'mocha'
 require 'awesome_print'
 
