@@ -16,6 +16,12 @@ class ExpectationsTest < Test::Unit::TestCase
     }
   end
   
+  # Don't know how to catch the exceptions?!!
+  # def test_expectations_backtrace
+  #   # expect!({} => { :key => "Foo" })
+  #   # expect! 1 => 0
+  # end
+  
   def test_int_expectations
     assert_expectation 1 => 1
     assert_expectation 1 => Fixnum

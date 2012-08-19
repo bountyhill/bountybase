@@ -34,20 +34,30 @@ module Expectations
   end
 
   def self.verify!(value, expectation)
-    if expectation.is_a?(Hash)
-      verify! value, Hash
-      
-      expectation.each do |key, expectations_for_key|
-        verify! value[key], expectations_for_key
+    failed_value, failed_expectation, message = value, expectation, nil
+    
+    # Test expectation, collect failed_value, failed_expectation, failed_message
+    unless expectation.is_a?(Hash)
+      good = met?(value, expectation)
+    else
+      good = met?(value, Hash)
+      if good
+        good = expectation.all? do |key, expect|
+          next true if met?(value[key], expect)
+          
+          failed_value, failed_expectation, message = value[key], expect, "at key #{key.inspect}"
+          false
+        end
       end
-      return
     end
     
-    return if met?(value, expectation)
+    # are we good?
+    return if good
 
-    backtrace = caller[3..-1]
+    # build exception with adjusted backtrace.
+    backtrace = caller[5 .. -1]
     
-    e = ArgumentError.new "#{value.inspect} does not meet expectation #{expectation.inspect}"
+    e = ArgumentError.new "#{failed_value.inspect} does not meet expectation #{failed_expectation.inspect}#{message && ", #{message}"}"
     e.singleton_class.send(:define_method, :backtrace) do
       backtrace
     end
