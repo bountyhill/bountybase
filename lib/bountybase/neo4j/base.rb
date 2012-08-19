@@ -32,7 +32,6 @@ module Bountybase::Neo4j
         expect! neography => /^http/
         @url = neography
       when Hash     
-        expect! neography => { "all_relationships" => String }
         @neography, @url = neography, neography["self"]
       end
     end

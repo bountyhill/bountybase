@@ -1,15 +1,5 @@
 module Bountybase::Neo4j
   class Relationship < Base
-    # creates a relationship with a given type.
-    def self.create(type, source, target, attributes = {})
-      expect! type => String, source => [Node], target => [Node], attributes => Hash
-
-      attributes = Graph.Base::Attributes.normalize(updates)
-      attributes.update "type" => type, "created_at" => Time.now.to_i
-
-      new type, uid, attributes
-    end
-
     def destroy
       implement!
     end
@@ -26,9 +16,7 @@ module Bountybase::Neo4j
       return super() unless attributes_loaded?
 
       inspected_attributes = attributes.map do |key, value| 
-        # next if key == "type" || key == "uid" || key == "rid"
-        next if key == "rid"
-        "#{key}: #{value.inspect}" 
+        "#{key}: #{value.inspect}" unless key == "rid"
       end
 
       rid = " #{self.rid}" unless without_rid

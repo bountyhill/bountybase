@@ -3,7 +3,7 @@ require_relative 'test_helper'
 ::Event::Listeners.add :console
 ::Event.route :all => :console
 
-class Neo4jConnectionsTest < Test::Unit::TestCase
+class Neo4jPathTest < Test::Unit::TestCase
   include Bountybase::TestCase
 
   Neo4j = Bountybase::Neo4j
@@ -106,7 +106,24 @@ CYPHER
     Neo4j.connect "name", foo1, bar1, foo2, bar2, :attr => :value
   end
   
-  def test_connection
+  def test_query_rel
+    foo1 = Neo4j::Node.create "foo", 1
+    bar1 = Neo4j::Node.create "bar", 1
+
+    Neo4j.connect foo1 => bar1
+
+    # return the path
+    results = Neo4j.query <<-CYPHER
+    START r=relationship(*)
+    RETURN r
+CYPHER
+
+    relationship = results.first
+    assert_kind_of Neo4j::Relationship, relationship
+    assert_equal("-foo/1->bar/1", relationship.rid)
+  end
+
+  def test_query_path
     foo1 = Neo4j::Node.create "foo", 1
     bar1 = Neo4j::Node.create "bar", 1
     bar2 = Neo4j::Node.create "bar", 2
@@ -123,13 +140,17 @@ CYPHER
     # we should have two result.
     assert_equal(1, results.length)
     assert_equal([Neo4j::Path], results.map(&:class))
-    
+
     path = results.first
     insp = path.inspect
-    
+
     path.fetch
 
     assert path.inspect.length > insp.length
+
+    assert_equal(foo1, path.start)
+    assert_equal(bar2, path.end)
+    assert_equal([foo1, bar1, bar2], path.nodes)
   end
 
   def test_two_connections

@@ -52,13 +52,8 @@ module Bountybase::Neo4j
   def query(query)
     data, columns = *raw_query(query)
     
-    data = data.map do |row|
-      row = row.map do |item|
-        if item.key?("start")
-          item = Path.new(item)
-        end
-      end
-    
+    data.map do |row|
+      row = row.map do |item| build item end
       row = row.first if row.length == 1
       row
     end
