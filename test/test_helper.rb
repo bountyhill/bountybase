@@ -22,6 +22,9 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'bountybase'
 require "forwardable"
 
+::Event::Listeners.add :console
+::Event.route :all => :console
+
 module Bountybase::TestCase
   extend Forwardable
 

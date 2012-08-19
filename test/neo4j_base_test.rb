@@ -1,9 +1,6 @@
 require_relative 'test_helper'
 require 'vcr'
 
-# ::Event::Listeners.add :console
-# ::Event.route :all => :console
-
 class Neo4jBaseTest < Test::Unit::TestCase
   include Bountybase::TestCase
 

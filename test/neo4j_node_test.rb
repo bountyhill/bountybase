@@ -1,8 +1,5 @@
 require_relative 'test_helper'
 
-::Event::Listeners.add :console
-::Event.route :all => :console
-
 class Neo4jNodeTest < Test::Unit::TestCase
   include Bountybase::TestCase
 

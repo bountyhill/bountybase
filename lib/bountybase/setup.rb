@@ -15,6 +15,8 @@ end
 # lib/bountybase/config.rb.
 module Bountybase::Setup
   def self.logging
+    return if Bountybase.environment == "test"
+    
     # setup listeners
     ::Event::Listeners.add :console
 
