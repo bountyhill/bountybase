@@ -74,7 +74,7 @@ CYPHER
 
   def test_register_two_tweets
     # Register two tweets. 
-    logger.benchmark :warn, "register_tweet", :min => 0 do
+    logger.benchmark :warn, "register 2 tweets", :min => 0 do
       # Register the initial tweet.
       Graph.register_tweet :tweet_id => 1,                  # The id of the tweet 
         :sender_id => 456,                                  # The twitter user id of the user sent this tweet 
@@ -92,7 +92,9 @@ CYPHER
         # :receiver_ids => [12, 34, 56],                      # An array of user ids of twitter users, that also receive this tweet.
         :text => "My first #bountytweet",                   # The tweet text
         :lang => "en"                                       # The tweet language
+    end
     
+    logger.benchmark :warn, "querying 2 tweet results", :min => 0 do
       #
       # FYI: This generates 5 paths; our unit tests below are filtered by names.
       #
