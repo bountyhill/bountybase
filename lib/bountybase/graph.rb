@@ -122,7 +122,7 @@ module Bountybase::Graph
   end
   
   def connect_tweet(options)
-    tweet_id, sender_id, source_id, receiver_ids = *options.values_at(:tweet_id, :sender_id, :source_id, :receiver_ids)
+    sender_id, source_id, receiver_ids = *options.values_at(:sender_id, :source_id, :receiver_ids)
 
     # ----
     quest_id = Bountybase.resolve_quest_url(options[:quest_url])
@@ -136,7 +136,7 @@ module Bountybase::Graph
     sender = twitter_identity(sender_id)
 
     # The source has seen the quest: connect it if there is none yet.
-    tweet_connection quest, sender, :by => tweet_id
+    tweet_connection quest, sender
 
     # TODO: How does the sender know the quest? If the sender_id is not yet set,
     # then the sender probably knows it from one of its followees. find_sender_id
@@ -148,17 +148,17 @@ module Bountybase::Graph
     # if we know the source we connect the quest to it.
     if source_id
       source = twitter_identity(source_id) 
-      tweet_connection quest, source, :by => tweet_id
+      tweet_connection quest, source
     end
 
-    Neo4j.connect "forwarded_#{quest.uid}", (source || quest) => sender, :by => tweet_id
+    Neo4j.connect "forwarded_#{quest.uid}", (source || quest) => sender
   
     # If there are a number of additional receivers (i.e. accounts that have been mentioned
     # in the tweet, of which we assume that they will receive this tweet) we connect them
     # from the sender.
     if receiver_ids
       receivers = receiver_ids.map { |receiver_id| twitter_identity(receiver_id) }
-      tweet_connection quest, sender, *receivers, :by => tweet_id
+      tweet_connection quest, sender, *receivers
     end
   end
 
@@ -172,9 +172,10 @@ module Bountybase::Graph
   end
   
   def tweet_connection(quest, source, *receivers)
-    options = receivers.pop if receivers.last.is_a?(Hash)
+    options = receivers.last.is_a?(Hash) ? receivers.pop : {}
     
-    expect! quest => Neo4j::Node, quest.type => "quests", source => Neo4j::Node, receivers => Array, options => { :by => Integer }
+    expect! quest => Neo4j::Node, quest.type => "quests", source => Neo4j::Node, receivers => Array
+
     receivers.each { |receiver| expect! receiver => Neo4j::Node }
 
     known_by     = [ quest, source ]

@@ -125,7 +125,7 @@ CYPHER
     bar1 = Neo4j::Node.create "bar", 1
     bar2 = Neo4j::Node.create "bar", 2
 
-    Neo4j.connect foo1 => bar1, bar1 => bar2
+    Neo4j.connect "alongconnectiontypename", foo1 => bar1, bar1 => bar2
 
     # return the path
     results = Neo4j.query <<-CYPHER
