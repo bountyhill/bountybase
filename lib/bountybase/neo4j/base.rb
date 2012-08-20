@@ -12,7 +12,7 @@ module Bountybase::Neo4j
 
     # equality
     def ==(other)
-      other.url == self.url
+      other.is_a?(self.class) && (other.url == self.url)
     end
 
     attr :url

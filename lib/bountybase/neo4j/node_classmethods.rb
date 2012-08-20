@@ -6,7 +6,7 @@ module Bountybase::Neo4j
     # connects it to the root node. It raises an exception if the node cannot
     # be created because it already exists.
     def create(type, uid, attributes = {})
-      expect! type => String, uid => [String, Integer]
+      expect! type => String, uid => [/^\d+$/, Integer]
 
       create_index_if_needed(type)
 

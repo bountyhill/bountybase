@@ -115,67 +115,66 @@ module Bountybase::Graph
       :lang => String                   # The tweet language
     } 
 
-    tweet = "tweet://#{options[:tweet_id]}"
-    
-    return if Neo4j::Node.find("tweets", tweet)
-    Neo4j::Node.create("tweets", tweet, options)
+    return if Neo4j::Node.find("tweets", options[:tweet_id])
+    Neo4j::Node.create("tweets", options[:tweet_id], options)
 
-    connect_tweet(tweet, options)
+    connect_tweet(options)
   end
   
-  def resolve_quest_url(url)
-    7373
-  end
-  
-  def connect_tweet(tweet, options)
-    sender_id, source_id, receiver_ids = *options.values_at(:sender_id, :source_id, :receiver_ids)
-    
+  def connect_tweet(options)
+    tweet_id, sender_id, source_id, receiver_ids = *options.values_at(:tweet_id, :sender_id, :source_id, :receiver_ids)
+
     # ----
-    quest_id = resolve_quest_url(options[:quest_url])
+    quest_id = Bountybase.resolve_quest_url(options[:quest_url])
 
     # get a quest node. Note: As we don't supply any attributes, this would
     # just return any existing node instead of recreating it.
     quest = Neo4j::Node.create("quests", quest_id)
 
-    # we have a source id. Get a source node for it. Note: As we don't supply any
+    # We have the id of the sender of the tweet. Get a node for it. Note: As we don't supply any
     # attributes, this would just return any existing node instead of recreating it.
-    source = Neo4j::Node.create("identities", "twitter://#{source_id}")
+    sender = twitter_identity(sender_id)
 
     # The source has seen the quest: connect it if there is none yet.
-    tweet_connection quest, source, :by => tweet
+    tweet_connection quest, sender, :by => tweet_id
 
     # TODO: How does the sender know the quest? If the sender_id is not yet set,
     # then the sender probably knows it from one of its followees. find_sender_id
     # picks the sender_id from the array of followees of the source_id that are
     # known to have seen the quest, and then the followee that posted (or just
     # received) the quest first.
-    sender_id ||= find_sender_id_for :quest_id => quest_id, :from_followees_of => source_id
-
-    # if we know a sender we connect the quest to it.
-    if sender_id
-      sender = Neo4j::Node.create("identities", "twitter://#{sender_id}") 
-      tweet_connection quest, sender, :by => tweet
+    source_id ||= find_sender_id_for :quest_id => quest_id, :from_followees_of => sender_id
+    
+    # if we know the source we connect the quest to it.
+    if source_id
+      source = twitter_identity(source_id) 
+      tweet_connection quest, source, :by => tweet_id
     end
 
-    Neo4j.connect "forwarded_#{quest.uid}", (sender || quest) => source, :by => tweet
+    Neo4j.connect "forwarded_#{quest.uid}", (source || quest) => sender, :by => tweet_id
   
     # If there are a number of additional receivers (i.e. accounts that have been mentioned
     # in the tweet, of which we assume that they will receive this tweet) we connect them
     # from the sender.
     if receiver_ids
-      receivers = receiver_ids.map do |receiver_id| 
-        expect! receiver_id => Integer
-        Neo4j::Node.create("identities", "twitter://#{sender_id}")
-      end
-      
-      tweet_connection quest, source, *receivers, :by => tweet
+      receivers = receiver_ids.map { |receiver_id| twitter_identity(receiver_id) }
+      tweet_connection quest, sender, *receivers, :by => tweet_id
     end
+  end
+
+  def find_sender_id_for(options)
+    nil
+  end
+  
+  def twitter_identity(twitter_account_id)
+    expect! twitter_account_id => Integer
+    Neo4j::Node.create("twitter_identities", twitter_account_id)
   end
   
   def tweet_connection(quest, source, *receivers)
     options = receivers.pop if receivers.last.is_a?(Hash)
     
-    expect! quest => Neo4j::Node, quest.type => "quests", source => Neo4j::Node, receivers => Array, options => { :by => String }
+    expect! quest => Neo4j::Node, quest.type => "quests", source => Neo4j::Node, receivers => Array, options => { :by => Integer }
     receivers.each { |receiver| expect! receiver => Neo4j::Node }
 
     known_by     = [ quest, source ]
