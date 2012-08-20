@@ -69,21 +69,6 @@ module Bountybase::Neo4j
     def neo_id
       url.split("/").last
     end
-    
-    def inspect #:nodoc:
-      kind, neo_id = *url.split("/")[-2..-1]
-
-      if attributes_loaded?
-        inspected_attributes = attributes.map do |key, value| 
-          next if key == "type" || key == "uid"
-          "#{key}: #{value.inspect}" 
-        end
-
-        "<#{kind}##{neo_id}: #{type}##{uid} #{inspected_attributes.compact.sort.join(", ")}>"
-      else
-        "<#{kind}##{neo_id}>"
-      end
-    end
 
     def self.normalize(attributes)
       expect! attributes => Hash

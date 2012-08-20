@@ -13,16 +13,17 @@ module Bountybase::Neo4j
     end
     
     def inspect(without_rid = false) #:nodoc:
-      return super() unless attributes_loaded?
+      return "<rel##{neo_id}>" unless attributes_loaded?
+      
+      attrs = self.attributes.map do |key, value| 
+        next if key == "rid" || key == "created_at" || key == "updated_at"
+        "#{key}: #{value.inspect}" 
+      end.compact
 
-      inspected_attributes = attributes.map do |key, value| 
-        "#{key}: #{value.inspect}" unless key == "rid"
-      end
-
-      rid = " #{self.rid}" unless without_rid
-      attrs = inspected_attributes.compact.sort.join(", ") unless inspected_attributes.empty?
-
-      "<rel##{neo_id}:#{type}#{rid}#{attrs}>"
+      r = "#{type}"
+      r += " #{self.rid}" unless without_rid
+      r += " {#{attrs.sort.join(", ")}}" unless attrs.empty?
+      "<#{r}>"
     end
 
     def load_neography #:nodoc:
