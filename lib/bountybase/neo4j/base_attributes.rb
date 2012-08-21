@@ -46,6 +46,10 @@ module Bountybase::Neo4j
 
     READONLY_ATTRIBUTE_NAMES = %w(type uid created_at)
 
+    def update_attributes(updates)
+      update attributes.update(updates)
+    end
+    
     # replaces the object's attributes with the passed in attributes, with the
     # exception of the readonly attributes, and saves the node.
     def update(updates)
@@ -76,6 +80,7 @@ module Bountybase::Neo4j
       attributes.each do |k,v|
         case v
         when Time then normalized[k.to_s] = v.to_i
+        when nil  then :nop
         else      normalized[k.to_s] = v
         end
       end

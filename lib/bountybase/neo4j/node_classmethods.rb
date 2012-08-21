@@ -18,12 +18,13 @@ module Bountybase::Neo4j
 
       # Note: If the node cannot be created because it might violate the unique index, 
       # or Neo4j doesn't like out attributes.
-      if !created_attributes
-        raise("Object cannot be created: #{uid}")
+      unless created_attributes
+        W "Cannot create object #{type}/#{uid}", attributes
+        raise("Cannot create object: #{type}/#{uid}")
       end
-      
+
       if different_attributes?(created_attributes["data"], attributes)
-        raise(DuplicateKeyError, "Object already exists #{uid}") 
+        raise(DuplicateKeyError, "Object already exists #{type}/#{uid}") 
       end
 
       Neo4j.build created_attributes
@@ -45,11 +46,9 @@ module Bountybase::Neo4j
     # "updated_at".
     def different_attributes?(actual, expected) #:nodoc:
       actual.any? do |k,v|
-        (v != expected[k]) &&
-        (k != "created_at") &&
-        (k != "updated_at")
+        next false if %w(created_at updated_at).include?(k)
+        v != expected[k]
       end
-      
     end
 
     public

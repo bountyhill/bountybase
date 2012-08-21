@@ -25,25 +25,6 @@ class GraphTest < Test::Unit::TestCase
     Graph.register_tweet TWEET_DEFAULTS.merge(options)
   end
   
-  # def test_register_tweet_with_sender_name
-  #   register_tweet :tweet_id => 1,                  # The id of the tweet 
-  #     :sender_id => 456,                                  # The twitter user id of the user sent this tweet 
-  #     :sender_name => "sender456"
-  # 
-  #   n = Neo4j::Node.find("twitter_identities", 456)
-  #   assert_equal "sender456", n.attributes["screen_name"]
-  # end
-  # 
-  # def test_register_tweet_with_sender_name_updates_idendity
-  #   # Register the initial tweet.
-  #   register_tweet :tweet_id => 1,                  # The id of the tweet 
-  #     :sender_id => 456,                                  # The twitter user id of the user sent this tweet 
-  #     :sender_name => "sender456"
-  # 
-  #   n = Neo4j::Node.find("twitter_identities", 456)
-  #   assert_equal "sender456", n.attributes["screen_name"]
-  # end
-  
   def test_register_tweet
     freeze_time(123457)
     
@@ -149,4 +130,49 @@ CYPHER
       assert_equal([1, 2], paths.map(&:length))
     end
   end
+
+  def test_twitter_names
+    node1 = Graph.twitter_identity(123, "foo")
+    node2 = Neo4j::Node.find("twitter_identities", 123)
+    assert_equal node1, node2
+    assert_equal "twitter_identities", node2.attributes["type"]
+    assert_equal "foo", node2.attributes["screen_name"]
+  end
+
+  def test_twitter_name_updates
+    Graph.twitter_identity(123)
+    node = Neo4j::Node.find("twitter_identities", 123)
+    assert_equal nil, node.attributes["screen_name"]
+
+    Graph.twitter_identity(123, "foo")
+    node = Neo4j::Node.find("twitter_identities", 123)
+    assert_equal "foo", node.attributes["screen_name"]
+
+    Graph.twitter_identity(123, "bar")
+    node = Neo4j::Node.find("twitter_identities", 123)
+    assert_equal "bar", node.attributes["screen_name"]
+
+    Graph.twitter_identity(123)
+    node = Neo4j::Node.find("twitter_identities", 123)
+    assert_equal "bar", node.attributes["screen_name"]
+  end
+  
+  # def test_register_tweet_with_sender_name
+  #   register_tweet :tweet_id => 1,                  # The id of the tweet 
+  #     :sender_id => 456,                                  # The twitter user id of the user sent this tweet 
+  #     :sender_name => "sender456"
+  # 
+  #   n = Neo4j::Node.find("twitter_identities", 456)
+  #   assert_equal "sender456", n.attributes["screen_name"]
+  # end
+  # 
+  # def test_register_tweet_with_sender_name_updates_idendity
+  #   # Register the initial tweet.
+  #   register_tweet :tweet_id => 1,                  # The id of the tweet 
+  #     :sender_id => 456,                                  # The twitter user id of the user sent this tweet 
+  #     :sender_name => "sender456"
+  # 
+  #   n = Neo4j::Node.find("twitter_identities", 456)
+  #   assert_equal "sender456", n.attributes["screen_name"]
+  # end
 end
