@@ -135,26 +135,26 @@ CYPHER
     node1 = Graph.twitter_identity(123, "foo")
     node2 = Neo4j::Node.find("twitter_identities", 123)
     assert_equal node1, node2
-    assert_equal "twitter_identities", node2.attributes["type"]
-    assert_equal "foo", node2.attributes["screen_name"]
+    assert_equal "twitter_identities", node2["type"]
+    assert_equal "foo", node2["screen_name"]
   end
 
   def test_twitter_name_updates
     Graph.twitter_identity(123)
     node = Neo4j::Node.find("twitter_identities", 123)
-    assert_equal nil, node.attributes["screen_name"]
+    assert_equal nil, node["screen_name"]
 
     Graph.twitter_identity(123, "foo")
     node = Neo4j::Node.find("twitter_identities", 123)
-    assert_equal "foo", node.attributes["screen_name"]
+    assert_equal "foo", node["screen_name"]
 
     Graph.twitter_identity(123, "bar")
     node = Neo4j::Node.find("twitter_identities", 123)
-    assert_equal "bar", node.attributes["screen_name"]
+    assert_equal "bar", node["screen_name"]
 
     Graph.twitter_identity(123)
     node = Neo4j::Node.find("twitter_identities", 123)
-    assert_equal "bar", node.attributes["screen_name"]
+    assert_equal "bar", node["screen_name"]
   end
   
   # def test_register_tweet_with_sender_name
@@ -163,7 +163,7 @@ CYPHER
   #     :sender_name => "sender456"
   # 
   #   n = Neo4j::Node.find("twitter_identities", 456)
-  #   assert_equal "sender456", n.attributes["screen_name"]
+  #   assert_equal "sender456", n["screen_name"]
   # end
   # 
   # def test_register_tweet_with_sender_name_updates_idendity
@@ -173,6 +173,6 @@ CYPHER
   #     :sender_name => "sender456"
   # 
   #   n = Neo4j::Node.find("twitter_identities", 456)
-  #   assert_equal "sender456", n.attributes["screen_name"]
+  #   assert_equal "sender456", n["screen_name"]
   # end
 end

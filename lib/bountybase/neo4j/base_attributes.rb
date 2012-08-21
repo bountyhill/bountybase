@@ -50,6 +50,10 @@ module Bountybase::Neo4j
       update attributes.update(updates)
     end
     
+    def [](name)
+      attributes[name.to_s]
+    end
+    
     # replaces the object's attributes with the passed in attributes, with the
     # exception of the readonly attributes, and saves the node.
     def update(updates)
