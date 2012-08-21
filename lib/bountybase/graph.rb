@@ -180,8 +180,8 @@ module Bountybase::Graph
     expect! uid => Integer, screen_name => [String, nil]
 
     if node = Neo4j::Node.find("twitter_identities", uid)
-      if screen_name && node.attributes["screen_name"] != screen_name
-        node.update_attributes "screen_name" => screen_name
+      if screen_name && node["screen_name"] != screen_name
+        node["screen_name"] = screen_name
       end
       node
     else
