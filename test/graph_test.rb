@@ -11,8 +11,8 @@ class GraphTest < Test::Unit::TestCase
   end
   
   def test_argument_gets_checked
-    assert_raise(ArgumentError) do  Graph.register_tweet     end
-    assert_raise(ArgumentError) do  Graph.register_tweet({}) end
+    assert_raise(ArgumentError) do  Graph::Twitter.register     end
+    assert_raise(ArgumentError) do  Graph::Twitter.register({}) end
   end
 
   TWEET_DEFAULTS = {
@@ -22,7 +22,7 @@ class GraphTest < Test::Unit::TestCase
   }
 
   def register_tweet(options = {})
-    Graph.register_tweet TWEET_DEFAULTS.merge(options)
+    Graph::Twitter.register TWEET_DEFAULTS.merge(options)
   end
   
   def test_register_tweet
@@ -132,7 +132,7 @@ CYPHER
   end
 
   def test_twitter_names
-    node1 = Graph.twitter_identity(123, "foo")
+    node1 = Graph::Twitter.identity(123, "foo")
     node2 = Neo4j::Node.find("twitter_identities", 123)
     assert_equal node1, node2
     assert_equal "twitter_identities", node2["type"]
@@ -140,19 +140,19 @@ CYPHER
   end
 
   def test_twitter_name_updates
-    Graph.twitter_identity(123)
+    Graph::Twitter.identity(123)
     node = Neo4j::Node.find("twitter_identities", 123)
     assert_equal nil, node["screen_name"]
 
-    Graph.twitter_identity(123, "foo")
+    Graph::Twitter.identity(123, "foo")
     node = Neo4j::Node.find("twitter_identities", 123)
     assert_equal "foo", node["screen_name"]
 
-    Graph.twitter_identity(123, "bar")
+    Graph::Twitter.identity(123, "bar")
     node = Neo4j::Node.find("twitter_identities", 123)
     assert_equal "bar", node["screen_name"]
 
-    Graph.twitter_identity(123)
+    Graph::Twitter.identity(123)
     node = Neo4j::Node.find("twitter_identities", 123)
     assert_equal "bar", node["screen_name"]
   end
