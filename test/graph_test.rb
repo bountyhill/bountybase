@@ -6,27 +6,49 @@ class GraphTest < Test::Unit::TestCase
   Graph = Bountybase::Graph
   Neo4j = Bountybase::Neo4j
 
-
   def setup
     Neo4j.purge!
   end
   
-  def test_dummy
-    assert_raise(ArgumentError) do  
-      Graph.register_tweet 
-    end
+  def test_argument_gets_checked
+    assert_raise(ArgumentError) do  Graph.register_tweet     end
+    assert_raise(ArgumentError) do  Graph.register_tweet({}) end
   end
+
+  TWEET_DEFAULTS = {
+    :quest_url => "http://bountyhill.local/quest/23",
+    :text => "My first #bountytweet",                   # The tweet text
+    :lang => "en"                                       # The tweet language
+  }
+
+  def register_tweet(options = {})
+    Graph.register_tweet TWEET_DEFAULTS.merge(options)
+  end
+  
+  # def test_register_tweet_with_sender_name
+  #   register_tweet :tweet_id => 1,                  # The id of the tweet 
+  #     :sender_id => 456,                                  # The twitter user id of the user sent this tweet 
+  #     :sender_name => "sender456"
+  # 
+  #   n = Neo4j::Node.find("twitter_identities", 456)
+  #   assert_equal "sender456", n.attributes["screen_name"]
+  # end
+  # 
+  # def test_register_tweet_with_sender_name_updates_idendity
+  #   # Register the initial tweet.
+  #   register_tweet :tweet_id => 1,                  # The id of the tweet 
+  #     :sender_id => 456,                                  # The twitter user id of the user sent this tweet 
+  #     :sender_name => "sender456"
+  # 
+  #   n = Neo4j::Node.find("twitter_identities", 456)
+  #   assert_equal "sender456", n.attributes["screen_name"]
+  # end
   
   def test_register_tweet
     freeze_time(123457)
-
+    
     # Register the initial tweet.
-    Graph.register_tweet :tweet_id => 1,                  # The id of the tweet 
-      :sender_id => 456,                                  # The twitter user id of the user sent this tweet 
-      :quest_url => "http://bountyhill.local/quest/23",
-      # :receiver_ids => [12, 34, 56],                    # An array of user ids of twitter users, that also receive this tweet.
-      :text => "My first #bountytweet",                   # The tweet text
-      :lang => "en"                                       # The tweet language
+    register_tweet :tweet_id => 1, :sender_id => 456
   
     # This creates 3 nodes:
     # the node for the quest with id 23
@@ -76,22 +98,13 @@ CYPHER
     # Register two tweets. 
     logger.benchmark :warn, "register 2 tweets", :min => 0 do
       # Register the initial tweet.
-      Graph.register_tweet :tweet_id => 1,                  # The id of the tweet 
-        :sender_id => 456,                                  # The twitter user id of the user sent this tweet 
-        :quest_url => "http://bountyhill.local/quest/23",
-        # :receiver_ids => [12, 34, 56],                      # An array of user ids of twitter users, that also receive this tweet.
-        :text => "My first #bountytweet",                   # The tweet text
-        :lang => "en"                                       # The tweet language
+      register_tweet :tweet_id => 1, :sender_id => 456
 
       #
       # The next tweet is a retweet of the initial tweet.
-      Graph.register_tweet :tweet_id => 123,                # The id of the tweet 
+      register_tweet :tweet_id => 123,                # The id of the tweet 
         :sender_id => 789,                                  # The twitter user id of the user sent this tweet 
-        :source_id => 456,                                  # The twitter user id of the user from where the sender knows about this bounty.
-        :quest_url => "http://bountyhill.local/quest/23",
-        # :receiver_ids => [12, 34, 56],                      # An array of user ids of twitter users, that also receive this tweet.
-        :text => "My first #bountytweet",                   # The tweet text
-        :lang => "en"                                       # The tweet language
+        :source_id => 456                                   # The twitter user id of the user from where the sender knows about this bounty.
     end
     
     logger.benchmark :warn, "querying 2 tweet results", :min => 0 do
