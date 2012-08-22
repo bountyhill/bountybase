@@ -5,25 +5,36 @@ require_relative "neo4j/neography_curb"
 module Bountybase::Neo4j
   extend self
 
+  # Builds a Neo4j object from the value passed in. The value can be anything either
+  # returned from a Cypher query or from any of the neography functions.
+  #
+  # Note that a string denotes just the string itself if this is a query result, 
+  # or the URL of a Neo4j object otherwise.
   def build(neography)
     expect! neography => [String, Hash]
 
     case neography
-    when String then build_from_url(neography) 
-    when Hash   then 
-      if neography.key?("self")
-        build_from_url(neography["self"])
-      elsif neography.key?("start")
-        Path.new neography 
-      else
-        expect! neography => :fail
-      end
+    when String   then build_from_url(neography) 
+    when Hash     then build_from_hash(neography)
+    else          neography
     end
   end
   
   private
   
-  def build_from_url(url)
+  def build_from_hash(hash) #:nodoc:
+    expect! {
+      hash["self"] || hash["start"]
+    }
+    
+    if url = hash["self"]
+      return build_from_url(url)
+    end
+
+    Path.new hash 
+  end
+  
+  def build_from_url(url) #:nodoc:
     # the URL, as reported from Neo4j, describes the type of an object.
     # URL examples are:
     # - http://localhost:7474/db/data/node/1426  
@@ -53,10 +64,20 @@ module Bountybase::Neo4j
     data, columns = *raw_query(query)
     
     data.map do |row|
-      row = row.map do |item| build item end
+      row = row.map { |item| 
+        # If the row entry is a String, it is the result already, and not, as 
+        # Neo4j.build would expect, the URL of a Neo4j node or relationship. The
+        # same is true for all non-hashes.
+        next item unless item.is_a?(Hash)
+        build(item)
+      }
       row = row.first if row.length == 1
       row
     end
+  end
+  
+  def ask(query)
+    (self.query(query) || []).first
   end
 end
 
