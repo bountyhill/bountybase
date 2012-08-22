@@ -62,17 +62,19 @@ class BountybaseTest < Test::Unit::TestCase
   end
   
   
-  def test_resolve_quest_url
+  def test_quest_id
+    assert_equal 12, Bountybase::Graph.quest_id(12)
+
     #
     # These URLs are bountyhill URLs. They are not resolved, but just tested.
-    assert_equal 23, Bountybase.resolve_quest_url("http://bountyhill.local/quest/23")
-    assert_equal 42, Bountybase.resolve_quest_url("https://www.bountyhill.local/quest/42")
-    assert_equal nil, Bountybase.resolve_quest_url("https://www.bountyhill.local/account/12")
+    assert_equal 23, Bountybase::Graph.quest_id("http://bountyhill.local/quest/23")
+    assert_equal 42, Bountybase::Graph.quest_id("https://www.bountyhill.local/quest/42")
+    assert_equal nil, Bountybase::Graph.quest_id("https://www.bountyhill.local/account/12")
     
     Bountybase::HTTP.expects(:resolve).with("http://t.co/ZczESpRE").returns("http://audiohackday.org/")
-    assert_equal nil, Bountybase.resolve_quest_url("http://t.co/ZczESpRE")
+    assert_equal nil, Bountybase::Graph.quest_id("http://t.co/ZczESpRE")
 
     Bountybase::HTTP.expects(:resolve).with("http://t.co/jkgha786jhg").returns("https://www.bountyhill.local/account/12")
-    assert_equal nil, Bountybase.resolve_quest_url("http://t.co/jkgha786jhg")
+    assert_equal nil, Bountybase::Graph.quest_id("http://t.co/jkgha786jhg")
   end
 end

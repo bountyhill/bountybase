@@ -16,21 +16,6 @@ module Bountybase
   def bountytweet?(tweet)
     true
   end
-
-  # resolves a bounty url. 
-  # Returns the id of a quest if the url matches it.
-  def resolve_quest_url(url, allow_resolve = true)
-    expect! url => String
-    
-    case url
-    when /^(?:http|https):\/\/[a-z.]*\bbountyhill\.(?:com|local)\/quest\/(\d+)\b/
-      Integer($1)
-    when /^(?:http|https):\/\/[a-z.]*\bbountyhill\.(?:com|local)\//
-      nil
-    else
-      resolve_quest_url Bountybase::HTTP.resolve(url), false if allow_resolve
-    end
-  end
 end
 
 require_relative "bountybase/attributes"

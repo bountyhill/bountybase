@@ -99,8 +99,33 @@ module Bountybase::Graph
   # Returns the quest node for the quest with a given url. If the url does not 
   # resolve to a quest, return nil.
   def quest(url)
-    quest_id = Bountybase.resolve_quest_url(url)
+    quest_id = self.quest_id(url)
     Neo4j::Node.create("quests", quest_id) if quest_id
+  end
+
+  # resolves the URL of a quest into the quest's id. If the URL is a number
+  # it is assumed to be the quest's id. If it is a bountyhill bounty URL,
+  # the quest ID is taken from the URL directly; in any other case the method
+  # tries to resolve the URL into a bountyhill quest URL.
+  def quest_id(url, allow_resolve = true)
+    expect! url => [String, Integer]
+    
+    case url
+    when Integer 
+      url
+    when /^(?:http|https):\/\/[a-z.]*\bbountyhill\.(?:com|local)\/quest\/(\d+)\b/
+      Integer($1)
+    when /^(?:http|https):\/\/[a-z.]*\bbountyhill\.(?:com|local)\//
+      nil
+    else
+      quest_id Bountybase::HTTP.resolve(url), false if allow_resolve
+    end
+  end
+
+  # returns the quest ID for that URL, but raises an error if there is none.
+  def quest_id!(url)
+    self.quest_id(url) ||
+      raise("This is not a quest ID: #{url.inspect}")
   end
   
 end
