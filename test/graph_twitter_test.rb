@@ -3,9 +3,6 @@ require_relative 'test_helper'
 class GraphTest < Test::Unit::TestCase
   include Bountybase::TestCase
 
-  Graph = Bountybase::Graph
-  Neo4j = Bountybase::Neo4j
-
   def setup
     Neo4j.purge!
   end
@@ -13,16 +10,6 @@ class GraphTest < Test::Unit::TestCase
   def test_argument_gets_checked
     assert_raise(ArgumentError) do  Graph::Twitter.register     end
     assert_raise(ArgumentError) do  Graph::Twitter.register({}) end
-  end
-
-  TWEET_DEFAULTS = {
-    :quest_url => "http://bountyhill.local/quest/23",
-    :text => "My first #bountytweet",                   # The tweet text
-    :lang => "en"                                       # The tweet language
-  }
-
-  def register_tweet(options = {})
-    Graph::Twitter.register TWEET_DEFAULTS.merge(options)
   end
   
   def test_register_tweet
@@ -156,23 +143,4 @@ CYPHER
     node = Neo4j::Node.find("twitter_identities", 123)
     assert_equal "bar", node["screen_name"]
   end
-  
-  # def test_register_tweet_with_sender_name
-  #   register_tweet :tweet_id => 1,                  # The id of the tweet 
-  #     :sender_id => 456,                                  # The twitter user id of the user sent this tweet 
-  #     :sender_name => "sender456"
-  # 
-  #   n = Neo4j::Node.find("twitter_identities", 456)
-  #   assert_equal "sender456", n["screen_name"]
-  # end
-  # 
-  # def test_register_tweet_with_sender_name_updates_idendity
-  #   # Register the initial tweet.
-  #   register_tweet :tweet_id => 1,                  # The id of the tweet 
-  #     :sender_id => 456,                                  # The twitter user id of the user sent this tweet 
-  #     :sender_name => "sender456"
-  # 
-  #   n = Neo4j::Node.find("twitter_identities", 456)
-  #   assert_equal "sender456", n["screen_name"]
-  # end
 end

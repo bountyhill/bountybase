@@ -52,4 +52,19 @@ module Bountybase::TestCase
   def performance_tests?
     !ENV["PERFORMANCE"].nil?
   end
+
+  # -- helper to register tweets ----------------------------------------------
+
+  Graph = Bountybase::Graph
+  Neo4j = Bountybase::Neo4j
+  
+  TWEET_DEFAULTS = {
+    :quest_url => "http://bountyhill.local/quest/23",
+    :text => "My first #bountytweet",                   # The tweet text
+    :lang => "en"                                       # The tweet language
+  }
+
+  def register_tweet(options = {})
+    Graph::Twitter.register TWEET_DEFAULTS.merge(options)
+  end
 end
