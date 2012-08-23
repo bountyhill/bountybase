@@ -139,9 +139,6 @@ CYPHER
     assert_equal([Neo4j::Path], results.map(&:class))
 
     path = results.first
-    insp = path.inspect
-
-    path.fetch
 
     assert_equal(foo1, path.start)
     assert_equal(bar2, path.end)

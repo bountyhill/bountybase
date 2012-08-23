@@ -47,11 +47,11 @@ module Bountybase::Neo4j
       expect! nodes.length => relationships.length + 1
 
       relationships.each_with_index do |relationship, idx|
-        parts << nodes[idx].insp
-        parts << relationship.insp
+        parts << nodes[idx]
+        parts << relationship
       end
         
-      parts << nodes.last.insp
+      parts << nodes.last
       "<#{parts.join(" ")}>"
     end
   end

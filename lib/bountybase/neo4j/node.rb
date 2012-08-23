@@ -4,7 +4,7 @@ module Bountybase::Neo4j
       connection.delete_node!(url)
     end
 
-    def insp
+    def to_s
       if attributes_loaded?
         "#{type}/#{uid}"
       else

@@ -27,7 +27,7 @@ module Bountybase::Neo4j
       super
     end
 
-    def insp #:nodoc:
+    def to_s #:nodoc:
       if attributes_loaded?
         "-[:#{type}]->"
       else
@@ -43,7 +43,7 @@ module Bountybase::Neo4j
         "#{key}: #{value.inspect}" 
       end.compact
 
-      r = "#{start_node.insp} -[:#{type}]-> #{end_node.insp}"
+      r = "#{start_node} -[:#{type}]-> #{end_node}"
       r += " {#{attrs.sort.join(", ")}}" unless attrs.empty?
       "<#{r}>"
     end

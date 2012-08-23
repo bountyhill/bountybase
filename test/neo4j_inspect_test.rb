@@ -14,11 +14,11 @@ class Neo4jInspectTest < Test::Unit::TestCase
     
     node = Neo4j::Node.find("foo", 1)
     assert node.inspect =~ /^<node:\d+>$/
-    assert node.insp =~ /^node:\d+$/
+    assert node.to_s =~ /^node:\d+$/
 
     node.fetch
     assert_equal "<foo/1>", node.inspect
-    assert_equal "foo/1", node.insp
+    assert_equal "foo/1", node.to_s
   end
 
   def test_node_w_attributes
@@ -26,15 +26,15 @@ class Neo4jInspectTest < Test::Unit::TestCase
 
     node = Neo4j::Node.find("foo", 1)
 
-    # neither insp nor inspect do load attributes...
+    # neither to_s nor inspect do load attributes...
     assert node.inspect =~ /^<node:\d+>$/
-    assert node.insp =~ /^node:\d+$/
+    assert node.to_s =~ /^node:\d+$/
     assert !node.attributes_loaded?
 
     # ...but make use once they are loaded.
     node.fetch
     assert_equal "<foo/1 {bar: \"baz\"}>", node.inspect
-    assert_equal "foo/1", node.insp
+    assert_equal "foo/1", node.to_s
   end
 
   def test_relationship
@@ -44,15 +44,15 @@ class Neo4jInspectTest < Test::Unit::TestCase
     
     relationship = Neo4j::Relationship.all.first
 
-    # neither insp nor inspect do load attributes...
+    # neither to_s nor inspect do load attributes...
     assert !relationship.attributes_loaded?
     assert relationship.inspect =~ /^<rel:\d+>$/
-    assert relationship.insp =~ /^rel:\d+$/
+    assert relationship.to_s =~ /^rel:\d+$/
     assert !relationship.attributes_loaded?
 
     # ...but make use once they are loaded.
     relationship.fetch
     assert_equal "<foo/1 -[:connects]-> foo/2>", relationship.inspect
-    assert_equal "-[:connects]->", relationship.insp
+    assert_equal "-[:connects]->", relationship.to_s
   end
 end
