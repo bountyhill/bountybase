@@ -28,10 +28,10 @@ module Bountybase::Neo4j
     }
     
     if url = hash["self"]
-      return build_from_url(url)
+      build_from_url(url)
+    else
+      Path.new hash
     end
-
-    Path.new hash 
   end
   
   def build_from_url(url) #:nodoc:
@@ -69,7 +69,7 @@ module Bountybase::Neo4j
         # Neo4j.build would expect, the URL of a Neo4j node or relationship. The
         # same is true for all non-hashes.
         next item unless item.is_a?(Hash)
-        build(item)
+        build_from_hash(item)
       }
       row = row.first if row.length == 1
       row

@@ -4,15 +4,23 @@ module Bountybase::Neo4j
       connection.delete_node!(url)
     end
 
+    def insp
+      if attributes_loaded?
+        "#{type}/#{uid}"
+      else
+        "node:#{neo_id}"
+      end
+    end
+    
     def inspect #:nodoc:
-      return "<node##{neo_id}>" unless attributes_loaded?
+      return "<node:#{neo_id}>" unless attributes_loaded?
       
       attrs = self.attributes.map do |key, value| 
         next if %w(type uid created_at updated_at).include?(key)
         "#{key}: #{value.inspect}" 
       end.compact
 
-      r = "#{type}##{uid}"
+      r = "#{type}/#{uid}"
       r += " {#{attrs.sort.join(", ")}}" unless attrs.empty?
       "<#{r}>"
     end

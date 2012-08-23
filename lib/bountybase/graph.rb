@@ -128,4 +128,42 @@ module Bountybase::Graph
       raise("This is not a quest ID: #{url.inspect}")
   end
   
+  # returns the number of identities that have seen a specific quest.
+  def propagation(quest)
+    query = <<-CYPHER
+      START src=node:quests(uid='#{quest_id!(quest)}')
+      MATCH src-[:known_by]->target 
+      RETURN count(*) 
+    CYPHER
+    
+    
+    Neo4j.ask(query) || 0
+  end
+  
+  # returns the bounty chain from a quest to a (successful) vendor.
+  #
+  # Example:
+  #   Graph.chain 12, 2345
+  #
+  # Returns the nodes of the chain from quests/12 to twitter_identities/2345; 
+  # including the ending node (twitter_identities/2345), but omitting the
+  # starting node (quests/12). 
+  # 
+  def chain(quest, vendor_id)
+    quest_id = self.quest_id!(quest)
+    expect! quest => Integer
+    
+    query = <<-CYPHER
+      START quest=node:quests(uid='#{quest_id}'), target=node:twitter_identities(uid='#{vendor_id}')
+      MATCH p = quest-[:forwarded_#{quest_id}*]->target 
+      RETURN p
+    CYPHER
+    
+    path = Neo4j.ask query
+    return unless path
+
+    # The first node in the returned path is the quest itself. All other nodes form 
+    # the chain.
+    path.nodes[1..-1]
+  end
 end

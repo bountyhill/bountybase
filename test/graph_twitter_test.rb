@@ -1,15 +1,10 @@
 require_relative 'test_helper'
 
-class GraphTest < Test::Unit::TestCase
+class GraphTwitterTest < Test::Unit::TestCase
   include Bountybase::TestCase
 
   def setup
     Neo4j.purge!
-  end
-  
-  def test_argument_gets_checked
-    assert_raise(ArgumentError) do  Graph::Twitter.register     end
-    assert_raise(ArgumentError) do  Graph::Twitter.register({}) end
   end
   
   def test_register_tweet

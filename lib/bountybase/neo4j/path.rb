@@ -39,6 +39,7 @@ module Bountybase::Neo4j
     def fetch
       nodes.each(&:attributes)
       relationships.each(&:attributes)
+      self
     end
     
     def inspect
@@ -46,11 +47,11 @@ module Bountybase::Neo4j
       expect! nodes.length => relationships.length + 1
 
       relationships.each_with_index do |relationship, idx|
-        parts << nodes[idx].inspect
-        parts << "--[#{relationship.inspect(:without_rid)}]-->"
+        parts << nodes[idx].insp
+        parts << relationship.insp
       end
         
-      parts << nodes.last.inspect
+      parts << nodes.last.insp
       "<#{parts.join(" ")}>"
     end
   end

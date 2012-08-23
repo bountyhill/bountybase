@@ -46,65 +46,78 @@ module Bountybase::Graph::Twitter
       :receiver_names => [Array, nil],  # An array of screen names of twitter users, that also receive this tweet.
       :text         => String,          # The tweet text
       :lang         => String           # The tweet language
-    } 
+    }
 
     # Is this really a quest?
     quest = Graph.quest options[:quest_url]
     return if quest.nil?
     
-    # Did we register this tweet already? If not, just keep it.
+    # We don't have to register this tweet twice...
     return if Neo4j::Node.find("tweets", options[:tweet_id])
     Neo4j::Node.create("tweets", options[:tweet_id], options)
 
-    # We have the id of the sender of the tweet. Get a node for it. Note: As we don't supply any
-    # attributes, this would just return any existing node instead of recreating it.
     sender = identity(options[:sender_id], options[:sender_name])
 
-    # The source has seen the quest: connect it if there is none yet.
-    tweet_connection quest, sender
+    # If the sender is not yet connected then we must connect it, preferably via an
+    # extra source node. If there is no source, then the sender probably knows the
+    # quest directly from the website, and is therefore entitled to a direct
+    # connection to the quest.
+    unless connected?(quest, sender)
+      Neo4j.connect "known_by", quest, sender, :created_at => Time.now.to_i
 
-    # TODO: How does the sender know the quest? If the sender_id is not yet set,
-    # then the sender probably knows it from one of its followees. find_sender_id
-    # picks the sender_id from the array of followees of the source_id that are
-    # known to have seen the quest, and then the followee that posted (or just
-    # received) the quest first.
-    if options[:source_id]
-      source = identity(options[:source_id], options[:source_name]) 
-      tweet_connection quest, source
-    else
-      source = find_source_by_quest_and_sender quest, sender
-    end
+      source = tweet_source(quest, options)
+      Neo4j.connect "forwarded_#{quest.uid}", (source || quest) => sender
+    end 
 
-    Neo4j.connect "forwarded_#{quest.uid}", (source || quest) => sender
-  
-    # If there are a number of additional receivers (i.e. accounts that have been mentioned
-    # in the tweet, of which we assume that they will receive this tweet) we connect them
-    # from the sender.
-    receiver_ids, receiver_names = *options.values_at(:receiver_ids, :receiver_names)
-    if receiver_ids
-      receivers = receiver_ids.zip(receiver_names || []).map { |receiver_id, receiver_name| 
-        identity(receiver_id, receiver_name) 
-      }
-      tweet_connection quest, sender, *receivers
+    # connect additional receivers
+    receiver_ids = options[:receiver_ids] || []
+    receiver_names = options[:receiver_names] || []
+
+    receiver_ids.each_with_index do |receiver_id, idx|
+      receiver_name = receiver_names[idx] 
+      receiver = identity(receiver_id, receiver_name) 
+      next if connected?(quest, receiver)
+      
+      Neo4j.connect "known_by", quest, receiver, :created_at => Time.now.to_i
+      Neo4j.connect "forwarded_#{quest.uid}", quest, sender
     end
   end
   
   private
-  
-  def find_source_by_quest_and_sender(quest, sender)
-    nil
+
+  def connected?(quest, receiver)
+    expect! quest => Neo4j::Node, receiver => Neo4j::Node
+    
+    Neo4j.ask <<-CYPHER
+      START src=node:quests(uid='#{quest.uid}'), target=node:twitter_identities(uid='#{receiver.uid}')
+      MATCH src-[relationship:known_by]->target 
+      RETURN relationship
+    CYPHER
   end
   
-  def tweet_connection(quest, source, *receivers)
-    expect! quest => Neo4j::Node, quest.type => "quests", source => Neo4j::Node, receivers => Array
-
-    receivers.each { |receiver| expect! receiver => Neo4j::Node }
-
-    known_by     = [ quest, source ]
-    known_by    += receivers.map { |receiver| [ quest, receiver ] }.flatten
-    Neo4j.connect "known_by", *known_by
-
-    forwarded_to = receivers.map { |receiver| [ source, receiver ] }.flatten
-    Neo4j.connect "forwarded_#{quest.uid}", *forwarded_to
+  # How does the sender know the quest? If the source_id is not set, then the sender
+  # probably knows it from one of its followees. This methods picks the all user ids
+  # from the followees of source_id that are known to already have seen the quest. If
+  # there is more than one of such followees the followee that posted (or just received)
+  # the quest first - by evaluating the created_at attribute of the :known_by relationship.
+  #
+  # This method also guarantees that the source is properly connected to the quest by
+  # connecting if needed. This can only occur if the source is set via the :source_id
+  # option.
+  def tweet_source(quest, options)
+    if options[:source_id]
+      source = identity(options[:source_id], options[:source_name]) 
+      unless connected?(quest, source)
+        Neo4j.connect "known_by", quest, source, :created_at => Time.now.to_i
+        Neo4j.connect "forwarded_#{quest.uid}", quest => source
+      end
+      source
+    else
+      find_source_by_quest_and_sender quest, options
+    end
+  end
+  
+  def find_source_by_quest_and_sender(quest, options)
+    nil
   end
 end

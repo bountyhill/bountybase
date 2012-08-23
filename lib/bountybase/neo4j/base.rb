@@ -40,5 +40,12 @@ module Bountybase::Neo4j
     def neography  #:nodoc:
       @neography ||= load_neography
     end
+    
+    public
+    
+    def fetch
+      neography
+      self
+    end
   end
 end

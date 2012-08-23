@@ -143,8 +143,6 @@ CYPHER
 
     path.fetch
 
-    assert path.inspect.length > insp.length
-
     assert_equal(foo1, path.start)
     assert_equal(bar2, path.end)
     assert_equal([foo1, bar1, bar2], path.nodes)
