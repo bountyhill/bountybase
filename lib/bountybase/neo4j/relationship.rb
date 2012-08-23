@@ -28,13 +28,11 @@ module Bountybase::Neo4j
     end
 
     def insp #:nodoc:
-      r = if attributes_loaded?
-        type
+      if attributes_loaded?
+        "-[:#{type}]->"
       else
         "rel:#{neo_id}"
       end
-
-      "-[:#{type}]->"
     end
     
     def inspect #:nodoc:
