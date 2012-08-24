@@ -2,15 +2,60 @@ require "ostruct"
 require "yaml"
 
 module Bountybase
-  # returns the configuration object. This object is an OpenStruct object (i.e. you
-  # read it via, e.g. `Bountybase.config.resque`)
+  # returns the global Bountybase::Config object, which contains configuration
+  # settings from the <b>config.yml</b> configuration file. 
+  #
+  #     Bountybase.config.neo4j     # => nil
+  #     Bountybase.config.neo4j!    # => raises exception.
+  # 
   def config
     @config ||= Config.new Config.read
   end
   
+  # A Bountybase configuration returns runtime configuration settings.
+  # To access a configuration setting you use the global Bountybase 
+  # configuration object as returned by <tt>Bountybase.config</tt>; 
+  # e.g.
+  #
+  #    Bountybase.config.neo4j
+  #
+  # Configuration settings for all environment values are stored in
+  # the <b>config.yml</b> file. This file is part of the bountybase
+  # repository; this makes sure that all instances of a multi-instance
+  # application share the same settings. This is an example excerpt
+  # of a <b>config.yml</b> file, which defines the
+  # <tt>Bountybase.config.syslog</tt> setting.
+  #
+  #   syslog:
+  #     default:    logs.papertrailapp.com:1234
+  #     deployment: logs.papertrailapp.com:61566
+  #     production: logs.papertrailapp.com:11905
+  #     staging:    logs.papertrailapp.com:22076
+  #
+  # This sets <tt>Bountybase.config.syslog</tt> to <em>"logs.papertrailapp.com:11905"</em> 
+  # in the production environment, and to <em>"logs.papertrailapp.com:1234"</em>
+  # in the development (or any other unspecified) environment setting.
+  #
+  # If a configuration value is the same for all environments you 
+  # need to specify this value only once, e.g.
+  #
+  #   syslog: logs.papertrailapp.com:1234
+  #
+  # The configuration object supports a special bang! syntax, which raises
+  # a Config::Missing exception if a configuration setting is missing:
+  #
+  #     # assuming there is no neo4j configuration setting
+  #     Bountybase.config.neo4j     # => nil
+  #     Bountybase.config.neo4j!    # => raises exception.
+  #
   class Config < OpenStruct
+
+    # RuntimeError to raise on missing settings.
     class Missing < RuntimeError; end
 
+    # Fetches the configuration setting for the _sym_ value. 
+    # Raises a Missing exception if there is no setting and sym
+    # ends in a +"!"+ character.  
     def method_missing(sym, *args, &block)
       return super unless args.empty? && !block_given?
       
@@ -21,19 +66,12 @@ module Bountybase
       end
     end
 
-    # read the yaml configuration
-    def self.yaml
-      # Or read from *this* file. 
-      # File.read(__FILE__).split(/__END__\s*/).last
-
-      config_file = File.join File.dirname(__FILE__), "..", "..", "config.yml"
-      File.read(config_file)
-    end
-
     # returns the configuration hash including settings for *all* environments 
-    def self.read
-      config = {}
+    def self.read #:nodoc:
+      config_file = File.join File.dirname(__FILE__), "..", "..", "config.yml"
+      yaml = File.read(config_file)
 
+      config = {}
       YAML.load(yaml).each do |key, value|
         next unless value = resolve_by_environment(value)
         config[key] = value
@@ -41,7 +79,9 @@ module Bountybase
       config
     end
 
-    def self.resolve_by_environment(setting)
+    # return the value for the current environment from the passed in
+    # setting. If the setting from the 
+    def self.resolve_by_environment(setting) #:nodoc:
       return setting unless setting.is_a?(Hash)
 
       if setting.key?(Bountybase.environment)
