@@ -27,6 +27,7 @@ module Bountybase::Attributes
   
   Attributes = ::Bountybase::Attributes
   
+  # Exception to raise on missing settings.
   class Missing < RuntimeError; end
 
   # Return the application's root directory, as read from RAILS_ROOT or RACK_ROOT.

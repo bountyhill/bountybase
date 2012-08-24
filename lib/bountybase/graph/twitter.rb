@@ -1,9 +1,12 @@
 #
-# Everything that is in the graph related to Twitter
+# Everything Twitter related for building the bounty graph.
 module Bountybase::Graph::Twitter
   extend self
 
+  # Shortcut for Bountybase::Neo4j
   Neo4j = Bountybase::Neo4j
+
+  # Shortcut for Bountybase::Graph
   Graph = Bountybase::Graph
     
   # Look up identity node, creates and/or updates it if necessary.
@@ -11,8 +14,13 @@ module Bountybase::Graph::Twitter
   # If the node does not exist, it will be created.
   # If the node exists, and screen_name is set, the screen_name attribute will
   # be updated if necessary.
+  #
+  #   Bountybase::Graph::Twitter.identity(12)
+  #   Bountybase::Graph::Twitter.identity(12, "screenname")
+  #
+  # The screen_name should not include the leading "@".
   def identity(uid, screen_name = nil)
-    expect! uid => Integer, screen_name => [String, nil]
+    expect! uid => Integer, screen_name => [/^[^@]/, nil]
 
     if node = Neo4j::Node.find("twitter_identities", uid)
       if screen_name && node["screen_name"] != screen_name
@@ -26,13 +34,21 @@ module Bountybase::Graph::Twitter
   
   # Register a bountytweet. Takes a option hash with these parameters:
   #
-  # - *tweet-id*: the tweet id
-  # - *sender-id*: the identity of the sender (e.g. "twitter://radiospiel"). This is the sender account.
-  # - *source-id*: the identity of the source (e.g. "twitter://radiospiel"). This is the in_reply_to account
-  # - *quest_url*: the URL of the bounty quest
-  # - *receiver_ids*: an optional array of twitter user ids, that also receive this tweet
-  # - *text*: the tweet text
-  # - *lang*: the tweet language
+  # - +:tweet_id+: the tweet id
+  # - +:sender_id+: the identity of the sender (e.g. 1234). 
+  # - +:sender_name+: The screen_name of the sender. (Optional)
+  # - +:source_id+: the identity of the source (e.g. 1234). 
+  #   This is the _in_reply_to_ account, in Twitter lingo. (Optional)
+  # - +:source_name+: The screen_name of the source. (Optional)
+  # - +:quest_url+: the URL of the bounty quest
+  # - +:receiver_ids+: an optional array of twitter user ids, 
+  #   that also receive this tweet. These are users that are
+  #   mentioned in a tweet.
+  # - +:receiver_names+: an optional array of screen_names of 
+  #   the +receiver_ids+ users, in the order of the +receiver_ids+
+  #   setting.
+  # - +:text+: the text of the tweet
+  # - +:lang+: the language of the tweet 
   #
   def register(options = {})
     expect! options => {
@@ -85,7 +101,7 @@ module Bountybase::Graph::Twitter
   
   private
 
-  def connected?(quest, receiver)
+  def connected?(quest, receiver) #:nodoc:
     expect! quest => Neo4j::Node, receiver => Neo4j::Node
     
     Neo4j.ask <<-CYPHER
@@ -104,7 +120,7 @@ module Bountybase::Graph::Twitter
   # This method also guarantees that the source is properly connected to the quest by
   # connecting if needed. This can only occur if the source is set via the :source_id
   # option.
-  def tweet_source(quest, options)
+  def tweet_source(quest, options) #:nodoc:
     if options[:source_id]
       source = identity(options[:source_id], options[:source_name]) 
       unless connected?(quest, source)
@@ -117,7 +133,7 @@ module Bountybase::Graph::Twitter
     end
   end
   
-  def find_source_by_quest_and_sender(quest, options)
+  def find_source_by_quest_and_sender(quest, options) #:nodoc:
     nil
   end
 end
