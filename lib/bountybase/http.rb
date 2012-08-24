@@ -2,11 +2,10 @@ require "net/http"
 require "addressable/uri"
 require "ostruct"
 
-# The HTTP module implements a simple wrapper around Net::HTTP, intended to ease the
-# pain of dealing with HTTP requests.
-#
-# It uses the `addressable` gem for better support for IDN (internationized) domain names.
-# For native IDN support install the "idn" gem.
+# The HTTP module implements a simple wrapper around Net::HTTP, intended to 
+# ease the pain of dealing with HTTP requests. It uses the `addressable` gem
+# to support IDN (internationized) domain names. If the "idn" gem is installed
+# it will use that for faster, native IDN support.
 module Bountybase::HTTP
   extend self
 
@@ -17,7 +16,7 @@ module Bountybase::HTTP
   class Error < RuntimeError
     
     # The response object (of class HTTP::Response).
-    attr :response 
+    attr_reader :response 
 
     def initialize(response) #:nodoc:
       @response = response
@@ -39,16 +38,18 @@ module Bountybase::HTTP
   @@config = OpenStruct.new
   
   # The configuration object. It supports the following entries:
-  # - config.headers: default headers to use when doing HTTP requests. Default: "Ruby HTTP client/1.0"
-  # - config.max_redirections: the number of maximum redirections to follow. Default: 10
+  # - <tt>config.headers</tt>: default headers to use when doing HTTP requests. Default: "Ruby HTTP client/1.0"
+  # - <tt>config.max_redirections</tt>: the number of maximum redirections to follow. Default: 10
   def config
     @@config
   end
   
+  # A default set of headers
   config.headers = {
     "User-Agent" => "Ruby HTTP client/1.0"
   }
   
+  # The default number of max redirections.
   config.max_redirections = 10
 
   # -- return types
@@ -94,34 +95,32 @@ module Bountybase::HTTP
     end
   end
   
-  # -- do requests
+  # -- do requests ----------------------------------------------------
   
-  public
-  
-  # resolve an URL. This tries to follow all URL redirections, until either
-  # an error occurs or a final URL is found.
+  # resolve an URL. This tries to follow all URL redirections, until 
+  # either an error occurs or a final URL is found.
+  #
+  # Returns the final URL (i.e. the URL which does not redirect any 
+  # longer), or nil.
   def resolve(url, headers = {})
-    r = do_request HEAD, url, headers, config.max_redirections, url, HEAD
+    r = do_request Net::HTTP::Head, url, headers, config.max_redirections, url, Net::HTTP::Head
     r.url
   end
 
   # runs a get request and return a HTTP::Response object.
   def get(url, headers = {})
-    do_request GET, url, headers, config.max_redirections, url
+    do_request Net::HTTP::Get, url, headers, config.max_redirections, url
   end
   
-  # runs a get request and return a validated HTTP::Response object. This 
-  # raises an exception if the HTTP request did not result in a 2xx status.
+  # runs a get request and return a validated HTTP::Response object. It 
+  # raises an exception if the HTTP request does not result in a *2xx* status.
   def get!(url, headers = {})
     get(url, headers).validate!
   end
   
   private
   
-  GET = Net::HTTP::Get      # :nodoc:
-  HEAD = Net::HTTP::Head    # :nodoc:
-  
-  def do_request(verb, uri, headers, max_redirections, original_url, redirection_verb = GET) #:nodoc:
+  def do_request(verb, uri, headers, max_redirections, original_url, redirection_verb = Net::HTTP::Get) #:nodoc:
     # merge default headers
     headers = config.headers.merge(headers)
 
