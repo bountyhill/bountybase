@@ -40,6 +40,10 @@ module Bountybase::HTTP
   # The configuration object. It supports the following entries:
   # - <tt>config.headers</tt>: default headers to use when doing HTTP requests. Default: "Ruby HTTP client/1.0"
   # - <tt>config.max_redirections</tt>: the number of maximum redirections to follow. Default: 10
+  #
+  # To adjust the configuration change these objects, like so:
+  #
+  #   HTTP.config.headers =  { "User-Agent" => "My awesome thingy/1.0" }
   def config
     @@config
   end
@@ -57,7 +61,15 @@ module Bountybase::HTTP
   # The HTTP::Response class works like a string, but contains extra "attributes"
   # status and headers, which return the response status and response headers.
   class Response < String
-    attr :url, :original_url, :response
+
+    # The URL of the final request.
+    attr_reader :url
+
+    # The URL of the original request.
+    attr_reader :original_url
+    
+    # The response object.
+    attr_reader :response
     
     def initialize(response, url, original_url) #:nodoc:
       @response, @url, @original_url = response, url, original_url
