@@ -111,15 +111,7 @@ module Bountybase::Graph::Twitter
     CYPHER
   end
   
-  # How does the sender know the quest? If the source_id is not set, then the sender
-  # probably knows it from one of its followees. This methods picks the all user ids
-  # from the followees of source_id that are known to already have seen the quest. If
-  # there is more than one of such followees the followee that posted (or just received)
-  # the quest first - by evaluating the created_at attribute of the :known_by relationship.
-  #
-  # This method also guarantees that the source is properly connected to the quest by
-  # connecting if needed. This can only occur if the source is set via the :source_id
-  # option.
+  # return the tweet source.
   def tweet_source(quest, options) #:nodoc:
     if options[:source_id]
       source = identity(options[:source_id], options[:source_name]) 
@@ -127,13 +119,24 @@ module Bountybase::Graph::Twitter
         Neo4j.connect "known_by", quest, source, :created_at => Time.now.to_i
         Neo4j.connect "forwarded_#{quest.uid}", quest => source
       end
-      source
     else
-      find_source_by_quest_and_sender quest, options
+      source = find_source_for_tweet quest, options
+      expect! source => [nil, Bountybase::Neo4j::Node]
     end
+    source
   end
   
-  def find_source_by_quest_and_sender(quest, options) #:nodoc:
+  # How does the sender know the quest? If the source_id is not set, then 
+  # the sender probably knows it from one of its followees. This methods
+  # picks the all user ids from the followees of source_id that are known
+  # to already have seen the quest. If there is more than one of such
+  # followees the followee that posted (or just received)  the quest first - 
+  # by evaluating the created_at attribute of the :known_by relationship.
+  #
+  # This method also guarantees that the source is properly connected to
+  # the quest by connecting if needed. This can only occur if the source
+  # is set via the :source_id option.
+  def find_source_for_tweet(quest, options) #:nodoc:
     nil
   end
 end

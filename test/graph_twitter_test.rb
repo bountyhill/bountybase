@@ -58,48 +58,46 @@ CYPHER
   end
 
   def test_register_two_tweets
-    # Register two tweets. 
+    # Register two tweets. This generates 5 paths
+    #
+    # <<quests#23> --[<known_by>]--> <twitter_identities#456>>,
+    # <<quests#23> --[<forwarded_23>]--> <twitter_identities#456>>,
+    # <<quests#23> --[<known_by>]--> <twitter_identities#456> --[<forwarded_23>]--> <twitter_identities#789>>,
+    # <<quests#23> --[<known_by>]--> <twitter_identities#789>>,
+    # <<quests#23> --[<forwarded_23>]--> <twitter_identities#456> --[<forwarded_23>]--> <twitter_identities#789>>]
     logger.benchmark :warn, "register 2 tweets", :min => 0 do
       # Register the initial tweet.
       register_tweet :tweet_id => 1, :sender_id => 456
 
       #
       # The next tweet is a retweet of the initial tweet.
-      register_tweet :tweet_id => 123,                # The id of the tweet 
-        :sender_id => 789,                                  # The twitter user id of the user sent this tweet 
-        :source_id => 456                                   # The twitter user id of the user from where the sender knows about this bounty.
+      register_tweet :tweet_id => 123, # The id of the tweet 
+        :sender_id => 789,             # The twitter user id of the user sent this tweet 
+        :source_id => 456              # The twitter user id of the user from where the sender knows about this bounty.
     end
     
     logger.benchmark :warn, "querying 2 tweet results", :min => 0 do
-      #
-      # FYI: This generates 5 paths; our unit tests below are filtered by names.
-      #
-      # <<quests#23> --[<known_by>]--> <twitter_identities#456>>,
-      # <<quests#23> --[<forwarded_23>]--> <twitter_identities#456>>,
-      # <<quests#23> --[<known_by>]--> <twitter_identities#456> --[<forwarded_23>]--> <twitter_identities#789>>,
-      # <<quests#23> --[<known_by>]--> <twitter_identities#789>>,
-      # <<quests#23> --[<forwarded_23>]--> <twitter_identities#456> --[<forwarded_23>]--> <twitter_identities#789>>]
-       
+
       paths = Neo4j.query <<-CYPHER
-      START src=node:quests(uid='23'), target=node(*)
-      MATCH path = src-[:known_by]->target 
-      RETURN path
-CYPHER
+        START src=node:quests(uid='23'), target=node(*)
+        MATCH path = src-[:known_by]->target 
+        RETURN path
+      CYPHER
+
       # The query above returns
       #
       # <<quests#23> --[<known_by>]--> <twitter_identities#456>>,
       # <<quests#23> --[<known_by>]--> <twitter_identities#789>>,
-
       paths = paths.sort_by { |p| p.end.uid }
       
       assert_equal [ Neo4j::Node.find("twitter_identities", 456), Neo4j::Node.find("twitter_identities", 789) ], paths.map(&:end)
       assert_equal([1, 1], paths.map(&:length))
 #
       paths = Neo4j.query <<-CYPHER
-      START src=node:quests(uid='23'), target=node(*)
-      MATCH path = src-[:forwarded_23*]->target 
-      RETURN path
-CYPHER
+        START src=node:quests(uid='23'), target=node(*)
+        MATCH path = src-[:forwarded_23*]->target 
+        RETURN path
+      CYPHER
 
       # The query above returns
       #
@@ -137,5 +135,63 @@ CYPHER
     Graph::Twitter.identity(123)
     node = Neo4j::Node.find("twitter_identities", 123)
     assert_equal "bar", node["screen_name"]
+  end
+  
+  def test_twitter_with_no_sender
+    # Register the initial tweet.
+    register_tweet :tweet_id => 1, :sender_id => 456
+
+    Bountybase::Graph::Twitter.expects(:find_source_for_tweet).returns(nil)
+      
+    # The next tweet is a tweet of the same query; it doesn't have a 
+    # source_id though; so we are trying to use the followees 
+    # as returned by Twitter.
+    register_tweet :tweet_id => 123,
+      :sender_id => 789
+
+    # The code is correct if both twitter identities are connected 
+    # directly to the quest.
+
+    paths = Neo4j.query <<-CYPHER
+      START src=node(*), target=node(*)
+      MATCH path = src-[:forwarded_23]->target 
+      RETURN path
+    CYPHER
+
+    assert_equal [ Neo4j::Node.find("quests", 23), Neo4j::Node.find("quests", 23) ], 
+      paths.map(&:start)
+  end
+
+  def test_twitter_with_sender
+    # Register the initial tweet.
+    register_tweet :tweet_id => 1, :sender_id => 456
+
+    Bountybase::Graph::Twitter.expects(:find_source_for_tweet).
+      returns(Graph::Twitter.identity(456))
+      
+    # The next tweet is a tweet of the same query; it doesn't have a 
+    # source_id though; so we are trying to use the followees 
+    # as returned by Twitter.
+    register_tweet :tweet_id => 123,
+      :sender_id => 789
+
+    # The code is correct if both twitter identities are connected 
+    # directly to the quest.
+
+    paths = Neo4j.query <<-CYPHER
+      START src=node(*), target=node(*)
+      MATCH path = src-[:forwarded_23]->target 
+      RETURN path
+    CYPHER
+
+    W "paths", paths.each(&:fetch)
+    assert_equal(2, paths.length)
+    p0, p1 = *paths
+    
+    assert_equal Neo4j::Node.find("quests", 23), p0.start
+    assert_equal Neo4j::Node.find("twitter_identities", 456), p0.end
+
+    assert_equal Neo4j::Node.find("twitter_identities", 456), p1.start
+    assert_equal Neo4j::Node.find("twitter_identities", 789), p1.end
   end
 end
