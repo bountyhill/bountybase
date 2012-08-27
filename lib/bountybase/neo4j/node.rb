@@ -1,11 +1,14 @@
 module Bountybase::Neo4j
   class Node < Base
+    # Delete this node.
+    #
+    # Note: To delete a large number of nodes, use the Neo4j.purge method instead.
     def destroy
-      connection.delete_node!(url)
+      Bountybase::Neo4j.connection.delete_node!(url)
     end
 
-    def to_s
-      if attributes_loaded?
+    def to_s #:nodoc:
+      if fetched?
         "#{type}/#{uid}"
       else
         "node:#{neo_id}"
@@ -13,7 +16,7 @@ module Bountybase::Neo4j
     end
     
     def inspect #:nodoc:
-      return "<node:#{neo_id}>" unless attributes_loaded?
+      return "<node:#{neo_id}>" unless fetched?
       
       attrs = self.attributes.map do |key, value| 
         next if %w(type uid created_at updated_at).include?(key)
@@ -28,14 +31,14 @@ module Bountybase::Neo4j
     private
     
     def load_neography #:nodoc:
-      connection.get_node(url)
+      Bountybase::Neo4j.connection.get_node(url)
     end
 
     def save_attributes(attributes) #:nodoc:
-      connection.reset_node_properties(url, attributes)
+      Bountybase::Neo4j.connection.reset_node_properties(url, attributes)
       
       expect! do
-        r = connection.get_node(url)
+        r = Bountybase::Neo4j.connection.get_node(url)
         attributes == r["data"]
       end
     end

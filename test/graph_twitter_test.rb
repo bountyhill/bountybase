@@ -10,7 +10,7 @@ class GraphTwitterTest < Test::Unit::TestCase
   def test_register_tweet
     freeze_time(123457)
     
-    # Register the initial tweet.
+    # Register an initial tweet.
     register_tweet :tweet_id => 1, :sender_id => 456
   
     # This creates 3 nodes:

@@ -28,7 +28,7 @@ module Bountybase::Neo4j
     end
 
     def to_s #:nodoc:
-      if attributes_loaded?
+      if fetched?
         "-[:#{type}]->"
       else
         "rel:#{neo_id}"
@@ -36,7 +36,7 @@ module Bountybase::Neo4j
     end
     
     def inspect #:nodoc:
-      return "<rel:#{neo_id}>" unless attributes_loaded?
+      return "<rel:#{neo_id}>" unless fetched?
 
       attrs = self.attributes.map do |key, value| 
         next if key == "rid" || key == "created_at" || key == "updated_at"
@@ -49,21 +49,27 @@ module Bountybase::Neo4j
     end
 
     def load_neography #:nodoc:
-      connection.get_relationship(url)
+      Neo4j.connection.get_relationship(url)
     end
     
-    def self.all(type = nil)
+    def self.all(pattern = '*')
+      pattern = pattern.to_s
+      
       all = Neo4j.query <<-CYPHER
         START r=relationship(*)
         RETURN r
       CYPHER
 
-      if type
-        type = type.to_s
-        all.reject! { |relationship| relationship.type != type }
+      if pattern != '*'
+        all.reject! { |relationship| relationship.type != pattern }
       end
       
       all
+    end
+
+    # count relationships matching a pattern
+    def self.count(pattern = '*')
+      all(pattern).length
     end
   end
 end

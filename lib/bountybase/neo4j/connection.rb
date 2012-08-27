@@ -1,12 +1,11 @@
 module Bountybase::Neo4j
-  module Connection
-    # returns a connection. Each thread has its own connection
-    def connection
-      Thread.current[:neography_connection] ||= Connection.connect!
-    end
-
-    private
-
+  # returns a connection to a Neo4j server. As neography connections
+  # are not threadsafe, each thread manages its own connection object.
+  def self.connection
+    Thread.current[:neography_connection] ||= Connection.connect!
+  end
+  
+  module Connection #:nodoc:
     # connect to a database, return connection object
     def self.connect! #:nodoc:
       url = Bountybase.config.neo4j
@@ -24,5 +23,3 @@ module Bountybase::Neo4j
     end
   end
 end
-
-Bountybase::Neo4j.extend Bountybase::Neo4j::Connection

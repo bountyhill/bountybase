@@ -1,31 +1,43 @@
 module Bountybase::Neo4j
+  # Raised when trying to recreate an already existing node
+  # with a different set of attributes.
   class DuplicateKeyError < RuntimeError; end
 
-  # A base class for Neo4j objects. Derived classes must implement the
-  # _save_attributes_ instance method and the _readonly_attribute_names_
-  # class method.
+  # A base class for Neo4j objects. 
+  #
+  # A Neo4j object can be built off a Hash containing all its attributes,
+  # or off an URL string which just declares *where* the object can be
+  # found. Therefore, a Neo4j object is either fully fetched or not. 
+  # It will be fetched automatically whenever needed - for example
+  # when accessing its attributes.
+  #
+  # To explicitely fetch an object use the fetch method. This might
+  # make sense when printing information for the object, as the 
+  # inspect methods provide more detail for fully fetched objects. 
   class Base
+    # A shortcut for Bountybase::Neo4j
     Neo4j = Bountybase::Neo4j
 
     extend Neo4j::Connection
     include Neo4j::Connection
 
     # equality
+    #
+    # Two objects are equal if they are of the same class and share the same
+    # Neo4j URL.
     def ==(other)
       other.is_a?(self.class) && (other.url == self.url)
     end
 
-    attr :url
+    # returns the Neo4j URL of this object
+    attr_reader :url
     
     private
     
-    # initialize this object with either a Hash or an URL. 
+    # Initialize this object with either a Hash or an URL. 
     #
-    # Note that one can verify the type of the object from the URL, and one can
-    # get the URL from the Hash. Therefore one should always create the right
-    # kind of object (i.e. a Neo4j::Node or Neo4j::Relationship instead of of
-    # a Neo4j::Base object.) That is the reason that Base#initialize is
-    # private - just use Neo4j::Base.create(url_or_hash) instead.
+    # Note that this method is private: always use Neo4j.build(url_or_hash) 
+    # instead.
     def initialize(neography)
       case neography
       when String
@@ -43,6 +55,12 @@ module Bountybase::Neo4j
     
     public
     
+    # returns true if attributes are loaded.
+    def fetched?
+      !@neography.nil?
+    end
+
+    # Make sure the object is fully fetched,
     def fetch
       neography
       self

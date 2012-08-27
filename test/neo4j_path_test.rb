@@ -13,13 +13,13 @@ class Neo4jPathTest < Test::Unit::TestCase
     foo1 = Neo4j::Node.create "foo", 1
     bar1 = Neo4j::Node.create "bar", 1
 
-    assert_equal(0, Neo4j::Connections.count)
+    assert_equal(0, Neo4j::Relationship.count)
 
     Neo4j.connect "name", foo1 => bar1
-    assert_equal(1, Neo4j::Connections.count)
+    assert_equal(1, Neo4j::Relationship.count)
 
     Neo4j.connect "other_name", foo1 => bar1
-    assert_equal(2, Neo4j::Connections.count)
+    assert_equal(2, Neo4j::Relationship.count)
   end
 
   def test_find_paths
@@ -51,26 +51,26 @@ CYPHER
     foo1 = Neo4j::Node.create "foo", 1
     foo2 = Neo4j::Node.create "foo", 1
   
-    assert_equal(0, Neo4j::Connections.count)
+    assert_equal(0, Neo4j::Relationship.count)
 
     Neo4j.connect "name", foo1 => foo2
-    assert_equal(0, Neo4j::Connections.count)
+    assert_equal(0, Neo4j::Relationship.count)
   end
   
   def test_cannot_connect_twice
     foo1 = Neo4j::Node.create "foo", 1
     bar1 = Neo4j::Node.create "bar", 1
 
-    assert_equal(0, Neo4j::Connections.count)
+    assert_equal(0, Neo4j::Relationship.count)
 
     Neo4j.connect "name", foo1 => bar1
-    assert_equal(1, Neo4j::Connections.count)
+    assert_equal(1, Neo4j::Relationship.count)
 
     Neo4j.connect "other_name", foo1 => bar1
-    assert_equal(2, Neo4j::Connections.count)
+    assert_equal(2, Neo4j::Relationship.count)
 
     Neo4j.connect "name", foo1 => bar1
-    assert_equal(2, Neo4j::Connections.count)
+    assert_equal(2, Neo4j::Relationship.count)
   end
   
   def test_connection_api

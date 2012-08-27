@@ -1,15 +1,18 @@
-module Bountybase::Neo4j::Connections
-  Neo4j = Bountybase::Neo4j
+# A module to manage connections between nodes.
+module Bountybase::Neo4j
   
-  # Connect two nodes with a relationship. Examples:
+  # Connect two or more nodes with relationship(s). 
   # 
-  # This builds two named, directed connections
-  #   Bountybase::Neo4j.connect "name", node1 => node2, node3 => node4, :attr => :value
-  # This builds two unnamed, directed connections
-  #   Bountybase::Neo4j.connect node1 => node2, node3 => node4, :attr => :value
-  # This builds two unnamed connection
-  #   Bountybase::Neo4j.connect node1, node2, node1 => node3, :attr => :value
-  def connect(*args)
+  #   # build two named connections, passing in some attributes
+  #   Bountybase::Neo4j.connect "name", node1 => node2, node3 => node4, "foo" => "bar"
+  #
+  #   # build two unnamed connections, w/some attributes
+  #   Bountybase::Neo4j.connect node1 => node2, node3 => node4, :foo => "bar"
+  #
+  #   # build two unnamed connection
+  #   Bountybase::Neo4j.connect node1, node2, node1 => node3
+  #
+  def self.connect(*args)
     options = {}
     while args.last.is_a?(Hash)
       options.update args.pop
@@ -21,50 +24,46 @@ module Bountybase::Neo4j::Connections
     expect! args.length.even?
 
     # get connections and options
-    connections, options = options.partition { |k,v| k.is_a?(Neo4j::Node) }
+    connections, options = options.partition { |k,v| k.is_a?(Node) }
     options = Hash[options]
 
     # build connections from args
     args.each_slice(2).each do |from, to|
-      Neo4j::Connections.build name, from, to, options
+      Connections.build name, from, to, options
     end
 
     # build connections from options hash
     connections.each do |from, to|
-      Neo4j::Connections.build name, from, to, options
+      Connections.build name, from, to, options
     end
   end
   
-  def self.build(name, from, to, options)
-    expect! name => String, from => Neo4j::Node, to => Neo4j::Node, options => Hash
-
-    return if from == to
+  module Connections #:nodoc:
     
-    index, key, value = "#{name}", "rid", "-#{from.uuid}->#{to.uuid}"
-    create_index_if_needed index
-    
-    rel = connection.create_unique_relationship(index, key, value, name, from.url, to.url)
-    connection.reset_relationship_properties(rel, options) unless options.empty?
-    rel
-  end
+    # Build a connection
+    def self.build(name, from, to, options) #:nodoc:
+      expect! name => String, from => Node, to => Node, options => Hash
 
-  def self.connection
-    Neo4j.connection
-  end
-  
-  def self.create_index_if_needed(name)
-    return if @indices && @indices.include?(name)
-    
-    @indices = (Neo4j.connection.list_relationship_indexes || {}).keys
-    return if @indices.include?(name)
+      return if from == to
 
-    Neo4j.connection.create_relationship_index(name)
-    @indices << name
-  end
-  
-  def self.count(pattern = '*')
-    rels, _ = Neo4j.raw_query("start n=rel(#{pattern}) return n")
-    rels.length
+      index, key, value = "#{name}", "rid", "-#{from.uuid}->#{to.uuid}"
+      create_index_if_needed index
+
+      rel = Bountybase::Neo4j.connection.create_unique_relationship(index, key, value, name, from.url, to.url)
+      Bountybase::Neo4j.connection.reset_relationship_properties(rel, options) unless options.empty?
+      rel
+    end
+
+    # Create a relationship index with a given name if needed.
+    def self.create_index_if_needed(name) #:nodoc:
+      return if @indices && @indices.include?(name)
+
+      @indices = (Bountybase::Neo4j.connection.list_relationship_indexes || {}).keys
+      return if @indices.include?(name)
+
+      Neo4j.connection.create_relationship_index(name)
+      @indices << name
+    end
   end
 end
 

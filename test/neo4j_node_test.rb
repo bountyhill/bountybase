@@ -36,7 +36,7 @@ class Neo4jNodeTest < Test::Unit::TestCase
     node = Neo4j::Node.create "foo", 1, :bar => "baz"
     assert_equal node.uid, 1
     assert_equal node.created_at, Time.at(123457)
-    assert_equal node.updated_at, nil
+    assert_equal node.updated_at, Time.at(123457)
   end
   
   def test_create_w_attributes
@@ -89,7 +89,7 @@ class Neo4jNodeTest < Test::Unit::TestCase
     
     node = Neo4j::Node.create "foo", 1, :bar => "baz"
     assert_equal(node.created_at, Time.at(123457))
-    assert_equal(node.updated_at, nil)
+    assert_equal(node.updated_at, Time.at(123457))
 
     # --- update node -------------------------------------------------
 

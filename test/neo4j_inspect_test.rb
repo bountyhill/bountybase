@@ -29,7 +29,7 @@ class Neo4jInspectTest < Test::Unit::TestCase
     # neither to_s nor inspect do load attributes...
     assert node.inspect =~ /^<node:\d+>$/
     assert node.to_s =~ /^node:\d+$/
-    assert !node.attributes_loaded?
+    assert !node.fetched?
 
     # ...but make use once they are loaded.
     node.fetch
@@ -45,10 +45,10 @@ class Neo4jInspectTest < Test::Unit::TestCase
     relationship = Neo4j::Relationship.all.first
 
     # neither to_s nor inspect do load attributes...
-    assert !relationship.attributes_loaded?
+    assert !relationship.fetched?
     assert relationship.inspect =~ /^<rel:\d+>$/
     assert relationship.to_s =~ /^rel:\d+$/
-    assert !relationship.attributes_loaded?
+    assert !relationship.fetched?
 
     # ...but make use once they are loaded.
     relationship.fetch
