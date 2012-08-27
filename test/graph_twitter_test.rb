@@ -142,7 +142,7 @@ CYPHER
     # Register the initial tweet.
     register_tweet :sender_id => 456
 
-    Bountybase::Graph::Twitter.expects(:find_source_for_tweet).returns(nil)
+    Bountybase::Graph::Twitter.expects(:source_for_tweet).returns(nil)
       
     # The next tweet is a tweet of the same query; it doesn't have a 
     # source_id though; so we are trying to use the followees 
@@ -166,7 +166,7 @@ CYPHER
     # Register the initial tweet.
     register_tweet :sender_id => 456
 
-    Bountybase::Graph::Twitter.expects(:find_source_for_tweet).
+    Bountybase::Graph::Twitter.expects(:source_for_tweet).
       returns(Graph::Twitter.identity(456))
       
     # The next tweet is a tweet of the same query; it doesn't have a 
@@ -207,5 +207,45 @@ CYPHER
     assert_equal 12, rels.length
     assert_equal 12, rels.map(&:start_node).uniq.length
     assert_equal  2, rels.map(&:end_node).map(&:uid).uniq.length
+    assert_equal ["follows"], rels.map(&:type).uniq
+  end
+  
+  def test_source_for_tweet
+    freeze_time(2) 
+    register_tweet :sender_id => 2, :quest_url => quest_url(1)
+    register_tweet :sender_id => 2, :quest_url => quest_url(2)
+    
+    freeze_time(3) 
+    register_tweet :sender_id => 1, :quest_url => quest_url(1)
+
+    freeze_time(4) 
+    register_tweet :sender_id => 11, :quest_url => quest_url(3)
+
+    freeze_time(1)
+    register_tweet :sender_id => 3, :quest_url => quest_url(1)
+    
+    sender = Graph::Twitter.identity(10)
+    Graph::Twitter.register_followers 1 => sender, 2 => sender, 3 => sender
+
+    # connecting to quest 1: The identities 1, 2, and 3 follow quest 1;
+    # the sender will be connected to identity #3, as it is the oldest
+    quest = Neo4j::Node.find("quests", 1)
+
+    source = Graph::Twitter.source_for_tweet(sender, quest)
+    assert_equal(Graph::Twitter.identity(3), source)
+    
+    # connecting to quest 2: Only identity #2 follows that questM
+    # the sender will be connected to identity #2.
+    quest = Neo4j::Node.find("quests", 2)
+
+    source = Graph::Twitter.source_for_tweet(sender, quest)
+    assert_equal(Graph::Twitter.identity(2), source)
+    
+    # connecting to quest 3: None of the senders followees follow quest 3;
+    # the sender will be connected directly to the quest.
+    quest = Neo4j::Node.find("quests", 3)
+
+    source = Graph::Twitter.source_for_tweet(sender, quest)
+    assert_nil(source)
   end
 end

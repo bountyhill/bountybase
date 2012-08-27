@@ -84,7 +84,7 @@ module Bountybase::Graph::Twitter
     unless connected?(quest, sender)
       Neo4j.connect "known_by", quest, sender, :created_at => Time.now.to_i
 
-      source = tweet_source(quest, options)
+      source = tweet_source(sender, quest, options)
       Neo4j.connect "forwarded_#{quest.uid}", (source || quest) => sender
     end 
 
@@ -115,7 +115,11 @@ module Bountybase::Graph::Twitter
   end
   
   # return the tweet source.
-  def tweet_source(quest, options) #:nodoc:
+  #
+  # This method also guarantees that the source is properly connected to
+  # the quest by connecting if needed. This can only occur if the source
+  # is set via the :source_id option.
+  def tweet_source(sender, quest, options) #:nodoc:
     if options[:source_id]
       source = identity(options[:source_id], options[:source_name]) 
       unless connected?(quest, source)
@@ -123,28 +127,41 @@ module Bountybase::Graph::Twitter
         Neo4j.connect "forwarded_#{quest.uid}", quest => source
       end
     else
-      source = find_source_for_tweet quest, options
+      source = source_for_tweet sender, quest
       expect! source => [nil, Bountybase::Neo4j::Node]
     end
     source
   end
-  
-  # How does the sender know the quest? If the source_id is not set, then 
-  # the sender probably knows it from one of its followees. This methods
-  # picks the all user ids from the followees of source_id that are known
-  # to already have seen the quest. If there is more than one of such
-  # followees the followee that posted (or just received)  the quest first - 
-  # by evaluating the created_at attribute of the :known_by relationship.
-  #
-  # This method also guarantees that the source is properly connected to
-  # the quest by connecting if needed. This can only occur if the source
-  # is set via the :source_id option.
-  def find_source_for_tweet(quest, options) #:nodoc:
-    nil
-  end
-end
-  
+
   public
+  
+  # How does the sender know the quest? If it is not passed in (because a
+  # tweet is a retweet, after all), then the sender probably knows about
+  # a quest from one of its followees. This methods find a potential source
+  # for a tweet by sender. From all twitter identities that
+  #
+  # a) are connected to quest and
+  # b) are being followed by the sender.
+  #
+  # it returns the one which knows the longest about the quest.
+  #
+  # This method is used
+  #
+  # a) to connect a tweet which is not a retweet, and
+  # b) to connect a website user to a quest.
+  #
+  # This method relies on followership properly set (via :register_followers)
+  def source_for_tweet(sender, quest)
+    expect! quest => Bountybase::Neo4j::Node
+
+    source = Neo4j.ask <<-CYPHER
+      START quest=node:quests(uid='#{quest.uid}'), followee=node(*), sender=node:twitter_identities(uid='#{sender.uid}')
+      MATCH quest-[rel:known_by]->followee<-[:follows]-sender
+      RETURN followee
+      ORDER BY rel.created_at
+      LIMIT 1
+    CYPHER
+  end
   
   #
   # Register followership between twitter users. Note that you can and 

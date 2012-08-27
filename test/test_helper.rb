@@ -71,4 +71,8 @@ module Bountybase::TestCase
     
     Graph::Twitter.register TWEET_DEFAULTS.merge(:tweet_id => @@tweet_id).merge(options)
   end
+
+  def quest_url(quest_id)
+    "http://bountyhill.local/quest/#{quest_id}"
+  end
 end
