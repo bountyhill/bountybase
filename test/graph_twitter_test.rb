@@ -194,4 +194,19 @@ CYPHER
     assert_equal Neo4j::Node.find("twitter_identities", 456), p1.start
     assert_equal Neo4j::Node.find("twitter_identities", 789), p1.end
   end
+
+  def test_register_followers
+    Graph::Twitter.register_followers 1 => [20, 21, 22, 23, 24, 25], 
+                                      2 => [20, 21, 32, 33, 34, 35]
+
+    rels = Neo4j.query <<-CYPHER
+      START src=node(*), target=node(*)
+      MATCH path = src-[rel:follows]->target 
+      RETURN rel
+    CYPHER
+    
+    assert_equal 12, rels.length
+    assert_equal 12, rels.map(&:start_node).uniq.length
+    assert_equal  2, rels.map(&:end_node).map(&:uid).uniq.length
+  end
 end

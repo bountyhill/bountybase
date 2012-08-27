@@ -140,3 +140,28 @@ module Bountybase::Graph::Twitter
     nil
   end
 end
+  
+  public
+  
+  #
+  # Register followership between twitter users. Note that you can and 
+  # should register more than a single followership with each call of
+  # Twitter.register_followers. 
+  #
+  #   register_followers(1 => 2)                  # user 2 is a follower of user 1
+  #   register_followers(1 => [2,3], 4 => 5)      # users 2 and 3 are followers of user 1,
+  #                                               # and user 5 is a follower of user 2.
+  #
+  def register_followers(data) 
+    connections = data.map do |followee_id, receiver_ids|
+      expect! followee_id => Integer, receiver_ids => [ Array, Integer ]
+      
+      followee = identity(followee_id)
+      
+      [ *receiver_ids ].map do |receiver_id| 
+        [ identity(receiver_id), followee ] 
+      end
+    end.flatten
+
+    Neo4j.connect "follows", *connections
+  end
