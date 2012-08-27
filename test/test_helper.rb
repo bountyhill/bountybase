@@ -64,7 +64,11 @@ module Bountybase::TestCase
     :lang => "en"                                       # The tweet language
   }
 
+  @@tweet_id = 123
+  
   def register_tweet(options = {})
-    Graph::Twitter.register TWEET_DEFAULTS.merge(options)
+    @@tweet_id += 1
+    
+    Graph::Twitter.register TWEET_DEFAULTS.merge(:tweet_id => @@tweet_id).merge(options)
   end
 end

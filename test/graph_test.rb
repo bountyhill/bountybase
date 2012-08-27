@@ -13,29 +13,28 @@ class GraphTest < Test::Unit::TestCase
   end
 
   def one_tweet
-    register_tweet :tweet_id => 1,                        # The id of the tweet 
-      :sender_id => 456,                                  # The twitter user id of the user sent this tweet 
+    register_tweet :sender_id => 456, # The twitter user id of the user sent this tweet 
       :sender_name => "sender456"
   end
 
   def one_tweet_with_source
-    register_tweet :tweet_id => 1, :source_id => 1000, :sender_id => 1001, :quest_url => "http://bountyhill.local/quest/1"
+    register_tweet :source_id => 1000, :sender_id => 1001, :quest_url => "http://bountyhill.local/quest/1"
   end
 
   def two_tweets
-    register_tweet :tweet_id => 1, :source_id => 1000, :sender_id => 1001, :quest_url => "http://bountyhill.local/quest/1"
-    register_tweet :tweet_id => 2, :source_id => 1001, :sender_id => 1002, :quest_url => "http://bountyhill.local/quest/1"
+    register_tweet :source_id => 1000, :sender_id => 1001, :quest_url => "http://bountyhill.local/quest/1"
+    register_tweet :source_id => 1001, :sender_id => 1002, :quest_url => "http://bountyhill.local/quest/1"
   end
 
   def seven_tweets
-    register_tweet :tweet_id => 1, :source_id => 1000, :sender_id => 1001, :quest_url => "http://bountyhill.local/quest/1"
-    register_tweet :tweet_id => 2, :source_id => 1001, :sender_id => 1002, :quest_url => "http://bountyhill.local/quest/1"
-    register_tweet :tweet_id => 3, :source_id => 1002, :sender_id => 1003, :quest_url => "http://bountyhill.local/quest/1"
-    register_tweet :tweet_id => 4, :source_id => 1001, :sender_id => 1004, :quest_url => "http://bountyhill.local/quest/1"
-    register_tweet :tweet_id => 5, :source_id => 1000, :sender_id => 1006, :quest_url => "http://bountyhill.local/quest/1"
-    
-    register_tweet :tweet_id => 11, :source_id => 1000, :sender_id => 1001, :quest_url => "http://bountyhill.local/quest/2"
-    register_tweet :tweet_id => 12, :source_id => 1001, :sender_id => 1003, :quest_url => "http://bountyhill.local/quest/2"
+    register_tweet :source_id => 1000, :sender_id => 1001, :quest_url => "http://bountyhill.local/quest/1"
+    register_tweet :source_id => 1001, :sender_id => 1002, :quest_url => "http://bountyhill.local/quest/1"
+    register_tweet :source_id => 1002, :sender_id => 1003, :quest_url => "http://bountyhill.local/quest/1"
+    register_tweet :source_id => 1001, :sender_id => 1004, :quest_url => "http://bountyhill.local/quest/1"
+    register_tweet :source_id => 1000, :sender_id => 1006, :quest_url => "http://bountyhill.local/quest/1"
+
+    register_tweet :source_id => 1000, :sender_id => 1001, :quest_url => "http://bountyhill.local/quest/2"
+    register_tweet :source_id => 1001, :sender_id => 1003, :quest_url => "http://bountyhill.local/quest/2"
   end
 
   def test_single_tweet

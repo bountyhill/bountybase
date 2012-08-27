@@ -38,11 +38,11 @@ CYPHER
 
     assert_kind_of(Neo4j::Path, path)
     
-    assert_equal foo1,            path.start
-    assert_equal foo1.attributes, path.start.attributes
+    assert_equal foo1,            path.start_node
+    assert_equal foo1.attributes, path.start_node.attributes
 
-    assert_equal bar1,            path.end
-    assert_equal bar1.attributes, path.end.attributes
+    assert_equal bar1,            path.end_node
+    assert_equal bar1.attributes, path.end_node.attributes
 
     assert_equal 3, path.members.length
   end
@@ -140,8 +140,8 @@ CYPHER
 
     path = results.first
 
-    assert_equal(foo1, path.start)
-    assert_equal(bar2, path.end)
+    assert_equal(foo1, path.start_node)
+    assert_equal(bar2, path.end_node)
     assert_equal([foo1, bar1, bar2], path.nodes)
   end
 

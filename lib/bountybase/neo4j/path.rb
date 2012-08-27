@@ -2,13 +2,13 @@ module Bountybase::Neo4j
   class Path
     Neo4j = Bountybase::Neo4j
     
-    attr :start, :nodes, :length, :end, :relationships
+    attr :start_node, :nodes, :length, :end_node, :relationships
     
     def initialize(data)
       @data = data
 
-      @start = Neo4j::Node.new(data["start"])
-      @end = Neo4j::Node.new(data["end"])
+      @start_node = Neo4j::Node.new(data["start"])
+      @end_node = Neo4j::Node.new(data["end"])
     end
     
     def nodes

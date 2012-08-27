@@ -20,9 +20,12 @@ module Bountybase::Graph::Twitter
   #
   # The screen_name should not include the leading "@".
   def identity(uid, screen_name = nil)
-    expect! uid => Integer, screen_name => [/^[^@]/, nil]
+    expect! uid => [Integer, Neo4j::Node], screen_name => [/^[^@]/, nil]
 
-    if node = Neo4j::Node.find("twitter_identities", uid)
+    if uid.is_a?(Neo4j::Node)
+      expect! uid.type => "twitter_identities"
+      uid
+    elsif node = Neo4j::Node.find("twitter_identities", uid)
       if screen_name && node["screen_name"] != screen_name
         node["screen_name"] = screen_name
       end
@@ -152,10 +155,9 @@ end
   #   register_followers(1 => [2,3], 4 => 5)      # users 2 and 3 are followers of user 1,
   #                                               # and user 5 is a follower of user 2.
   #
+  # Values are twitter ids (integers) or "twitter_identities" nodes.
   def register_followers(data) 
     connections = data.map do |followee_id, receiver_ids|
-      expect! followee_id => Integer, receiver_ids => [ Array, Integer ]
-      
       followee = identity(followee_id)
       
       [ *receiver_ids ].map do |receiver_id| 
@@ -165,3 +167,4 @@ end
 
     Neo4j.connect "follows", *connections
   end
+end

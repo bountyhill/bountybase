@@ -39,6 +39,9 @@ module Bountybase::Neo4j
   end
   
   module Connections #:nodoc:
+    def self.connection #:nodoc:
+      Bountybase::Neo4j.connection
+    end
     
     # Build a connection
     def self.build(name, from, to, options) #:nodoc:
@@ -49,8 +52,8 @@ module Bountybase::Neo4j
       index, key, value = "#{name}", "rid", "-#{from.uuid}->#{to.uuid}"
       create_index_if_needed index
 
-      rel = Bountybase::Neo4j.connection.create_unique_relationship(index, key, value, name, from.url, to.url)
-      Bountybase::Neo4j.connection.reset_relationship_properties(rel, options) unless options.empty?
+      rel = connection.create_unique_relationship(index, key, value, name, from.url, to.url)
+      connection.reset_relationship_properties(rel, options) unless options.empty?
       rel
     end
 
@@ -58,10 +61,10 @@ module Bountybase::Neo4j
     def self.create_index_if_needed(name) #:nodoc:
       return if @indices && @indices.include?(name)
 
-      @indices = (Bountybase::Neo4j.connection.list_relationship_indexes || {}).keys
+      @indices = (connection.list_relationship_indexes || {}).keys
       return if @indices.include?(name)
 
-      Neo4j.connection.create_relationship_index(name)
+      connection.create_relationship_index(name)
       @indices << name
     end
   end

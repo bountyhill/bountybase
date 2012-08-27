@@ -11,7 +11,7 @@ class GraphTwitterTest < Test::Unit::TestCase
     freeze_time(123457)
     
     # Register an initial tweet.
-    register_tweet :tweet_id => 1, :sender_id => 456
+    register_tweet :sender_id => 456, :tweet_id => 1
   
     # This creates 3 nodes:
     # the node for the quest with id 23
@@ -67,13 +67,12 @@ CYPHER
     # <<quests#23> --[<forwarded_23>]--> <twitter_identities#456> --[<forwarded_23>]--> <twitter_identities#789>>]
     logger.benchmark :warn, "register 2 tweets", :min => 0 do
       # Register the initial tweet.
-      register_tweet :tweet_id => 1, :sender_id => 456
+      register_tweet :sender_id => 456
 
       #
       # The next tweet is a retweet of the initial tweet.
-      register_tweet :tweet_id => 123, # The id of the tweet 
-        :sender_id => 789,             # The twitter user id of the user sent this tweet 
-        :source_id => 456              # The twitter user id of the user from where the sender knows about this bounty.
+      register_tweet :sender_id => 789,   # The twitter user id of the user sent this tweet 
+        :source_id => 456                 # The twitter user id of the user from where the sender knows about this bounty.
     end
     
     logger.benchmark :warn, "querying 2 tweet results", :min => 0 do
@@ -88,9 +87,10 @@ CYPHER
       #
       # <<quests#23> --[<known_by>]--> <twitter_identities#456>>,
       # <<quests#23> --[<known_by>]--> <twitter_identities#789>>,
-      paths = paths.sort_by { |p| p.end.uid }
+      paths = paths.sort_by { |p| p.end_node.uid }
+      end_nodes = paths.map(&:end_node)
       
-      assert_equal [ Neo4j::Node.find("twitter_identities", 456), Neo4j::Node.find("twitter_identities", 789) ], paths.map(&:end)
+      assert_equal [ Neo4j::Node.find("twitter_identities", 456), Neo4j::Node.find("twitter_identities", 789) ], end_nodes
       assert_equal([1, 1], paths.map(&:length))
 #
       paths = Neo4j.query <<-CYPHER
@@ -104,9 +104,10 @@ CYPHER
       # <<quests#23> --[<forwarded_23>]--> <twitter_identities#456>>,
       # <<quests#23> --[<forwarded_23>]--> <twitter_identities#456> --[<forwarded_23>]--> <twitter_identities#789>>]
 
-      paths = paths.sort_by { |p| p.end.uid }
+      paths = paths.sort_by { |p| p.end_node.uid }
 
-      assert_equal [ Neo4j::Node.find("twitter_identities", 456), Neo4j::Node.find("twitter_identities", 789) ], paths.map(&:end)
+      end_nodes = paths.map(&:end_node)
+      assert_equal [ Neo4j::Node.find("twitter_identities", 456), Neo4j::Node.find("twitter_identities", 789) ], end_nodes
       assert_equal([1, 2], paths.map(&:length))
     end
   end
@@ -139,15 +140,14 @@ CYPHER
   
   def test_twitter_with_no_sender
     # Register the initial tweet.
-    register_tweet :tweet_id => 1, :sender_id => 456
+    register_tweet :sender_id => 456
 
     Bountybase::Graph::Twitter.expects(:find_source_for_tweet).returns(nil)
       
     # The next tweet is a tweet of the same query; it doesn't have a 
     # source_id though; so we are trying to use the followees 
     # as returned by Twitter.
-    register_tweet :tweet_id => 123,
-      :sender_id => 789
+    register_tweet :sender_id => 789
 
     # The code is correct if both twitter identities are connected 
     # directly to the quest.
@@ -159,12 +159,12 @@ CYPHER
     CYPHER
 
     assert_equal [ Neo4j::Node.find("quests", 23), Neo4j::Node.find("quests", 23) ], 
-      paths.map(&:start)
+      paths.map(&:start_node)
   end
 
   def test_twitter_with_sender
     # Register the initial tweet.
-    register_tweet :tweet_id => 1, :sender_id => 456
+    register_tweet :sender_id => 456
 
     Bountybase::Graph::Twitter.expects(:find_source_for_tweet).
       returns(Graph::Twitter.identity(456))
@@ -172,8 +172,7 @@ CYPHER
     # The next tweet is a tweet of the same query; it doesn't have a 
     # source_id though; so we are trying to use the followees 
     # as returned by Twitter.
-    register_tweet :tweet_id => 123,
-      :sender_id => 789
+    register_tweet :sender_id => 789
 
     # The code is correct if both twitter identities are connected 
     # directly to the quest.
@@ -188,11 +187,11 @@ CYPHER
     assert_equal(2, paths.length)
     p0, p1 = *paths
     
-    assert_equal Neo4j::Node.find("quests", 23), p0.start
-    assert_equal Neo4j::Node.find("twitter_identities", 456), p0.end
+    assert_equal Neo4j::Node.find("quests", 23), p0.start_node
+    assert_equal Neo4j::Node.find("twitter_identities", 456), p0.end_node
 
-    assert_equal Neo4j::Node.find("twitter_identities", 456), p1.start
-    assert_equal Neo4j::Node.find("twitter_identities", 789), p1.end
+    assert_equal Neo4j::Node.find("twitter_identities", 456), p1.start_node
+    assert_equal Neo4j::Node.find("twitter_identities", 789), p1.end_node
   end
 
   def test_register_followers
