@@ -1,10 +1,14 @@
 require_relative 'test_helper'
 
+# Tests on how the graph is built from tweets. These tests should not
+# access the Twitter API at all.
 class GraphTwitterTest < Test::Unit::TestCase
   include Bountybase::TestCase
 
   def setup
     Neo4j.purge!
+    Graph::Twitter.stubs(:update_followees!).returns(nil)
+    # Graph::Twitter.stubs(:update_followees!).returns(nil)
   end
   
   def test_register_tweet
@@ -142,8 +146,6 @@ CYPHER
     # Register the initial tweet.
     register_tweet :sender_id => 456
 
-    Bountybase::Graph::Twitter.expects(:source_for_tweet).returns(nil)
-      
     # The next tweet is a tweet of the same query; it doesn't have a 
     # source_id though; so we are trying to use the followees 
     # as returned by Twitter.
@@ -194,9 +196,9 @@ CYPHER
     assert_equal Neo4j::Node.find("twitter_identities", 789), p1.end_node
   end
 
-  def test_register_followers
-    Graph::Twitter.register_followers 1 => [20, 21, 22, 23, 24, 25], 
-                                      2 => [20, 21, 32, 33, 34, 35]
+  def test_register_followees
+    Graph::Twitter.register_followees 20 => 1, 21 => 1, 22 => 1, 23 => 1, 24 => 1, 25 => 1
+    Graph::Twitter.register_followees 20 => 2, 21 => 2, 32 => 2, 33 => 2, 34 => 2, 35 => 2
 
     rels = Neo4j.query <<-CYPHER
       START src=node(*), target=node(*)
@@ -225,7 +227,7 @@ CYPHER
     register_tweet :sender_id => 3, :quest_url => quest_url(1)
     
     sender = Graph::Twitter.identity(10)
-    Graph::Twitter.register_followers 1 => sender, 2 => sender, 3 => sender
+    Graph::Twitter.register_followees sender => [1, 2, 3]
 
     # connecting to quest 1: The identities 1, 2, and 3 follow quest 1;
     # the sender will be connected to identity #3, as it is the oldest

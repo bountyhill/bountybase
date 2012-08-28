@@ -150,8 +150,10 @@ module Bountybase::Graph::Twitter
   # a) to connect a tweet which is not a retweet, and
   # b) to connect a website user to a quest.
   #
-  # This method relies on followership properly set (via :register_followers)
+  # This method relies on followership properly set (via :register_followees)
   def source_for_tweet(sender, quest)
+    update_followees(sender)
+    
     expect! quest => Bountybase::Neo4j::Node
 
     source = Neo4j.ask <<-CYPHER
@@ -166,22 +168,41 @@ module Bountybase::Graph::Twitter
   #
   # Register followership between twitter users. Note that you can and 
   # should register more than a single followership with each call of
-  # Twitter.register_followers. 
+  # Twitter.register_followees. 
   #
-  #   register_followers(1 => 2)                  # user 2 is a follower of user 1
-  #   register_followers(1 => [2,3], 4 => 5)      # users 2 and 3 are followers of user 1,
-  #                                               # and user 5 is a follower of user 2.
+  #   register_followees(1 => 2)                  # user 1 follows of user 2
+  #   register_followees(1 => [2,3], 4 => 5)      # user 1 follows users 2 and 3, user 4 follows user 2.
   #
   # Values are twitter ids (integers) or "twitter_identities" nodes.
-  def register_followers(data) 
-    connections = data.map do |followee_id, receiver_ids|
-      followee = identity(followee_id)
+  def register_followees(data) 
+    connections = data.map do |follower_id, followee_ids|
+      follower = identity(follower_id)
       
-      [ *receiver_ids ].map do |receiver_id| 
-        [ identity(receiver_id), followee ] 
+      [ *followee_ids ].map do |followee_id| 
+        [ follower, identity(followee_id) ] 
       end
     end.flatten
 
     Neo4j.connect "follows", *connections
+  end
+  
+  FOLLOWEES_CACHING_TIMEOUT = 7 * 24 * 3600 # 7 days timeout
+  
+  #
+  # Update followees for a user, but only if the user's followees haven't been updated
+  # recently. This is to make sure we don't hit Twitter's API limits.
+  def update_followees(sender)
+    followees_updated_at = sender["followees_updated_at"]
+    return unless followees_updated_at.nil? || followees_updated_at < Time.now.to_i - FOLLOWEES_CACHING_TIMEOUT
+    
+    update_followees! sender
+  end
+  
+  #
+  # Update followees for a user.
+  def update_followees!(sender)
+    followee_ids = Bountybase::TwitterAPI.followee_ids(sender.uid)
+    register_followees sender => followee_ids
+    sender["followees_updated_at"] = Time.now.to_i
   end
 end
