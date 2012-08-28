@@ -206,10 +206,22 @@ CYPHER
       RETURN rel
     CYPHER
     
-    assert_equal 12, rels.length
-    assert_equal 12, rels.map(&:start_node).uniq.length
-    assert_equal  2, rels.map(&:end_node).map(&:uid).uniq.length
-    assert_equal ["follows"], rels.map(&:type).uniq
+    uids = rels.map do |rel|
+      assert_equal "follows", rel.type
+      assert_equal "twitter_identities", rel.start_node.type 
+      assert_equal "twitter_identities", rel.end_node.type
+      [rel.start_node.uid, rel.end_node.uid]
+    end.sort_by do |start_uid, end_uid|
+      (start_uid * 1000) + end_uid
+    end
+    
+    expected = [ 
+      [ 20, 1 ], [ 20, 2 ], [ 21, 1 ], [ 21, 2 ], [ 22, 1 ], 
+      [ 23, 1 ], [ 24, 1 ], [ 25, 1 ], 
+      [ 32, 2 ], [ 33, 2 ], [ 34, 2 ], [ 35, 2 ] 
+    ]
+    
+    assert_equal(expected, uids)
   end
   
   def test_source_for_tweet
