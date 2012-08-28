@@ -35,6 +35,43 @@ module Bountybase::Graph::Twitter
     end
   end
   
+  #
+  # Look up a number of identity nodes, creating if necessary. The returned
+  # array of nodes matches the order of uids as passed into the identities
+  # method.
+  #
+  # In contrast to the Twitter#identity method this method does not accept
+  # nodes, and is not able to update an identity's screen_name.
+  def identities(*uids)
+    # == keep all 'uids' that are nodes already.
+
+    existing_nodes, missing_uids = uids.partition do |uid| 
+      uid.is_a?(Neo4j::Node)
+    end
+    
+    existing_nodes = existing_nodes.by(&:uid)
+    
+    # == find nodes for each uid
+
+    expect! {
+      missing_uids.each { |uid| expect! uid => Integer }
+    }
+
+    found_nodes = Neo4j::Node.find_all("twitter_identities", *missing_uids).by(&:uid)
+
+    # == create nodes for each uid without any found node.
+
+    missing_uids = missing_uids - found_nodes.keys
+    missing_nodes = Neo4j::Node.create_many("twitter_identities", *missing_uids).by(&:uid)
+
+    # == put the returned nodes into the right order.
+    
+    uids.map do |uid|
+      uid = uid.uid if uid.is_a?(Neo4j::Node)
+      existing_nodes[uid] || found_nodes[uid] || missing_nodes[uid] || raise("Missing node #{uid}")
+    end
+  end
+  
   # Register a bountytweet. Takes a option hash with these parameters:
   #
   # - +:tweet_id+: the tweet id
@@ -176,13 +213,10 @@ module Bountybase::Graph::Twitter
   # Values are twitter ids (integers) or "twitter_identities" nodes.
   def register_followees(data) 
     connections = data.map do |follower_id, followee_ids|
-      follower = identity(follower_id)
-      
-      [ *followee_ids ].map do |followee_id| 
-        [ follower, identity(followee_id) ] 
-      end
+      follower, *followees = identities(follower_id, *followee_ids)
+      followees.map { |followee| [ follower, followee ] }
     end.flatten
-
+    
     Neo4j.connect "follows", *connections
   end
   

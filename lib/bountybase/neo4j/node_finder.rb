@@ -29,8 +29,29 @@ class Bountybase::Neo4j::Node
     expect! type => String, uid => [String, Integer]
 
     found = Bountybase::Neo4j.connection.get_node_index(type, "uid", uid)
-    return unless found
+    Bountybase::Neo4j.build found.first if found
+  end
+
+  # Find many nodes of the same type.
+  #
+  # returns an array of all nodes of a given type with given uids.
+  # The returned array may hold less than the number of uids in the
+  # uid parameter, and may return nodes in a different order.
+  def self.find_all(type, *uids)
+    expect! type => String
+    expect! {
+      uids.each { |uid| expect! uid => [String, Integer] }
+    }
+
+    return [] if uids.length == 0
+
+    batch = uids.map do |uid|
+      [ :get_node_index, type, "uid", uid ]
+    end 
     
-    Bountybase::Neo4j.build found.first
+    Bountybase::Neo4j.connection.batch(*batch).map do |r| 
+      body = r["body"]
+      Bountybase::Neo4j.build body.first if body.first
+    end.compact
   end
 end

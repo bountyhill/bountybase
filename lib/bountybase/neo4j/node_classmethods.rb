@@ -30,6 +30,29 @@ class Bountybase::Neo4j::Node
     Neo4j.build created_attributes
   end
 
+  # create many nodes of a give type.
+  def self.create_many(type, *uids)
+    expect! do
+      expect! type => String
+      uids.each { |uid| expect! uid => [/^\d+$/, Integer] }
+    end
+
+    return [] if uids.empty?
+    
+    create_index_if_needed(type)
+
+    attributes = { "type" => type, "created_at" => Time.now.to_i }
+
+    batch = uids.map do |uid|
+      [ :create_unique_node, type, "uid", uid, attributes.merge("uid" => uid)]
+    end
+    
+    Bountybase::Neo4j.connection.batch(*batch).map do |r| 
+      next unless body = r["body"]
+      Bountybase::Neo4j.build body
+    end
+  end
+
   # destroy a node.
   def self.destroy(type, uid)
     expect! type => String, uid => [String, Integer]
