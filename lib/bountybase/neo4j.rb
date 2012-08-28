@@ -94,10 +94,11 @@ module Bountybase::Neo4j
       hash["self"] || hash["start"]
     }
     
-    if url = hash["self"]
-      build_from_url(url)
-    else
-      Path.new hash
+    case url = hash["self"]
+    when nil                        then Path.new hash
+    when /\/data\/node\//           then Node.new hash
+    when /\/data\/relationship\//   then Relationship.new hash
+    else                            build_from_url(url)
     end
   end
   

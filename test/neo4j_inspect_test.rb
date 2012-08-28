@@ -10,9 +10,9 @@ class Neo4jInspectTest < Test::Unit::TestCase
   end
 
   def test_node
-    Neo4j::Node.create("foo", 1)
+    node = Neo4j::Node.create("foo", 1)
     
-    node = Neo4j::Node.find("foo", 1)
+    node = Neo4j::Node.new node.url
     assert node.inspect =~ /^<node:\d+>$/
     assert node.to_s =~ /^node:\d+$/
 
@@ -22,9 +22,8 @@ class Neo4jInspectTest < Test::Unit::TestCase
   end
 
   def test_node_w_attributes
-    Neo4j::Node.create "foo", 1, "bar" => "baz"
-
-    node = Neo4j::Node.find("foo", 1)
+    node = Neo4j::Node.create "foo", 1, "bar" => "baz"
+    node = Neo4j::Node.new node.url
 
     # neither to_s nor inspect do load attributes...
     assert node.inspect =~ /^<node:\d+>$/
@@ -43,7 +42,8 @@ class Neo4jInspectTest < Test::Unit::TestCase
     Neo4j.connect foo1 => foo2
     
     relationship = Neo4j::Relationship.all.first
-
+    relationship = Neo4j::Relationship.new relationship.url
+    
     # neither to_s nor inspect do load attributes...
     assert !relationship.fetched?
     assert relationship.inspect =~ /^<rel:\d+>$/
