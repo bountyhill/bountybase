@@ -28,8 +28,23 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'bountybase'
 require "forwardable"
 
+# -- Basic VCR configuration
+
+require 'vcr'
+
+VCR.configure do |c|
+  c.cassette_library_dir = 'fixtures/http_test'
+  c.hook_into :webmock # or :fakeweb
+  c.ignore_localhost = true
+  c.allow_http_connections_when_no_cassette = true
+end
+
+# -- logging configuration
+
 ::Event::Listeners.add :console
 ::Event.route :all => :console
+
+# -- a Bountybase TestCase with some helpers
 
 module Bountybase::TestCase
   extend Forwardable

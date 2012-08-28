@@ -1,14 +1,6 @@
 require_relative 'test_helper'
 require 'http'
 
-require 'vcr'
-
-VCR.configure do |c|
-  c.cassette_library_dir = 'fixtures/http_test'
-  c.hook_into :webmock # or :fakeweb
-  c.ignore_localhost = true
-end
-
 class HTTPTest < Test::Unit::TestCase
   include Bountybase::TestCase
   
