@@ -21,3 +21,6 @@ group :development do
   gem "awesome_print"
 end
 
+gem "twitter"
+gem "oj"        # oj is the JSON parser recommended for the twitter gem
+
