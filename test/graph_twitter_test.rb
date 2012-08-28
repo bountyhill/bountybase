@@ -197,8 +197,10 @@ CYPHER
   end
 
   def test_register_followees
-    Graph::Twitter.register_followees 20 => 1, 21 => 1, 22 => 1, 23 => 1, 24 => 1, 25 => 1
-    Graph::Twitter.register_followees 20 => 2, 21 => 2, 32 => 2, 33 => 2, 34 => 2, 35 => 2
+    benchmark :warn, "register_followees", :min => 0 do
+      Graph::Twitter.register_followees 20 => 1, 21 => 1, 22 => 1, 23 => 1, 24 => 1, 25 => 1
+      Graph::Twitter.register_followees 20 => 2, 21 => 2, 32 => 2, 33 => 2, 34 => 2, 35 => 2
+    end
 
     rels = Neo4j.query <<-CYPHER
       START src=node(*), target=node(*)
