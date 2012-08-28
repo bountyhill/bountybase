@@ -19,52 +19,51 @@ module Bountybase::Neo4j
     end
 
     name = args.first.is_a?(String) ? args.shift : "connects"
+    Connections.create_index_if_needed name
     
-    # There must be a odd number of remaining arguments.
+    # There must be an even number of remaining arguments.
     expect! args.length.even?
 
-    # get connections and options
-    connections, options = options.partition { |k,v| k.is_a?(Node) }
+    # The options hash contains options and connections. Connections
+    # are Node => Node; options is everything else.
+    connections_from_options, options = options.partition { |k,v| k.is_a?(Node) }
     options = Hash[options]
 
-    # build connections from args
-    args.each_slice(2).each do |from, to|
-      Connections.build name, from, to, options
-    end
+    # == collect all connections to build.
 
-    # build connections from options hash
-    connections.each do |from, to|
-      Connections.build name, from, to, options
+    connections_to_build = args.each_slice(2).to_a        # from arguments...
+    connections_to_build.concat connections_from_options  # from options...
+    connections_to_build.reject! { |from, to| from == to }
+    
+    # == build connections, in a batch
+
+    batch = connections_to_build.map do |from, to|
+      key, value = "rid", "-#{from.uuid}->#{to.uuid}"
+      [:create_unique_relationship, name, key, value, name, from.url, to.url ]
+    end
+    
+    rel_urls = connection.batch(*batch).map do |result| 
+      result["body"]["self"] 
+    end
+              
+    unless options.empty?
+      batch = rel_urls.map do |rel|
+        [:reset_relationship_properties, rel, options]
+      end
+
+      connection.batch(*batch)
     end
   end
   
   module Connections #:nodoc:
-    def self.connection #:nodoc:
-      Bountybase::Neo4j.connection
-    end
-    
-    # Build a connection
-    def self.build(name, from, to, options) #:nodoc:
-      expect! name => String, from => Node, to => Node, options => Hash
-
-      return if from == to
-
-      index, key, value = "#{name}", "rid", "-#{from.uuid}->#{to.uuid}"
-      create_index_if_needed index
-
-      rel = connection.create_unique_relationship(index, key, value, name, from.url, to.url)
-      connection.reset_relationship_properties(rel, options) unless options.empty?
-      rel
-    end
-
     # Create a relationship index with a given name if needed.
     def self.create_index_if_needed(name) #:nodoc:
       return if @indices && @indices.include?(name)
 
-      @indices = (connection.list_relationship_indexes || {}).keys
+      @indices = (Bountybase::Neo4j.connection.list_relationship_indexes || {}).keys
       return if @indices.include?(name)
 
-      connection.create_relationship_index(name)
+      Bountybase::Neo4j.connection.create_relationship_index(name)
       @indices << name
     end
   end

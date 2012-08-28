@@ -73,34 +73,20 @@ CYPHER
     assert_equal(2, Neo4j::Relationship.count)
   end
   
-  def test_connection_api
+  def test_connect
     foo1 = Neo4j::Node.create "foo", 1
     bar1 = Neo4j::Node.create "bar", 1
     foo2 = Neo4j::Node.create "foo", 2
     bar2 = Neo4j::Node.create "bar", 2
 
     # This builds two named connections
-    Neo4j::Connections.expects(:build).with "name", foo1, bar1, :attr => :value
-    Neo4j::Connections.expects(:build).with "name", foo2, bar2, :attr => :value
-
-    Neo4j.connect "name", foo1 => bar1, foo2 => bar2, :attr => :value
+    Neo4j.connect "name", foo1, bar1, foo1 => foo2, foo2 => bar2, :attr => :value
     
-    # This builds two unnamed connections
-    Neo4j::Connections.expects(:build).with 'connects', foo1, bar1, :attr => :value
-    Neo4j::Connections.expects(:build).with 'connects', foo2, bar2, :attr => :value
-
-    Neo4j.connect foo1 => bar1, foo2 => bar2, :attr => :value
-    
-    # This builds one unnamed connection
-    Neo4j::Connections.expects(:build).with 'connects', foo1, bar1, :attr => :value
-
-    Neo4j.connect foo1, bar1, :attr => :value
-    
-    # This builds two named connections
-    Neo4j::Connections.expects(:build).with "name", foo1, bar1, :attr => :value
-    Neo4j::Connections.expects(:build).with "name", foo2, bar2, :attr => :value
-
-    Neo4j.connect "name", foo1, bar1, foo2, bar2, :attr => :value
+    assert_equal(3, Neo4j::Relationship.count)
+    Neo4j::Relationship.all.each do |rel|
+      assert_equal rel.attributes, "attr" => "value"
+      assert_equal "name", rel.type
+    end
   end
   
   def test_query_rel
@@ -110,12 +96,8 @@ CYPHER
     Neo4j.connect foo1 => bar1
 
     # return the path
-    results = Neo4j.query <<-CYPHER
-    START r=relationship(*)
-    RETURN r
-CYPHER
-
-    relationship = results.first
+    assert_equal 1, Neo4j::Relationship.count
+    relationship = Neo4j::Relationship.all.first
     assert_kind_of Neo4j::Relationship, relationship
     assert_equal("-foo/1->bar/1", relationship.rid)
   end
