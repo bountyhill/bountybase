@@ -39,6 +39,10 @@ VCR.configure do |c|
   c.allow_http_connections_when_no_cassette = true
 end
 
+# Disable WebMock's curb adapter: that way all curb traffic - which should be
+# Neo4j traffic *only* - is not handled via webmock nor vcr.
+WebMock::HttpLibAdapters::CurbAdapter.disable!
+
 # -- logging configuration
 
 ::Event::Listeners.add :console
