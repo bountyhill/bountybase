@@ -1,12 +1,9 @@
-# Bountybase::Message::Heartbeat: hey, I am still alive!
-#
-# Messages of this kind are sent regularily from several components to bountyclerk.
-# bountyclerk sends them to the log and stat servers. 
+# Bountybase::Message::Heartbeat. This message is sent regularily from
+# several bountyhill components to bountyclerk, where it will be counted
+# and accumulated.
 class Bountybase::Message::Heartbeat < Bountybase::Message
-  INTERVAL = 10 # send heartbeat every 10 seconds.
-
   # perform the heartbeat message.
   def perform
-    Bountybase.logger.warn "heartbeat: #{origin.environment} #{origin.instance}"
+    Bountybase.logger.warn "heartbeat: #{environment} #{instance}"
   end
 end

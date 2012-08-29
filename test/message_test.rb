@@ -16,12 +16,12 @@ class MessageTest < Test::Unit::TestCase
   def test_enqueue
     Resque::Job.expects(:create).
       with "heartbeat",                          # name of queue
-            Bountybase::Message,                 # resuqe target performer
+            Bountybase::Message,                 # resque target performer
             'Bountybase::Message::Heartbeat',    # message name
             HEARTBEAT_PAYLOAD,                   # message payload
             ORIGIN                               # message origin
     
-    Bountybase::Message::Origin.expects(:create_hash).returns(ORIGIN)
+    Bountybase::Message::Heartbeat.expects(:origin_hash).returns(ORIGIN)
     Bountybase::Message::Heartbeat.enqueue HEARTBEAT_PAYLOAD
   end
 
@@ -59,21 +59,48 @@ class MessageTest < Test::Unit::TestCase
     end
   end
   
-  def test_message_queue
-    assert_equal("heartbeat", Bountybase::Message::Heartbeat.queue)
+  def test_default_queue
+    assert_equal("heartbeat", Bountybase::Message::Heartbeat.default_queue)
+    assert_equal("tweet", Bountybase::Message::Tweet.default_queue)
+  end
+
+  def test_origin_hash
+    freeze_time Time.at(12345678)
+    
+    with_settings "INSTANCE" => "test-bountybase" do
+      assert_equal Bountybase::Message.origin_hash, 
+        :instance => "bountybase", :environment => "test", :timestamp => 12345678
+    end
+  end
+  
+  def test_heartbeat_routing
+    Bountybase::Message::Heartbeat.any_instance.expects :perform 
+    Bountybase::Message.perform "Heartbeat", HEARTBEAT_PAYLOAD, ORIGIN
   end
 
   def test_heartbeat
     Bountybase.logger.expects :warn
     Bountybase::Message.perform "Heartbeat", HEARTBEAT_PAYLOAD, ORIGIN
   end
+
+  TWEET_PAYLOAD = {
+    :tweet_id => 123,
+    :sender_id => 456,
+    :sender_name => "name",
+    :quest_url => "http://bountybase.local/quest/23",
+    :receiver_ids => [ 1, 2, 3],
+    :receiver_names => [ "receiver1", "receiver2", "receiver3"],
+    :text => "Look what I have seen @receiver1 @receiver2 http://bountybase.local/quest/23",
+    :lang => "en"
+  }
   
-  def test_origin_hash
-    freeze_time Time.at(12345678)
-    
-    with_settings "INSTANCE" => "test-bountybase" do
-      assert_equal Bountybase::Message::Origin.create_hash, 
-        :instance => "bountybase", :environment => "test", :timestamp => 12345678
-    end
+  def test_tweet_routing
+    Bountybase::Message::Tweet.any_instance.expects :perform 
+    Bountybase::Message.perform "Tweet", TWEET_PAYLOAD, ORIGIN
+  end
+
+  def test_tweet
+    Bountybase::Graph.expects(:register_tweet).with(TWEET_PAYLOAD)
+    Bountybase::Message.perform "Tweet", TWEET_PAYLOAD, ORIGIN
   end
 end
