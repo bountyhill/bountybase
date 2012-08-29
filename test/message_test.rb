@@ -87,7 +87,7 @@ class MessageTest < Test::Unit::TestCase
     :tweet_id => 123,
     :sender_id => 456,
     :sender_name => "name",
-    :quest_url => "http://bountybase.local/quest/23",
+    :quest_urls => [ "http://bountyhill.local/quests/23" ],
     :receiver_ids => [ 1, 2, 3],
     :receiver_names => [ "receiver1", "receiver2", "receiver3"],
     :text => "Look what I have seen @receiver1 @receiver2 http://bountybase.local/quest/23",
@@ -100,7 +100,10 @@ class MessageTest < Test::Unit::TestCase
   end
 
   def test_tweet
-    Bountybase::Graph::Twitter.expects(:register).with(TWEET_PAYLOAD)
+    quest_url = TWEET_PAYLOAD[:quest_urls].first
+    expected_payload = TWEET_PAYLOAD.merge(:quest_id => Bountybase::Graph.quest_id(quest_url))
+
+    Bountybase::Graph::Twitter.expects(:register).with(expected_payload)
     Bountybase::Message.perform "Tweet", TWEET_PAYLOAD, ORIGIN
   end
   

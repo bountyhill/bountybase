@@ -21,7 +21,7 @@ require "resque"
 #   Bountybase::Message::Tweet.enqueue :tweet_id => 123,
 #     :sender_id => 456,
 #     :sender_name => "name",
-#     :quest_url => "http://bountybase.local/quest/23",
+#     :quest_id => 23,
 #     :receiver_ids => [ 1, 2, 3],
 #     :receiver_names => [ "receiver1", "receiver2", "receiver3"],
 #     :text => "Look what I have seen @receiver1 @receiver2 http://bountybase.local/quest/23",

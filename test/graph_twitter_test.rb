@@ -29,7 +29,7 @@ class GraphTwitterTest < Test::Unit::TestCase
     assert_not_nil n = Neo4j::Node.find("tweets", "1")
     assert_equal n.attributes, "created_at"=>123457,
         "lang"=>"en",
-        "quest_url"=>"http://bountyhill.local/quest/23",
+        "quest_id"=>23,
         "sender_id"=>456,
         "text"=>"My first #bountytweet",
         "tweet_id"=>1,
@@ -228,17 +228,17 @@ CYPHER
   
   def test_source_for_tweet
     freeze_time(2) 
-    register_tweet :sender_id => 2, :quest_url => quest_url(1)
-    register_tweet :sender_id => 2, :quest_url => quest_url(2)
+    register_tweet :sender_id => 2, :quest_id => 1
+    register_tweet :sender_id => 2, :quest_id => 2
     
     freeze_time(3) 
-    register_tweet :sender_id => 1, :quest_url => quest_url(1)
+    register_tweet :sender_id => 1, :quest_id => 1
 
     freeze_time(4) 
-    register_tweet :sender_id => 11, :quest_url => quest_url(3)
+    register_tweet :sender_id => 11, :quest_id => 3
 
     freeze_time(1)
-    register_tweet :sender_id => 3, :quest_url => quest_url(1)
+    register_tweet :sender_id => 3, :quest_id => 1
     
     sender = Graph::Twitter.identity(10)
     Graph::Twitter.register_followees sender => [1, 2, 3]

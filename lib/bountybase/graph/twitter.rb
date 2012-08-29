@@ -80,7 +80,7 @@ module Bountybase::Graph::Twitter
   # - +:source_id+: the identity of the source (e.g. 1234). 
   #   This is the _in_reply_to_ account, in Twitter lingo. (Optional)
   # - +:source_name+: The screen_name of the source. (Optional)
-  # - +:quest_url+: the URL of the bounty quest
+  # - +:quest_id+: the ID of the bounty quest
   # - +:receiver_ids+: an optional array of twitter user ids, 
   #   that also receive this tweet. These are users that are
   #   mentioned in a tweet.
@@ -97,7 +97,7 @@ module Bountybase::Graph::Twitter
       :sender_name  => [String, nil],   # The twitter screen name of the user sent this tweet 
       :source_id    => [Integer, nil],  # The twitter user id of the user from where the sender knows about this bounty.
       :source_name  => [String, nil],   # The twitter screen name of the user from where the sender knows about this bounty.
-      :quest_url    => /http.*$/,       # The url for the quest.
+      :quest_id     => Integer,       # The url for the quest.
       :receiver_ids => [Array, nil],    # An array of user ids of twitter users, that also receive this tweet.
       :receiver_names => [Array, nil],  # An array of screen names of twitter users, that also receive this tweet.
       :text         => String,          # The tweet text
@@ -105,7 +105,7 @@ module Bountybase::Graph::Twitter
     }
 
     # Is this really a quest?
-    quest = Graph.quest options[:quest_url]
+    quest = Graph.quest options[:quest_id]
     return if quest.nil?
     
     # We don't have to register this tweet twice...

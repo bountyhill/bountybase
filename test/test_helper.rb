@@ -73,7 +73,7 @@ module Bountybase::TestCase
   Neo4j = Bountybase::Neo4j
   
   TWEET_DEFAULTS = {
-    :quest_url => "http://bountyhill.local/quest/23",
+    :quest_id => 23,
     :text => "My first #bountytweet",                   # The tweet text
     :lang => "en"                                       # The tweet language
   }
@@ -84,9 +84,5 @@ module Bountybase::TestCase
     @@tweet_id += 1
     
     Graph::Twitter.register TWEET_DEFAULTS.merge(:tweet_id => @@tweet_id).merge(options)
-  end
-
-  def quest_url(quest_id)
-    "http://bountyhill.local/quest/#{quest_id}"
   end
 end
