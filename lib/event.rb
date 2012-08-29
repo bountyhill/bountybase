@@ -30,24 +30,30 @@
 # Custom event listeners can be implemented by deriving from Event::Listener
 # and reimplementing the Event::Listener#deliver method.
 #
-# Messages can be \<b>routed</b> to different destinations, depending on some conditions, 
-# like this: 
+# Messages can be \<b>routed</b> to different destinations, depending on some conditions.
+# Examples:
 # 
-#     # route all messages to the console
-#     Event.route :all      => :console
-#
-#     # send all events containing "scheme" to :analytics
-#     Event.route "scheme"  => :analytics
-#
-#     # this works also with regexps
-#     Event.route /http(s):/  => :analytics
+#     Event.route :all      => :console         # send all messages to the console
+#     Event.route "scheme"  => :analytics       # send events containing "scheme" to :analytics
+#     Event.route /http(s):/  => :analytics     # routing works with regexps, too
 #
 #     # send all events generated from SomeKlass and SomeKlass instances to :analytics
 #     Event.route SomeKlass => :analytics 
-# 
-#     Event.info "start"         # ends up on console, but not on :analytics. 
+#
+# With routing set up as above these are some event examples (assuming the event message
+# severity is set to :info or below.
+#
+#     Event.info "start"                        # ends up on :console, but not on :analytics. 
+#     Event.info "Connect to http://ix.de"      # ends up on :console and on :analytics. 
+#     SomeKlass.info "some_object"              # ends up on :console and on :analytics. 
 #
 class Event
+
+  # Returns the name to use when Event is used as an event source. This
+  # method returns nil, which means that <tt>Event.logger</tt> uses no
+  # name. See also Object.event_source_name.
+  def self.event_source_name
+  end
 
   # Event severities
   module Severity
@@ -134,13 +140,13 @@ class Event
     end
   end
 
-  def inspect
+  def inspect #:nodoc:
     "<#{self.class} source: #{source.inspect} #{severity.inspect} #{msg.inspect}>"
   end
 
   private
 
-  def format_value(value)
+  def format_value(value) #:nodoc:
     case value
     when Array      then "[ " + value.map { |v| format_value(v) }.join(", ") + " ]"
     when Hash       then "{ " + format_hash_inner(value) + " }"
@@ -149,7 +155,7 @@ class Event
     end
   end
 
-  def format_hash_inner(hash)
+  def format_hash_inner(hash) #:nodoc:
     hash.map do |k,v| 
       if k.to_s =~ /(secret|password)/ 
         "#{k}: xxxxxxxx" 
@@ -191,24 +197,41 @@ class Event
     end
   end
   
-  # The base class for Event listeners.
+  # The base class for Event listeners. To implement a custom Event Listener
+  # subclass this class and implement the +deliver+ method.
   class Listener
-    attr :options, :severity
 
+    # Options for this event listener, as passed into the constructor.
+    attr :options
+    
+    # The minimum severity for this event listener.
+    attr :severity
+
+    # Create a new Listener.
     def initialize(options = {})
+      expect! options => Hash
+      
       @options = options
       @severity = Event::Severity.to_number(options[:severity] || :debug)
     end
+    
+    # deliver an event to this event listener.
+    #
+    # Parameter:
+    # - +event+: an Event object.
+    def deliver_stderr(event)
+      raise ArgumentError, "Missing implementation"
+    end
   end
   
-  # A listener writing to a program's console.
+  # A listener writing to a program's console. ConsoleListeners are 
+  # prepared to work both in RubyMotion and in a CRuby environment. 
   class ConsoleListener < Listener
-    def deliver_stderr(event)
+    def deliver_stderr(event) #:nodoc:
       STDERR.puts event.to_s(:full)
     end
 
-    # delivery on the device
-    def deliver_ios_device(event)
+    def deliver_ios_device(event) #:nodoc:
       NSLog "%@", event.to_s(:full)
     end
 
@@ -220,10 +243,10 @@ class Event
     end
   end
   
-  # A listener writing to FlurryAnalytics. This works only in iOS, and only with
-  # the FlurryAnalytics SDK set up and linked in.
+  # A listener writing to FlurryAnalytics. This works only in RubyMotion, and
+  # only with the FlurryAnalytics SDK set up and linked in.
   class FlurryAnalyticsListener < Listener
-    def initialize(key, options = {})
+    def initialize(key, options = {})                         #:nodoc:
       super options
       FlurryAnalytics.startSession key
     end
@@ -266,7 +289,7 @@ MSG
 
     private
     
-    def severities_by_number
+    def severities_by_number #:nodoc:
       @severities_by_number ||= [].tap do |ary|
         Event::Severity::SEVERITIES.each { |sym, num| ary[num] = sym }
       end
@@ -330,106 +353,145 @@ end
 
 # -- logging methods
 
+# The Event::Logger class is the logger adapter. Each ruby object will
+# return an Event::Logger object from its <tt>:logger</tt> method.
 class Event::Logger
-  attr :event_source
+  # The +event_source+ for this event. This attribute is used to 
+  # determine the event_source name, via its +event_source_name+
+  # method.
+  attr_reader :event_source
   
-  def initialize(event_source)
+  def initialize(event_source) #:nodoc:
     @event_source = event_source
   end
   
-  module LoggerMethods
-    def error(*args, &block)
-      Event.deliver :error, self, *args, &block
-    end
-
-    def warn(*args, &block)
-      Event.deliver :warn, self, *args, &block
-    end
-
-    def info(*args, &block)
-      Event.deliver :info, self, *args, &block
-    end
-
-    def debug(*args, &block)
-      Event.deliver :debug, self, *args, &block
-    end
-
-    class Benchmarker
-      attr :message, true
-      
-      def initialize(message)
-        @message = message
-      end
-    end
-    
-    def benchmark(*args, &block)
-      severity = args.shift if Event::Severity::SEVERITIES.key?(args.first)
-      severity ||= :info
-      
-      min_runtime = args.pop[:min] if args.last.is_a?(Hash) && args.last.keys == [:min]
-      min_runtime ||= 50
-
-      msg = args.shift || "benchmark"
-      msg += " #{args.map(&:inspect).join(", ")}" if args.length > 0
-
-      benchmarker = Benchmarker.new(msg)
-      lambda = Proc.new
-
-      start = Time.now
-      
-      r = if lambda.arity == 0 
-        yield
-      else
-        yield benchmarker
-      end
-
-      runtime = ((Time.now - start) * 1000).to_i
-      Event.deliver severity, self, "#{benchmarker.message}: #{runtime} msecs." if runtime >= min_runtime
-    
-      r
-    rescue
-      runtime = ((Time.now - start) * 1000).to_i
-      Event.deliver severity, self, "#{benchmarker.message}: failed after #{runtime} msecs." if runtime >= min_runtime
-      raise
-    end
+  # Generates a log event at *error* severity.
+  def error(*args, &block)
+    Event.deliver :error, self, *args, &block
   end
 
-  include LoggerMethods
+  # Generates a log event at *warn* severity.
+  def warn(*args, &block)
+    Event.deliver :warn, self, *args, &block
+  end
+
+  # Generates a log event at *info* severity.
+  def info(*args, &block)
+    Event.deliver :info, self, *args, &block
+  end
+
+  # Generates a log event at *debug* severity.
+  def debug(*args, &block)
+    Event.deliver :debug, self, *args, &block
+  end
+
+  # The Benchmarker object can be used to adjust a benchmark's
+  # message after the fact:
+  #
+  #   benchmark do |bm|
+  #     doc = HTTP.get "http://google.com"
+  #     bm.message = "Received #{doc.bytesize} byte"
+  #     doc
+  #   end
+  class Benchmarker
+    
+    # The benchmark message
+    attr :message, true
+    
+    def initialize(message) #:nodoc:
+      @message = message
+    end
+  end
+  
+  #
+  # Runs a benchmark and logs it using. 
+  # 
+  #   benchmark "This is a benchmark" do
+  #     # do something which takes some time.
+  #   end
+  #
+  # The default severity is :info, but can be adjusted:
+  #
+  #   benchmark :warn, "This benchmark will be logged at :warn severity" do
+  #     # do something which takes some time.
+  #   end
+  #
+  # This method yields a Benchmarker object, which can be used to
+  # modify the benchmark message "after the fact."
+  #
+  #   benchmark do |bm|
+  #     doc = HTTP.get "http://google.com"
+  #     bm.message = "Received #{doc.bytesize} byte"
+  #     doc
+  #   end
+  #
+  def benchmark(*args, &block)
+    severity = args.shift if Event::Severity::SEVERITIES.key?(args.first)
+    severity ||= :info
+    
+    min_runtime = args.pop[:min] if args.last.is_a?(Hash) && args.last.keys == [:min]
+    min_runtime ||= 50
+
+    msg = args.shift || "benchmark"
+    msg += " #{args.map(&:inspect).join(", ")}" if args.length > 0
+
+    benchmarker = Benchmarker.new(msg)
+    lambda = Proc.new
+
+    start = Time.now
+    
+    r = if lambda.arity == 0 
+      yield
+    else
+      yield benchmarker
+    end
+
+    runtime = ((Time.now - start) * 1000).to_i
+    Event.deliver severity, self, "#{benchmarker.message}: #{runtime} msecs." if runtime >= min_runtime
+  
+    r
+  rescue
+    runtime = ((Time.now - start) * 1000).to_i
+    Event.deliver severity, self, "#{benchmarker.message}: failed after #{runtime} msecs." if runtime >= min_runtime
+    raise
+  end
 end
 
 class Object
+  # Returns the logger object for this object.
   def logger
     @logger ||= Event::Logger.new(self.class)
   end
 
+  # Runs a benchmark on the logger.
   def benchmark(*args, &block)
     logger.benchmark(*args, &block)
   end
 
+  # Returns the name to use when this object is used as an event source
   def event_source_name
     name
   end
 end
 
-class Event
-  def self.event_source_name
-    nil
-  end
-end
-
 module Bountybase
+  # Bountybase event_source_name returns nil. Bountybase.warn etc. do not 
+  # include an event_source_name.
   def self.event_source_name
     nil
   end
 end
   
 class Module
+  # The logger for a modules and classes uses the module/class itself 
+  # as event source, and *not* its class (which would be Class, btw.)
+  #
+  # This lets you use, e.g.
+  # 
+  #   Net::HTTP.warn "Test"
+  #
+  # which logs a message with event_source_name "Net::HTTP".  
   def logger
     @logger ||= Event::Logger.new(self)
   end
 end
-
-def E(*args, &block); Event.deliver :error, Bountybase.logger, *args, &block; end
-def W(*args, &block); Event.deliver :warn,  Bountybase.logger, *args, &block; end
-def I(*args, &block); Event.deliver :info,  Bountybase.logger, *args, &block; end
-def D(*args, &block); Event.deliver :debug, Bountybase.logger, *args, &block; end
