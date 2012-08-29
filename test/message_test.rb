@@ -100,7 +100,7 @@ class MessageTest < Test::Unit::TestCase
   end
 
   def test_tweet
-    Bountybase::Graph.expects(:register_tweet).with(TWEET_PAYLOAD)
+    Bountybase::Graph::Twitter.expects(:register).with(TWEET_PAYLOAD)
     Bountybase::Message.perform "Tweet", TWEET_PAYLOAD, ORIGIN
   end
 end

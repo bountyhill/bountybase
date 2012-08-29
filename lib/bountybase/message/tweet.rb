@@ -5,6 +5,6 @@
 class Bountybase::Message::Tweet < Bountybase::Message
   # perform the heartbeat message.
   def perform
-    Bountybase::Graph.register_tweet(payload)
+    Bountybase::Graph::Twitter.register payload
   end
 end
