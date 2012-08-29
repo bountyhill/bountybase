@@ -43,6 +43,13 @@ end
 # Neo4j traffic *only* - is not handled via webmock nor vcr.
 WebMock::HttpLibAdapters::CurbAdapter.disable!
 
+# -- logging configuration. These makes no difference with what Bountybase.setup
+# does, but is added here so that tests that are not run via rake get a valid
+# logging configuration also. 
+
+::Event::Listeners.add :console
+::Event.route :all => :console
+
 # -- a Bountybase TestCase with some helpers
 
 module Bountybase::TestCase
