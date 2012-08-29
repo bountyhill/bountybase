@@ -18,9 +18,6 @@ module Bountybase::Neo4j
     # A shortcut for Bountybase::Neo4j
     Neo4j = Bountybase::Neo4j
 
-    extend Neo4j::Connection
-    include Neo4j::Connection
-
     # equality
     #
     # Two objects are equal if they are of the same class and share the same

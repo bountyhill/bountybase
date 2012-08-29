@@ -43,11 +43,6 @@ end
 # Neo4j traffic *only* - is not handled via webmock nor vcr.
 WebMock::HttpLibAdapters::CurbAdapter.disable!
 
-# -- logging configuration
-
-::Event::Listeners.add :console
-::Event.route :all => :console
-
 # -- a Bountybase TestCase with some helpers
 
 module Bountybase::TestCase

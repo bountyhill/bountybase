@@ -2,24 +2,23 @@ module Bountybase::Neo4j
   # returns a connection to a Neo4j server. As neography connections
   # are not threadsafe, each thread manages its own connection object.
   def self.connection
-    Thread.current[:neography_connection] ||= Connection.connect!
+    Thread.current[:neography_connection] ||= connect!
   end
-  
-  module Connection #:nodoc:
-    # connect to a database, return connection object
-    def self.connect! #:nodoc:
-      url = Bountybase.config.neo4j
-      expect! url => /[^\/]$/
 
-      Neography::Rest.new(url).tap do |connection|
-        next if @created_first_connection
+  # connect to the Neo4j database, return Neography connection object.
+  #
+  # Note: The URL to connect to is read from the Bountybase.config.neo4j
+  # setting.
+  def self.connect! #:nodoc:
+    url = Bountybase.config.neo4j
+    expect! url => /[^\/]$/
 
-        Bountybase.logger.benchmark :warn, "Connected to neo4j at", url, :min => 0 do
-          connection.ping
-        end
+    connection = Neography::Rest.new(url)
 
-        @created_first_connection = true
-      end
+    Bountybase.logger.benchmark :warn, "Connected to neo4j at", url, :min => 0 do
+      connection.ping
     end
+
+    connection
   end
 end
