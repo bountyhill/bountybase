@@ -85,27 +85,11 @@ class Bountybase::Message
     @payload = payload
   end
   
-  #
-  # Validates the message. If it is invalid this method should return
-  # +false+ or raise an +ArgumentError+ exception.
-  # 
-  # Note that one can use the expect! method to verify the message object.
-  def valid?
-  end
-
-  def validate! #:nodoc:
-    if valid? == false
-      raise UnsupportedParameters, "Could not validate message"
-    end
-  end
-  
   # Set the message's origin, validate it, and perform the message.
   # Any ArgumentError caught at any point in this process is translated
   # into a UnsupportedParameters exception.
   def perform_with_origin(origin) #:nodoc:
     @instance, @environment, @timestamp = origin.values_at :instance, :environment, :timestamp
-
-    validate!
     perform
   end
   
@@ -118,6 +102,17 @@ class Bountybase::Message
       :timestamp    => Time.now.to_i
     }
   end
+
+  #
+  # Validate the payload. If the payload is invalid this method raises
+  # an +ArgumentError+ exception. 
+  #
+  # Reimplement validate! in subclasses for custom payload validation.
+  # Note that one can use the expect! method to verify the message object.
+  def self.validate!(payload)
+  end
+
+  public
 
   # -- enqueuing a message. 
 
@@ -145,13 +140,11 @@ class Bountybase::Message
   #   Message::Heartbeat.enqueue "heartbeat"
   #   Message::Tweet.enqueue :tweet_id => 123
   #   Message::Tweet.enqueue "tweet_queue", :tweet_id => 123
-  
-  public
-  
   def self.enqueue(*args)
     payload = args.last.is_a?(Hash) ? args.pop : {}
     queue, dummy = *args
     expect! dummy => nil, queue => [ String, nil ]
+    validate! payload
     
     # While the Resque default implementation derives the queue name from 
     # the class. We, however, are using the same class (Bountybase::Message)

@@ -103,4 +103,14 @@ class MessageTest < Test::Unit::TestCase
     Bountybase::Graph::Twitter.expects(:register).with(TWEET_PAYLOAD)
     Bountybase::Message.perform "Tweet", TWEET_PAYLOAD, ORIGIN
   end
+  
+  def test_tweet_validation
+    assert_nothing_raised() {  
+      Bountybase::Message::Tweet.enqueue "Tweet", TWEET_PAYLOAD
+    }
+    
+    assert_raise(ArgumentError) {  
+      Bountybase::Message::Tweet.enqueue "Tweet", {}
+    }
+  end
 end
