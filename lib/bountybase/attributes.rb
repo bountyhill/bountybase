@@ -50,7 +50,7 @@ module Bountybase::Attributes
   def role
     @role ||= begin
       _, role, _ = *I.parse_instance
-      role || raise(Missing, "Cannot determine role.")
+      role || raise(Missing, "Cannot determine role, INSTANCE env value is #{I.from_environment("INSTANCE").inspect}")
     end
   end
 
@@ -66,7 +66,7 @@ module Bountybase::Attributes
       instance || if environment == "test"
         "test"
       else
-        raise(Missing, "Cannot determine instance setting.")
+        raise(Missing, "Cannot determine instance setting, INSTANCE env value is #{I.from_environment("INSTANCE").inspect}")
       end
     end
   end
