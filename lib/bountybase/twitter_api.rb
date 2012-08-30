@@ -11,15 +11,27 @@ module Bountybase::TwitterAPI
   def followee_ids(user)
     expect! user => [Integer, String]
     
-    client.friend_ids(user).all
+    benchmark :warn, "Fetching followee_ids" do |bm|
+      r = client.friend_ids(user).all
+      bm.message = "Fetching #{r.length} followee_ids"
+      r
+    end
+  rescue Object
+    $!.log "TwitterAPI.followee_ids"
+    []
   end
   
   # Lookup user information.
   def users(user_ids)
     expect! user_ids => [Array]
 
-    users = client.users(user_ids)  # fetch users as an array.
-    users.by(&:id)                  # and return these as a hash.
+    benchmark :warn, "Fetching user information on #{user_ids.length} users" do
+      users = client.users(user_ids)  # fetch users as an array.
+      users.by(&:id)                  # and return these as a hash.
+    end
+  rescue Object
+    $!.log "TwitterAPI.users"
+    {}
   end
   
   private
