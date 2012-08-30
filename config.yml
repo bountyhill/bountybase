@@ -92,6 +92,6 @@ fnordmetric:
 
 neo4j:
   # test:                 http://9e68fcc50:2bb6aea56@291fac8e1.hosted.neo4j.org:7289
-  development:          http://localhost:7474/bountybasedev
+  development:          http://localhost:7474
   test:                 http://localhost:7474
   production:           http://9e68fcc50:2bb6aea56@291fac8e1.hosted.neo4j.org:7289
