@@ -62,6 +62,15 @@ twitter:
       consumer_secret:      YotJBuBSLTaP8IUhbkUU46nKPtCmcI6BFL53oaRQQI
       access_token:         744854762-0AOIW3nminJYWUZrThOQGpJvQYb30BeAMCLJp06S
       access_token_secret:  mnmcR4RWhR6xvMxu6yzJ3NGRf3jzdvOUQzn22Ndo
+    #
+    # Note: bountyclerk1 uses the same twitter account as bountytwirl2, for now.
+    # This is ok during development.
+    bountyclerk1:
+      url:                  https://dev.twitter.com/apps/2982201
+      consumer_key:         hucvNtFL6gDA6t5XjlD1A
+      consumer_secret:      YotJBuBSLTaP8IUhbkUU46nKPtCmcI6BFL53oaRQQI
+      access_token:         744854762-0AOIW3nminJYWUZrThOQGpJvQYb30BeAMCLJp06S
+      access_token_secret:  mnmcR4RWhR6xvMxu6yzJ3NGRf3jzdvOUQzn22Ndo
     bountytick:
       url:                  https://dev.twitter.com/apps/2982207
       consumer_key:         auDWHPRoc7egQgHsMbUjg
