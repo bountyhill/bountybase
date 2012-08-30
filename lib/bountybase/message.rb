@@ -49,9 +49,6 @@ class Bountybase::Message
   # Error to raise when trying to perform a unknown message.
   class UnknownName < ArgumentError; end
 
-  # Error to raise when trying to perform a message with invalid parameters.
-  class UnsupportedParameters < ArgumentError; end
-
   # the originating Bountybase.instance name
   attr_reader :instance      
 
@@ -80,17 +77,10 @@ class Bountybase::Message
   
   # Build the Message object. The default implementation just saves the 
   # passed in attributes. You rarely have to override this method.
-  def initialize(payload = {}) #:nodoc:
-    expect! payload => Hash
+  def initialize(payload, origin) #:nodoc:
+    expect! payload => Hash, origin => Hash
     @payload = payload
-  end
-  
-  # Set the message's origin, validate it, and perform the message.
-  # Any ArgumentError caught at any point in this process is translated
-  # into a UnsupportedParameters exception.
-  def perform_with_origin(origin) #:nodoc:
     @instance, @environment, @timestamp = origin.values_at :instance, :environment, :timestamp
-    perform
   end
   
   # return a hash holding all information to later being passed into the 
@@ -182,18 +172,16 @@ class Bountybase::Message
   def self.perform(klassname, payload, origin)
     expect! payload => Hash, origin => Hash
 
-    payload.withIndifferentKeys!
-    origin.withIndifferentKeys!
-    
     klass = @@message_klasses[klassname]
+
+    payload = payload.with_symbolized_keys
+    origin = origin.with_symbolized_keys
+
     klass.validate! payload
-    klass.new(payload).send(:perform_with_origin, origin)
-  rescue UnknownName, UnsupportedParameters
-    E "Cannot perform: #{$!}"
+    klass.new(payload, origin).perform
+  rescue Object
+    E "Cannot perform: #{$!}" #{}",\n\tfrom #{$!.backtrace.join("\n\t")}"
     raise
-  rescue ArgumentError
-    E "Cannot perform: #{$!}"
-    raise UnsupportedParameters, $!
   end
   
   private

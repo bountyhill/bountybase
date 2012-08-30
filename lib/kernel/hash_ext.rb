@@ -8,17 +8,35 @@ class Hash
   #   hash["bar"]     #  "bars"
   #   hash[:bar]      #  nil
   #
-  #   hash.withIndifferentKeys!
+  #   hash = hash.with_indifferent_keys
   #
   #   hash["foo"]     #  "foos"
   #   hash[:foo]      #  "foos"
   #   hash["bar"]     #  "bars"
   #   hash[:bar]      #  "bars"
   #
-  def withIndifferentKeys!
-    extend WithIndifferentKeys
+  def with_indifferent_keys
+    dup.extend(WithIndifferentKeys)
   end
 
+  # returns a copy of this Hash where all String keys are symbolized.
+  def with_symbolized_keys
+    inject({}) do |hash, (key, value)|
+      if key.is_a?(String)
+        hash.update key.to_sym => value
+      else
+        hash.update key => value
+      end
+    end
+  end
+
+  # returns a copy of this Hash where all keys (including, e.g. Fixnums) are stringified.
+  def with_stringified_keys
+    inject({}) do |hash, (key, value)|
+      hash.update key.to_s => value
+    end
+  end
+  
   module WithIndifferentKeys #:nodoc:
     # If the key exists in any of its indifferent forms, it returns
     # the specific form, if not, it returns the key.
@@ -26,10 +44,10 @@ class Hash
       case key
       when Symbol
         s = key.to_s
-        return s if hash.key?(s)
+        return s if hash.key?(s, false)
       when String
         sym = key.to_sym
-        return sym if hash.key?(sym)
+        return sym if hash.key?(sym, false)
       end
       
       key
@@ -45,6 +63,15 @@ class Hash
 
     def []=(key, value) #:nodoc:
       super(WithIndifferentKeys.find_key(self, key), value)
+    end
+
+    def key?(key, try_indifferent_keys = true) #:nodoc:
+      super(key) || 
+        case try_indifferent_keys ? key : false
+        when Symbol then super(key.to_s)
+        when String then super(key.to_sym)
+        else false
+        end
     end
   end
 end

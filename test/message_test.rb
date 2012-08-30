@@ -54,7 +54,7 @@ class MessageTest < Test::Unit::TestCase
       Bountybase::Message.perform("UnknownName", options, origin) 
     end
 
-    assert_raise(Bountybase::Message::UnsupportedParameters) do 
+    assert_raise(ArgumentError) do 
       Bountybase::Message.perform("Heartbeat", 1, origin) 
     end
   end
