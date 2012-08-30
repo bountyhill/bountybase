@@ -27,7 +27,7 @@ class MessageTest < Test::Unit::TestCase
 
   def test_dummy_implementation
     assert_raise(RuntimeError) do
-      Bountybase::Message.new.perform
+      Bountybase::Message.new({}, {}).perform
     end
   end
 
@@ -101,7 +101,9 @@ class MessageTest < Test::Unit::TestCase
 
   def test_tweet
     quest_url = TWEET_PAYLOAD[:quest_urls].first
-    expected_payload = TWEET_PAYLOAD.merge(:quest_id => Bountybase::Graph.quest_id(quest_url))
+    expected_payload = TWEET_PAYLOAD.dup
+    expected_payload.update :quest_id => Bountybase::Graph.quest_id(quest_url)
+    expected_payload.delete :quest_urls
 
     Bountybase::Graph::Twitter.expects(:register).with(expected_payload)
     Bountybase::Message.perform "Tweet", TWEET_PAYLOAD, ORIGIN
