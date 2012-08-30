@@ -179,20 +179,29 @@ class Bountybase::Message
   #
   # The order of its arguments reflects the order used by
   # <tt>Resque::Job.create</tt> in the <tt>Message.enqueue</tt>
-  def self.perform(klassname, options, origin)
+  def self.perform(klassname, payload, origin)
+    expect! payload => Hash, origin => Hash
+
+    payload.withIndifferentKeys!
+    origin.withIndifferentKeys!
+    
     klass = @@message_klasses[klassname]
-    klass.new(options).send(:perform_with_origin, origin)
+    klass.validate! payload
+    klass.new(payload).send(:perform_with_origin, origin)
   rescue UnknownName, UnsupportedParameters
+    E "Cannot perform: #{$!}"
     raise
   rescue ArgumentError
+    E "Cannot perform: #{$!}"
     raise UnsupportedParameters, $!
   end
   
   private
 
   def self.resolve_message_name(name) #:nodoc:
-    return unless name =~ /^[A-Z][A-Za-z0-9_]*$/
+    return unless name =~ /^[A-Z][:A-Za-z0-9_]*$/
 
+    name = name.split("::").last
     klass = Bountybase::Message.const_get(name)
     return klass if klass.instance_methods.include? :perform
   rescue NameError, TypeError
