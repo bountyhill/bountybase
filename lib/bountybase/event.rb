@@ -28,3 +28,10 @@ end
 class Object
   include Bountybase::EventShortcuts
 end
+
+class NilClass
+  def self.event_source_name #:nodoc:
+    nil
+  end
+end
+  
