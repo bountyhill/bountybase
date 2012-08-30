@@ -1,4 +1,4 @@
-require_relative "expectations"
+require "expectation"
 require_relative "kernel/enumerable_ext"
 
 # The Bountybase namespace organizes data access patterns for the Bountyhill application.

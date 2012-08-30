@@ -1,5 +1,6 @@
 source :rubygems
 
+gem "expectation"
 gem "addressable"
 gem "rake"
 gem "remote_syslog_logger"
