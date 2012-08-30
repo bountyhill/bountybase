@@ -179,8 +179,8 @@ class Bountybase::Message
 
     klass.validate! payload
     klass.new(payload, origin).perform
-  rescue Object
-    E "Cannot perform: #{$!}" #{}",\n\tfrom #{$!.backtrace.join("\n\t")}"
+  rescue StandardError
+    $!.log "Cannot perform"
     raise
   end
   

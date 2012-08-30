@@ -1,6 +1,7 @@
 require "expectation"
 require_relative "kernel/enumerable_ext"
 require_relative "kernel/hash_ext"
+require_relative "kernel/standard_error_ext"
 
 # The Bountybase namespace organizes data access patterns for the Bountyhill application.
 module Bountybase; end
