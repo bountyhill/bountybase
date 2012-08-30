@@ -104,12 +104,23 @@ module Bountybase::Graph::Twitter
       :lang         => String           # The tweet language
     }
 
+    # Apart from the receiver_ids and receiver_names entries all values 
+    # must be Strings or Fixnums, or else Neo4j could not save those.
+    receiver_ids = options.delete(:receiver_ids) || []
+    receiver_names = options.delete(:receiver_names) || []
+    
+    expect {
+      expectations = options.keys.inject({}) do |h, key| h.update key => [ String, Fixnum ] end
+      expect! options => expectations
+    }
+
     # Is this really a quest?
     quest = Graph.quest options[:quest_id]
     return if quest.nil?
     
     # We don't have to register this tweet twice...
     return if Neo4j::Node.find("tweets", options[:tweet_id])
+
     Neo4j::Node.create("tweets", options[:tweet_id], options)
 
     sender = identity(options[:sender_id], options[:sender_name])
