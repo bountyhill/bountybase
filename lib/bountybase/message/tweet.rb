@@ -3,20 +3,41 @@
 # Bountybase::Message::Tweet message, which is to be processed by  
 # bountyclerk.
 class Bountybase::Message::Tweet < Bountybase::Message
-  # perform the heartbeat message.
+  
+  # The quest_urls as passed in from the payload.
+  attr_reader :quest_urls
+  
+  def initialize(payload, origin)
+    expect! payload => { :quest_urls => Array }
+
+    @quest_urls = payload.delete(:quest_urls)
+    super payload, origin
+  end
+  
+  # perform the message
   def perform
     return unless quest_id
+    I "Quest ##{quest_id}: register tweet", payload[:text]
 
-    Bountybase::Graph::Twitter.register(payload.merge(:quest_id => quest_id))
+    Bountybase::Graph::Twitter.register(payload.update(:quest_id => quest_id))
   end
 
-  def quest_id
-    @quest_id ||= payload[:quest_urls].map do |url|
+  private
+  
+  def quest_id #:nodoc:
+    @quest_id ||= quest_urls.map do |url|
       expect! url => /http.*$/
       Bountybase::Graph.quest_id(url)
     end.compact.first
   end
-  
+
+  def quest_id_for_tests #:nodoc:
+    quest_url = quest_urls.first
+    quest_url.hash % 33 if quest_url
+  end
+
+  # alias_method :quest_id :quest_id_for_tests
+
   def self.validate!(payload)
     expect! payload => {
       :tweet_id     => Integer,         # The id of the tweet 
