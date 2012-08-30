@@ -13,18 +13,23 @@ class Neography::Rest
   def http(verb, path, post_body = nil, put_data = nil, &block)
     url = configuration + URI.encode(path)
 
-    Curl.http(verb, url, post_body, put_data) do |curb|
-      if basic_auth = @authentication[:basic_auth]
-        curb.http_auth_types = :basic
-        curb.username, curb.password = *basic_auth.values_at(:username, :password)
+    benchmark :debug, "[#{verb.upcase}] #{url}" do |bm|
+      r = Curl.http(verb, url, post_body, put_data) do |curb|
+        if basic_auth = @authentication[:basic_auth]
+          curb.http_auth_types = :basic
+          curb.username, curb.password = *basic_auth.values_at(:username, :password)
+        end
+
+        curb.headers["Accept"] = "application/json"
+        curb.headers["Content-Type"] = "application/json"
+        curb.headers["Connection"] = "Keep-Alive"
       end
-      
-      curb.headers["Accept"] = "application/json"
-      curb.headers["Content-Type"] = "application/json"
-      curb.headers["Connection"] = "Keep-Alive"
+
+      bm.message = "[#{verb.upcase}] #{url}: #{r.code} #{r.body.bytesize} bytes"
+      r
     end
   end
-    
+  
   def get(path,options={})
     evaluate_response http(:GET, path)
   end
