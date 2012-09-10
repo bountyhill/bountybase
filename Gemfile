@@ -10,7 +10,6 @@ gem "neography"
 gem "curb"
 gem "rulesio"
 gem "simple_cache_rs"
-gem "sqlite3"
 
 group :test do
   gem "vcr"

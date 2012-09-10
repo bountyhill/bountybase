@@ -115,7 +115,11 @@ GEM
       actionpack
       activesupport
       girl_friday (~> 0.10.0)
-    simple_cache_rs (0.10.2)
+    simple_cache_rs (0.10.3)
+      expectation
+      redis
+      redis-namespace
+      sqlite3
     simple_oauth (0.1.9)
     simplecov (0.6.4)
       multi_json (~> 1.0)
@@ -173,7 +177,6 @@ DEPENDENCIES
   rulesio
   simple_cache_rs
   simplecov
-  sqlite3
   test-unit
   twitter
   vcr
