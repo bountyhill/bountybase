@@ -99,6 +99,16 @@ fnordmetric:
     redis_url:          redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
     redis_prefix:       pro
 
+#
+#
+# rules.io config.
+rulesio:
+  default:
+    disabled:           true
+    token:              'yNzTq0l2F2rQxIFwfnufiA'
+
+#
+#
 neo4j:
   # test:                 http://9e68fcc50:2bb6aea56@291fac8e1.hosted.neo4j.org:7289
   development:          http://localhost:7474

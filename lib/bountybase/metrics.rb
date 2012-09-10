@@ -1,5 +1,6 @@
 require "fnordmetric"
 require "fnordmetric/api"
+require "rulesio"
 
 module Bountybase
   #
@@ -17,13 +18,73 @@ module Bountybase
   # Which gauges and counters are actually useful for the stats module is
   # not configured here, but is part of the +bountystats+ application.
   def metrics
-    @metrics ||= if config = Bountybase.config.fnordmetric
-        Metrics.new(config)
+    @metrics ||= begin
+      adapter = if (config = Bountybase.config.rulesio) && !config["disabled"]
+        RulesIOAdapter.new(config)
+      elsif (config = Bountybase.config.fnordmetric) && !config["disabled"]
+        FnordMetricAdapter.new(config) 
       else
-        Metrics::Dummy
+        DummyAdapter.new
       end
+      
+      Bountybase.logger.info "Connected to metrics adapter", adapter.class
+      Metrics.new adapter
+    end
   end
 
+  # A dummy adapter, just eats all events doing nothing. Used when there
+  # is no configuration.
+  class DummyAdapter
+    def event(data); end
+  end
+
+  class FnordMetricAdapter
+    # Default event_queue_ttl setting.
+    EVENT_QUEUE_DEFAULT_TTL = 20
+
+    extend Forwardable
+    delegate :event => :"@api"
+    
+    def initialize(config)
+      @api = FnordMetric::API.new :redis_url   => config["redis_url"], 
+                              :redis_prefix    => config["redis_prefix"],  
+                              :event_queue_ttl => config["event_queue_ttl"] ||    EVENT_QUEUE_DEFAULT_TTL
+    end
+  end
+
+  class RulesIOAdapter
+    def event(event)
+      event[:_name] = event.delete(:_type).to_s
+      event[:_timestamp] = Time.now.to_f
+      event[:_actor] ||= Bountybase.instance
+      event[:_domain] ||= "bountybase"
+
+      W "event", event
+      RulesIO.send_event(event)
+      RulesIO.flush
+    end
+    
+    def initialize(options)
+      expect! options => { "token" => String }
+
+      defaults = {
+        "webhook_url"   => 'https://www.rules.io/events/',
+        "queue"         => RulesIO::GirlFridayQueue,
+        "queue_options" => {}
+      }
+      
+      options = defaults.update(options)
+      
+      RulesIO.logger = RulesIO
+      RulesIO.webhook_url = options["webhook_url"]
+      RulesIO.buffer = []
+      RulesIO.filter_parameters = []
+      RulesIO.token = options["token"]
+      RulesIO.queue = options["queue"]
+      RulesIO.queue_options = options["queue_options"]
+    end
+  end
+  
   #
   # The API endpoint for the Bountybase metrics object. There is usually
   # a single Metrics instance, which can be accessed via Bountybase.metrics.
@@ -43,30 +104,14 @@ module Bountybase
   # - +event_queue_ttl+: how long should events live? This defaults
   #   to Metrics::EVENT_QUEUE_DEFAULT_TTL
   class Metrics
-    
-    # A dummy module, just eats all method calls doing nothing. Used as a Metrics
-    # standin when there is no configuration.
-    module Dummy #:nodoc:
-      def self.method_missing(*args); end
-    end
-    
-    # Default event_queue_ttl setting.
-    EVENT_QUEUE_DEFAULT_TTL = 20
 
-    # The api attribute is needed for testing. 
-    attr :api #:nodoc:
-    
     # Creates a new Metrics instance. 
-    def initialize(config) #:nodoc:
-      @api = FnordMetric::API.new :redis_url       => config["redis_url"], 
-                                  :redis_prefix    => config["redis_prefix"],  
-                                  :event_queue_ttl => config["event_queue_ttl"] || EVENT_QUEUE_DEFAULT_TTL
-
-      Bountybase.logger.info "Connected to stats queue", config
+    def initialize(service) #:nodoc:
+      @service = service
     end
     
     def method_missing(sym, *args) #:nodoc:
-      api.event build_event(sym, *args)
+      @service.event build_event(sym, *args)
     end
     
     private

@@ -8,6 +8,7 @@ gem "resque"
 gem "fnordmetric"
 gem "neography"
 gem "curb"
+gem "rulesio"
 
 group :test do
   gem "vcr"

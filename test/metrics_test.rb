@@ -7,23 +7,27 @@ class MetricsTest < Test::Unit::TestCase
     assert_not_nil(Bountybase.metrics)
   end
   
+  def metrics_service
+    @metrics_service ||= Bountybase.metrics.instance_variable_get("@service")
+  end
+  
   def test_counters
-    Bountybase.metrics.api.expects(:event).with(:_type => :pageviews)
+    metrics_service.expects(:event).with(:_type => :pageviews)
     Bountybase.metrics.pageviews!
   end
 
   def test_counters_w_parameters
-    Bountybase.metrics.api.expects(:event).with(:_type => :pageviews, :a => :b)
+    metrics_service.expects(:event).with(:_type => :pageviews, :a => :b)
     Bountybase.metrics.pageviews! :a => :b
   end
 
   def test_gauges
-    Bountybase.metrics.api.expects(:event).with(:_type => :processing_time, :value => 20)
+    metrics_service.expects(:event).with(:_type => :processing_time, :value => 20)
     Bountybase.metrics.processing_time 20
   end
 
   def test_gauges_w_parameters
-    Bountybase.metrics.api.expects(:event).with(:_type => :processing_time, :value => 20, :a => :b)
+    metrics_service.expects(:event).with(:_type => :processing_time, :value => 20, :a => :b)
     Bountybase.metrics.processing_time 20, :a => :b
   end
 
