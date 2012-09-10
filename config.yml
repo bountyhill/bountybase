@@ -134,3 +134,28 @@ neo4j:
   development:          http://localhost:7474
   test:                 http://localhost:7474
   production:           http://9e68fcc50:2bb6aea56@291fac8e1.hosted.neo4j.org:7289
+
+
+#
+# Configuration for transloadit image upload. This includes both S3 storage
+# configuration (bucket, key, secret) and transloadit account information.
+transloadit:
+  default:
+    key:              17d2e6f10126475eb760488225759517
+    secret:           0c3b2954e827002e1d7ac27e964bcd4eb7ad94e2
+    s3_key:           183DWY3TS8SWQQJAAY82
+    s3_secret:        NndG7WPbbBb3cE/X7MB797U/vIZJnxhHjYcvaH1g
+  development:
+    s3_bucket:        bountyhill-dev
+  test:
+    s3_bucket:        bountyhill-test
+  staging:
+    s3_bucket:        bountyhill-staging
+  production:
+    s3_bucket:        bountyhill-production
+
+
+#
+# Admin twitter handles.
+bountyhill_admins:
+  - "@radiospiel"

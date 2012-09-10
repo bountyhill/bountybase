@@ -106,10 +106,15 @@ module Bountybase
     def self.resolve_by_environment(setting) #:nodoc:
       return setting unless setting.is_a?(Hash)
 
-      if setting.key?(Bountybase.environment)
-        setting[Bountybase.environment]
-      elsif setting.key?("default")
-        setting["default"]
+      environment_setting, default_setting = 
+        *setting.values_at(Bountybase.environment, "default")
+      
+      if environment_setting.is_a?(Hash) && default_setting.is_a?(Hash)
+        default_setting.deep_merge(environment_setting)
+      elsif !environment_setting.nil?
+        environment_setting
+      else
+        default_setting
       end
     end
   end
