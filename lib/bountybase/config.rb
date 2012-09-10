@@ -66,6 +66,28 @@ module Bountybase
       end
     end
 
+    # returns a redis url for a specific redis based component. These URLs
+    # are built from a base redis configuration, under the \a "redis" key,
+    # and a second configuration value under the passed in \a component.
+    def redis_for(component)
+      redis_url = Bountybase.config.redis.gsub(/\/*$/, "")
+      expect! redis_url => /^redis:/
+
+      url_part = if component == :bountybase
+        # default namespace for global redis connection.
+        "bountybase"
+      else
+        Bountybase.config.send(component) || raise("Missing #{component} redis configuration")
+      end
+
+      case url_part
+      when "none"   then nil
+      when /:/      then url_part
+      when /^\d+$/  then "#{redis_url}:#{url_part}"
+      else               "#{redis_url}/#{url_part}"
+      end
+    end
+
     # returns the configuration hash including settings for *all* environments 
     def self.read #:nodoc:
       config_file = File.join File.dirname(__FILE__), "..", "..", "config.yml"

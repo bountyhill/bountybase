@@ -2,6 +2,7 @@ require "expectation"
 require_relative "kernel/enumerable_ext"
 require_relative "kernel/hash_ext"
 require_relative "kernel/standard_error_ext"
+require_relative "redis_ext"
 
 # The Bountybase namespace organizes code for the Bountyhill applications.
 # A rough breakdown includes the following sub modules:

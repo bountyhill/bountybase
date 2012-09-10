@@ -13,14 +13,34 @@ syslog:
     - logs.papertrailapp.com
     - 22076
 
-# The resque configuration, one URL per environment.
-# TODO: setup redis instance for production
-resque:
-  deployment:   none
+# A redis database. This database acts as the default for both
+# the fnordmetric metric collection, for the resque configuration,
+# and for the medium level cache - but these can be configuration
+# , used for various things.
+#
+# Note: these URLs should end in "/"
+redis:
   production:   redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
   staging:      redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
-  test:         redis://localhost:6379/1
-  development:  redis://localhost:6379/2
+  test:         redis://localhost:6379/
+  development:  redis://localhost:6379/
+  
+# The resque configuration. This accepts a 
+#
+# - a 'hostname:port' string
+# - a '[0-9]+' string to select a database from the general redis configuration.
+# - a '[^:]+' string to select a namespace in the generally configured redis database.
+# - the "none" value to skip resque configuration.
+#
+# The default configuration sets a "resque" value, assuming that the redis 
+# config entry is different in all environments.
+resque:
+  default:      resque
+  deployment:   none
+
+# The bountybase cache
+cache:
+  default:      bountycache
 
 # The librato metrics credentials. Even though they are the same we cannot use a "default"
 # setting because development and test do not generate metrics.

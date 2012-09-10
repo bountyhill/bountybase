@@ -66,26 +66,29 @@ module Bountybase::Setup
   # An entry "none" specifies that Resque is not to be used. In that case 
   # trying to use it results in an exception.
   def self.resque
-    url = Bountybase.config.resque || raise("Missing resque configuration")
-    if url == "none"
+    if redis = redis_for(:resque)
+      Resque.redis = redis
+    else
       def Resque.redis
         raise "Cannot use resque in #{Bountybase.environment} mode"
       end
-      return
-    end
-    
-    # set resque URL, ping once (to resolve name), and ping a second time for
-    # an initial roundtrip measurement.
-    Bountybase.logger.info "Connecting to resque at", url
-
-    Resque.redis = url
-    Resque.redis.ping
-
-    Bountybase.logger.benchmark(:warn, "Resque using redis at", url, :min => 0) do
-      Resque.redis.ping
     end
   end
+
+  # connect to a Redis instance for a given mode, returning a
+  # Redis::Namespace object. 
+  def self.redis_for(what)
+    return unless url = Bountybase.config.redis_for(what)
+
+    Bountybase.logger.warn "Connecting to #{what} redis at", url
+    Redis::Namespace.connect(url).tap(&:roundtrip)
+  end
   
+  # returns a normalized version of the redis config setting.
+  def self.redis
+    @redis ||= redis_for(:bountybase)
+  end
+
   # Setup connection to the neo4j database.
   #
   # This uses the Bountybase.config.neo4j value under the hood. (See Neo4j.connect!)
