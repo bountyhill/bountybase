@@ -1,5 +1,5 @@
 module Deployment
-  def self.event_source_name
+  def self.event_source_name #:nodoc:
     Dir.getwd.sub(ENV["HOME"], "~")
   end
 
@@ -61,22 +61,33 @@ module Deployment
   rescue Errno::ENOENT
   end
   
+  def git_changed?(dir)
+    return false
+    
+    Dir.chdir(dir) do
+      if !sys("git diff --exit-code")
+        "unstaged"
+      elsif !sys("git diff --exit-code --cached")
+        "uncommitted"
+      end
+    end
+  end
+  
   def verify_bountybase_versions
     return unless bountybased = head("vendor/bountybased")
-    return unless bountybased != head("vendor/bountybase")
-
-    die <<-MSG
-bountybased and bountybase versions differ. Please push the bountybase project and update the bountybase submodule:
-
-    pushd vendor/bountybased
-    # commit outstanding changes
-    git push
-    popd
-    pushd vendor/bountybase
-    git pull
-    popd
-    git commit -m "Updated bountybase submodule" vendor/bountybase .gitmodules
+    if changes = git_changed?("vendor/bountybased")
+      die <<-MSG
+The bountybased directory contains #{changes} changes. Please commit these changes and repeat.
 MSG
+    end
+    
+    bountybase = head("vendor/bountybase")
+    return unless bountybased != bountybase
+
+    Bountybase.logger.warn "bountybased and bountybase versions differ (#{bountybased} vs #{bountybase}). Fetching current version:"
+
+    sys! "(cd vendor/bountybase; git pull)"
+    sys! "git commit -m 'Updated bountybase submodule' vendor/bountybase .gitmodules"
   end
   
   def prepare_deployment

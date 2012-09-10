@@ -61,7 +61,6 @@ class BountybaseTest < Test::Unit::TestCase
     end
   end
   
-  
   def test_quest_id
     assert_equal 12, Bountybase::Graph.quest_id(12)
 
@@ -76,5 +75,13 @@ class BountybaseTest < Test::Unit::TestCase
 
     Bountybase::HTTP.expects(:resolve).with("http://t.co/jkgha786jhg").returns("https://www.bountyhill.local/account/12")
     assert_equal nil, Bountybase::Graph.quest_id("http://t.co/jkgha786jhg")
+  end
+  
+  def test_simple_cache
+    s = "foo"
+    assert_equal "foo", Bountybase.cached("key") { s }
+    
+    s = "baz"
+    assert_equal "foo", Bountybase.cached("key") { s }
   end
 end
