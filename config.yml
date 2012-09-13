@@ -157,5 +157,5 @@ transloadit:
 
 #
 # Admin twitter handles.
-bountyhill_admins:
+admins:
   - "@radiospiel"

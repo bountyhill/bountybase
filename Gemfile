@@ -1,15 +1,6 @@
 source :rubygems
 
-gem "expectation"
-gem "addressable"
-gem "rake"
-gem "remote_syslog_logger"
-gem "resque"
-gem "fnordmetric"
-gem "neography"
-gem "curb"
-gem "rulesio"
-gem "simple_cache_rs"
+gem "bountydeps"
 
 group :test do
   gem "vcr"
@@ -23,7 +14,3 @@ end
 group :development do
   gem "awesome_print"
 end
-
-gem "twitter"
-gem "oj"        # oj is the JSON parser recommended for the twitter gem
-

@@ -1,6 +1,6 @@
 require "fnordmetric"
 require "fnordmetric/api"
-require "rulesio"
+# require "rulesio"
 
 module Bountybase
   #
@@ -19,7 +19,7 @@ module Bountybase
   # not configured here, but is part of the +bountystats+ application.
   def metrics
     @metrics ||= begin
-      adapter = if (config = Bountybase.config.rulesio) && !config["disabled"]
+      adapter = if false && (config = Bountybase.config.rulesio) && !config["disabled"]
         RulesIOAdapter.new(config)
       elsif (config = Bountybase.config.fnordmetric) && !config["disabled"]
         FnordMetricAdapter.new(config) 
