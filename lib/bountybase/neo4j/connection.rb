@@ -11,7 +11,9 @@ module Bountybase::Neo4j
   # setting.
   def self.connect! #:nodoc:
     url = Bountybase.config.neo4j
-    expect! url => /[^\/]$/
+    expect! url => [ /[^\/]$/, nil ]
+
+    return NoConnection unless url
 
     connection = Neography::Rest.new(url)
 
@@ -20,5 +22,11 @@ module Bountybase::Neo4j
     end
 
     connection
+  end
+  
+  module NoConnection
+    def self.method_missing(*args)
+      raise "No Neo4j connection was configured in the #{Bountybase.environment.inspect} environment."
+    end
   end
 end

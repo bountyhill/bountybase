@@ -70,8 +70,10 @@ module Bountybase
     # are built from a base redis configuration, under the \a "redis" key,
     # and a second configuration value under the passed in \a component.
     def redis_for(component)
-      redis_url = Bountybase.config.redis.gsub(/\/*$/, "")
-      expect! redis_url => /^redis:/
+      expect! Bountybase.config.redis => [ nil, /^redis:/ ]
+
+      return unless redis_url = Bountybase.config.redis
+      redis_url.gsub!(/\/*$/, "")
 
       url_part = if component == :bountybase
         # default namespace for global redis connection.
