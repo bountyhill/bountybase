@@ -22,4 +22,9 @@ require "bountybase"
 
 STDERR.puts "Using bountybase#{bountybased ? "d" : ""} version #{Bountybase::VERSION}"
 
-Bountybase.setup
+if $0 =~ /rake$/
+  # when run from rake only setup logging
+  Bountybase::Setup.logging
+else
+  Bountybase.setup
+end
