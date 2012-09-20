@@ -12,22 +12,22 @@ class MetricsTest < Test::Unit::TestCase
   end
   
   def test_counters
-    metrics_service.expects(:event).with(:_type => :pageviews)
+    metrics_service.expects(:event).with(:count, :pageviews, 1, nil)
     Bountybase.metrics.pageviews!
   end
 
   def test_counters_w_parameters
-    metrics_service.expects(:event).with(:_type => :pageviews, :a => :b)
+    metrics_service.expects(:event).with(:count, :pageviews, 1, :a => :b)
     Bountybase.metrics.pageviews! :a => :b
   end
 
   def test_gauges
-    metrics_service.expects(:event).with(:_type => :processing_time, :value => 20)
+    metrics_service.expects(:event).with(:value, :processing_time, 20, nil)
     Bountybase.metrics.processing_time 20
   end
 
   def test_gauges_w_parameters
-    metrics_service.expects(:event).with(:_type => :processing_time, :value => 20, :a => :b)
+    metrics_service.expects(:event).with(:value, :processing_time, 20, :a => :b)
     Bountybase.metrics.processing_time 20, :a => :b
   end
 

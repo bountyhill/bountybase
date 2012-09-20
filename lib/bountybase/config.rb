@@ -1,5 +1,6 @@
 require "ostruct"
 require "yaml"
+require "active_support/all"
 
 module Bountybase
   # returns the global Bountybase::Config object, which contains configuration

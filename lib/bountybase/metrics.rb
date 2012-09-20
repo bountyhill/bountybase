@@ -1,6 +1,4 @@
-require "fnordmetric"
-require "fnordmetric/api"
-# require "rulesio"
+require "girl_friday"
 
 module Bountybase
   #
@@ -19,7 +17,9 @@ module Bountybase
   # not configured here, but is part of the +bountystats+ application.
   def metrics
     @metrics ||= begin
-      adapter = if false && (config = Bountybase.config.rulesio) && !config["disabled"]
+      adapter = if config = Bountybase.config.stathat
+        StatHatAdapter.new(config)
+      elsif false && (config = Bountybase.config.rulesio) && !config["disabled"]
         RulesIOAdapter.new(config)
       elsif (config = Bountybase.config.fnordmetric) && !config["disabled"]
         FnordMetricAdapter.new(config) 
@@ -46,25 +46,62 @@ module Bountybase
     delegate :event => :"@api"
     
     def initialize(config)
+      require "fnordmetric"
+      require "fnordmetric/api"
+      
       @api = FnordMetric::API.new :redis_url   => config["redis_url"], 
                               :redis_prefix    => config["redis_prefix"],  
                               :event_queue_ttl => config["event_queue_ttl"] ||    EVENT_QUEUE_DEFAULT_TTL
     end
+    
+    def event(type, name, value, payload)
+      payload ||= {}
+      
+      payload[:_name] = payload.delete(:_type).to_s
+      payload[:_timestamp] = Time.now.to_f
+      payload[:_actor] ||= Bountybase.instance
+      payload[:_domain] ||= "bountybase"
+
+      @api.event payload
+    end
   end
 
-  class RulesIOAdapter
-    def event(event)
-      event[:_name] = event.delete(:_type).to_s
-      event[:_timestamp] = Time.now.to_f
-      event[:_actor] ||= Bountybase.instance
-      event[:_domain] ||= "bountybase"
+  class StatHatAdapter
+    attr :queue
+    
+    def initialize(account)
+      require "stathat"
+      @account = account
+    end
 
-      W "event", event
-      RulesIO.send_event(event)
+    def event(type, name, value, payload)
+      expect! type => [ :count, :value ]
+
+      case type
+      when :count then StatHat::API.ez_post_count(name, @account, value || 1)
+      when :value then StatHat::API.ez_post_value(name, @account, value)
+      end
+    end
+  end
+  
+  class RulesIOAdapter
+    def event(type, name, value, payload)
+      payload ||= {}
+      
+      payload[:_name] = payload.delete(:_type).to_s
+      payload[:_timestamp] = Time.now.to_f
+      payload[:_actor] ||= Bountybase.instance
+      payload[:_domain] ||= "bountybase"
+
+      RulesIO.send_event(payload)
       RulesIO.flush
     end
     
     def initialize(options)
+      require "rulesio"
+      
+      expect! "Working" => false # Dont use me, I need some work!
+      
       expect! options => { "token" => String }
 
       defaults = {
@@ -108,27 +145,44 @@ module Bountybase
     # Creates a new Metrics instance. 
     def initialize(service) #:nodoc:
       @service = service
+
+      run_in_background!
     end
-    
-    def method_missing(sym, *args) #:nodoc:
-      @service.event build_event(sym, *args)
-    end
-    
+
     private
     
-    def build_event(sym, *args) #:nodoc:
-      # parse arguments. These are valid combinations: [value, Hash], [value], [Hash], [none]
-      options = args.last.is_a?(Hash) ? args.pop : {} 
-
-      options[:_type] = sym.to_s =~ /^(.*)!$/ ? $1.to_sym : sym
+    def run_in_background!
+      require "girl_friday"
       
+      service = @service
+      
+      @service = GirlFriday::WorkQueue.new(:metrics, :size => 1) do |type, name, value, payload|
+        service.event type, name, value, payload
+      end
+
+      def @service.event(*args); self << args; end
+    end
+
+    # method_missing builds an event from the name and the passed in parameters.
+    def method_missing(name, *args) #:nodoc:
+      if args.last.is_a?(Hash) 
+        payload = args.pop
+      end
+
       case args.length
-      when 0 then :nop 
-      when 1 then options[:value] = args.first
+      when 0 then value = 1
+      when 1 then value = args.first
       else        raise ArgumentError, "Invalid number of arguments"
       end
 
-      options
+      if name.to_s =~ /^(.*)!$/
+        type = :count
+        name = $1.to_sym
+      else
+        type = :value
+      end
+
+      @service.event type, name, value, payload
     end
   end
 end

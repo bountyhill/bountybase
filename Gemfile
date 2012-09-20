@@ -3,6 +3,7 @@ source :rubygems
 gem "bountydeps"
 
 group :test do
+  gem "psych"
   gem "vcr"
   gem "webmock"
   gem "mocha"

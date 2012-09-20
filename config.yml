@@ -152,6 +152,10 @@ rulesio:
     disabled:           true
     token:              'yNzTq0l2F2rQxIFwfnufiA'
 
+# The stathat account name.
+stathat:
+  default:              eno@open-lab.org
+
 #
 #
 neo4j:
