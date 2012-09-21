@@ -51,6 +51,23 @@ module Bountybase
   # - +event_queue_ttl+: how long should events live? This defaults
   #   to Metrics::EVENT_QUEUE_DEFAULT_TTL
   class Metrics
+    def self.in_background?
+      @in_background
+    end
+
+    def self.in_background=(in_background)
+      @in_background = in_background
+    end
+    
+    def self.in_background(flag, &block)
+      old, @in_background = @in_background, flag
+      yield
+    ensure
+      @in_background = old
+    end
+    
+    self.in_background = true
+    
     # A dummy adapter, just eats all events doing nothing. Used when there
     # is no configuration.
     module DummyService #:nodoc:
@@ -59,15 +76,27 @@ module Bountybase
 
     class BackgroundService #:nodoc:
       def initialize(service)
+        @service = service
+        
         require "girl_friday"
         
         @queue = GirlFriday::WorkQueue.new(:metrics, :size => 1) do |type, name, value, payload|
-          service.event type, name, value, payload
+          send_event(type, name, value, payload)
         end
       end
       
       def event(*args)
-        @queue << args
+        if ::Bountybase::Metrics.in_background?
+          @queue << args
+        else
+          send_event *args
+        end
+      end
+      
+      private
+      
+      def send_event(type, name, value, payload)
+        @service.event(type, name, value, payload)
       end
     end
     
