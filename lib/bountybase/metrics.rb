@@ -79,7 +79,15 @@ module Bountybase
         @service = BackgroundService.new(@service)
       end
     end
-
+    
+    def count(name, value=1, payload={})
+      @service.event :count, name, value, payload
+    end
+    
+    def value(name, value, payload={})
+      @service.event :value, name, value, payload
+    end
+    
     private
     
     # method_missing builds an event from the name and the passed in parameters.
