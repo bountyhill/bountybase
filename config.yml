@@ -110,9 +110,17 @@ twirl_tags:
 # The twitter app configuration for http://bountyhill.com. 
 # Note: most of the settings below are for reference only; important
 # settings are user, consumer_* and access_token_*
+#
+# - twitter_app.user: The "public" twitter account. This is the account
+#   owning the bountyhill twitter application.
+# - twitter_app.tag: The hash tag used to mark bounties. The twirl agent
+#   is configured to follow this hash tag in addition to the hash tags
+#   defined in the twirl_tags settings above.
+#
 twitter_app:
   default:
     user:                 bhstaging
+    tag:                  "#bhstaging"
     email:                staging@bountyhill.com
     password:             0cc7dbc46f19f6738fda47621653c51f
     url:                  https://dev.twitter.com/apps/3258822/show
@@ -123,6 +131,7 @@ twitter_app:
     access_token_secret:  bJ1Gylrg39y8x9dt7BYXLeuwLpCMNqJHMEYfnIxTU
   production:
     user:                 bountyhill
+    tag:                  "#bounty"
     email:                TODO
     password:             TODO
     url:                  TODO
@@ -130,6 +139,20 @@ twitter_app:
     consumer_secret:      TODO
     access_token:         TODO
     access_token_secret:  TODO
+
+#
+# This account is used to send messages directly to bountyhill users.
+# This is the account a user will be follow when signing in.
+twitter_notifications:
+  default:
+    user:                 bountyhermes
+    email:                bountyhermes@bountyhill.com
+    password:             7e9447a4f162cd131c1e941cc14f861f
+    url:                  https://dev.twitter.com/apps/3339978/show
+    consumer_key:         5Qwo5csYLfl78duu75jsBg
+    consumer_secret:      RVUc2P6Rn4pje5XlYJwCekivEmbwal2FU4VwALxCrXk
+    access_token:         857751487-DygiKejULjguoQFttG144RpIOqOUvhxp9zlBYQVj
+    access_token_secret:  461RyIGIgXQPMgY9vyLuSWurgXcAhnLLPChSDFohE
 
 #
 # redis connection for fnordmetric statistics.
