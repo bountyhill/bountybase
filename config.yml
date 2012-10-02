@@ -99,11 +99,11 @@ twitter:
       access_token_secret:  FetfXPlK0dyRhQUd98OoFDC7CQI1s17FjlGpJwRXDQ
 
 #
-# Listen for which tags?
-twirl_tags:
+# Tweets to track. In addition to these entries bountytwirl tracks the
+# twitter_app.tag hashtag.
+tracking:
   default:   
     - Berlin
-    - "#Olympia2012"
     - "@big_ben_clock"
 
 #
