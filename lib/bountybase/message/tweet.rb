@@ -23,12 +23,23 @@ class Bountybase::Message::Tweet < Bountybase::Message
   end
 
   private
+
+  # resolve quest URLs.
+  def resolved_urls #:nodoc:
+    @resolved_urls ||= quest_urls.map do |url|
+      begin
+        Bountybase::HTTP.resolve(url)
+      rescue StandardError
+        $!.log "Cannot resolve url", url
+      end
+    end.compact.
+      tap do |urls| 
+        W "urls resolve to", *urls 
+      end
+  end
   
   def quest_id #:nodoc:
-    @quest_id ||= quest_urls.map do |url|
-      expect! url => /http.*$/
-      Bountybase::Graph.quest_id(url)
-    end.compact.first
+    @quest_id ||= quest_urls.map { |url| Bountybase::Graph.quest_id(url) }.compact.first
   end
 
   def quest_id_for_tests #:nodoc:
