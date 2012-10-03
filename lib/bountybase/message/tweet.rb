@@ -16,6 +16,7 @@ class Bountybase::Message::Tweet < Bountybase::Message
   
   # perform the message
   def perform
+    W "perform", quest_urls
     return unless quest_id
     I "Quest ##{quest_id}: register tweet", payload[:text]
 
@@ -34,12 +35,14 @@ class Bountybase::Message::Tweet < Bountybase::Message
       end
     end.compact.
       tap do |urls| 
-        W "urls resolve to", *urls 
+        W "urls resolve to", [ urls ] 
       end
   end
   
   def quest_id #:nodoc:
-    @quest_id ||= quest_urls.map { |url| Bountybase::Graph.quest_id(url) }.compact.first
+    @quest_id ||= resolved_urls.
+      map { |url| Bountybase::Graph.quest_id(url) }.
+      compact.first.tap { |quest_id| W "Found quest_id", quest_id }
   end
 
   def quest_id_for_tests #:nodoc:

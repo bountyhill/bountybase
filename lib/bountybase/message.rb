@@ -172,9 +172,11 @@ class Bountybase::Message
   def self.perform(klassname, payload, origin)
     expect! payload => Hash, origin => Hash
 
-    W "#{klassname}", payload, origin
     
     klass = @@message_klasses[klassname]
+
+    W klass.name, payload
+    I "from", origin
 
     payload = payload.with_symbolized_keys
     origin = origin.with_symbolized_keys

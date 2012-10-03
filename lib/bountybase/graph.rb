@@ -116,7 +116,7 @@ module Bountybase::Graph
     case url
     when Integer 
       url
-    when /^(?:http|https):\/\/[a-z.]*\bbountyhill\.(?:com|local)\/(?:quest|quests)\/(\d+)\b/
+    when /^(?:http|https):\/\/[a-z.]*\bbountyhill\.(?:com|local)\/(?:q|quest|quests)\/(\d+)\b/
       Integer($1)
     when /^(?:http|https):\/\/[a-z.]*\bbountyhill\.(?:com|local)\//
       nil
