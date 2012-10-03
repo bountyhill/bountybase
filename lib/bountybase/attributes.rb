@@ -39,9 +39,10 @@ module Bountybase::Attributes
   # "development", "staging", etc. This setting is read from the RAILS_ENV, 
   # RACK_ENV, or INSTANCE environment variable, and defaults to "development".
   def environment
-    @environment ||= I.from_environment("RAILS_ENV", "RACK_ENV") ||
-      I.parse_instance.first ||
+    @environment ||= I.parse_instance.first ||
+      I.from_environment("RAILS_ENV", "RACK_ENV") ||
       "development"
+    end
   end
 
   # Returns the process' role within a multiprocess application. The role 
