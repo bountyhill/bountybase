@@ -70,13 +70,13 @@ twitter:
       consumer_secret:      6UdPXY4Wx9AgXH9YL65Ev3gCZgZ0lEop8ylsVRXjGE
       access_token:         744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI
       access_token_secret:  IhoMD0O9VRLZTwYkBPJT9jRcvd0K5kgVgVPmH5sQ
-    bountytwirl1:
+    twirl1:
       url:                  https://dev.twitter.com/apps/2982201
       consumer_key:         c6cvEkq8dHMaTa9F2y2w
       consumer_secret:      6UdPXY4Wx9AgXH9YL65Ev3gCZgZ0lEop8ylsVRXjGE
       access_token:         744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI
       access_token_secret:  IhoMD0O9VRLZTwYkBPJT9jRcvd0K5kgVgVPmH5sQ
-    bountytwirl2:
+    twirl2:
       url:                  https://dev.twitter.com/apps/2982201
       consumer_key:         hucvNtFL6gDA6t5XjlD1A
       consumer_secret:      YotJBuBSLTaP8IUhbkUU46nKPtCmcI6BFL53oaRQQI
@@ -85,13 +85,13 @@ twitter:
     #
     # Note: bountyclerk1 uses the same twitter account as bountytwirl2, for now.
     # This is ok during development.
-    bountyclerk1:
+    clerk1:
       url:                  https://dev.twitter.com/apps/2982201
       consumer_key:         hucvNtFL6gDA6t5XjlD1A
       consumer_secret:      YotJBuBSLTaP8IUhbkUU46nKPtCmcI6BFL53oaRQQI
       access_token:         744854762-0AOIW3nminJYWUZrThOQGpJvQYb30BeAMCLJp06S
       access_token_secret:  mnmcR4RWhR6xvMxu6yzJ3NGRf3jzdvOUQzn22Ndo
-    bountytick:
+    tick:
       url:                  https://dev.twitter.com/apps/2982207
       consumer_key:         auDWHPRoc7egQgHsMbUjg
       consumer_secret:      9qFMRghFa5F0s06CxYvFn22mXNpmrzzrBhbrzO7FA7M
