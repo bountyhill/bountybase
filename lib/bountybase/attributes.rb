@@ -39,9 +39,24 @@ module Bountybase::Attributes
   # "development", "staging", etc. This setting is read from the RAILS_ENV, 
   # RACK_ENV, or INSTANCE environment variable, and defaults to "development".
   def environment
-    @environment ||= I.parse_instance.first ||
-      I.from_environment("RAILS_ENV", "RACK_ENV") ||
-      "development"
+    @environment ||= read_environment :instance, "RAILS_ENV", "RACK_ENV", :default
+  end
+  
+  def read_environment(*keys) #:nodoc:
+    keys.each do |key|
+      env = case key
+      when :instance  then I.parse_instance.first
+      when :default   then "development"
+      else            I.from_environment("RAILS_ENV")
+      end
+      
+      next unless env
+
+      STDERR.puts "Read environment (#{env.inspect}) from #{key.inspect}"
+      return env
+    end
+    
+    nil
   end
 
   # Returns the process' role within a multiprocess application. The role 
