@@ -1,0 +1,63 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://sosfunds.org/500
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 500
+      message: Internal Server Error
+    headers:
+      !binary "U2VydmVy":
+      - !binary |-
+        bmdpbngvMS4xLjE5
+      !binary "RGF0ZQ==":
+      - !binary |-
+        V2VkLCAwMSBBdWcgMjAxMiAxMjoxNTo0OSBHTVQ=
+      Content-Type:
+      - !binary |-
+        dGV4dC9odG1sO2NoYXJzZXQ9dXRmLTg=
+      Content-Length:
+      - !binary |-
+        MzA=
+      !binary "Q29ubmVjdGlvbg==":
+      - !binary |-
+        a2VlcC1hbGl2ZQ==
+      X-Frame-Options:
+      - !binary |-
+        c2FtZW9yaWdpbg==
+      X-Xss-Protection:
+      - !binary |-
+        MTsgbW9kZT1ibG9jaw==
+      Content-Language:
+      - !binary |-
+        ZW4=
+      Set-Cookie:
+      - !binary |-
+        cmFjay5zZXNzaW9uPUJBaDdDRWtpRDNObGMzTnBiMjVmYVdRR09nWkZSaUpG
+        TlRjMVl6ZG1NemhsTkRCaE4yUTJNV0prWWprdyUwQVl6Wm1aamcxWW1VMk4y
+        WXlORGRpTkdWbU56azNZek5qT1RreVlqTmxNV0ZsWldFeFlqVXdPRFV6Wmtr
+        aSUwQURYUnlZV05yYVc1bkJqc0FSbnNJU1NJVVNGUlVVRjlWVTBWU1gwRkhS
+        VTVVQmpzQVJpSXRZakl4TjJVNSUwQU9HTXpZbVkzTUdZelkyWTBOak16WVRV
+        ME5EZGtOalU0TjJWbFlUazNOR0poTVVraUdVaFVWRkJmUVVORCUwQVJWQlVY
+        MFZPUTA5RVNVNUhCanNBUmlJdFpHRXpPV0V6WldVMVpUWmlOR0l3WkRNeU5U
+        VmlabVZtT1RVMiUwQU1ERTRPVEJoWm1RNE1EY3dPVWtpR1VoVVZGQmZRVU5E
+        UlZCVVgweEJUa2RWUVVkRkJqc0FSaUl0WkdFeiUwQU9XRXpaV1UxWlRaaU5H
+        SXdaRE15TlRWaVptVm1PVFUyTURFNE9UQmhabVE0TURjd09Va2lDWFZ6WlhJ
+        RyUwQU93Qkdld1k2REdOdmRXNTBjbmxKSWdkRVJRWTdBRlElM0QlMEEtLTQ1
+        MDU5MThlM2FlZDAyNGIyMjBlNmIwY2YwMzQ0OGFkYjRiYWRlMWE7IHBhdGg9
+        LzsgSHR0cE9ubHk=
+    body:
+      encoding: US-ASCII
+      string: <h1>Internal Server Error</h1>
+    http_version: 
+  recorded_at: Wed, 01 Aug 2012 12:15:47 GMT
+recorded_with: VCR 2.1.1

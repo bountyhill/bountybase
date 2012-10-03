@@ -1,0 +1,217 @@
+#
+# The bountybase configuration: This is yaml.
+
+# The syslog configuration, per environment an array of [ hostname, port ] 
+syslog:
+  deployment:
+    - logs.papertrailapp.com
+    - 61566
+  production:
+    - logs.papertrailapp.com
+    - 11905
+  staging:
+    - logs.papertrailapp.com
+    - 22076
+
+# A redis database. This database acts as the default for both
+# the fnordmetric metric collection, for the resque configuration,
+# and for the medium level cache - but these can be configuration
+# , used for various things.
+#
+# Note: these URLs should end in "/"
+redis:
+  production:   redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
+  staging:      redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
+  test:         redis://localhost:6379/
+  development:  redis://localhost:6379/
+  
+# The resque configuration. This accepts a 
+#
+# - a 'hostname:port' string
+# - a '[0-9]+' string to select a database from the general redis configuration.
+# - a '[^:]+' string to select a namespace in the generally configured redis database.
+# - the "none" value to skip resque configuration.
+#
+# The default configuration sets a "resque" value, assuming that the redis 
+# config entry is different in all environments.
+resque:
+  default:      resque
+  deployment:   none
+
+# The bountybase cache
+cache:
+  default:      bountycache
+
+# The librato metrics credentials. Even though they are the same we cannot use a "default"
+# setting because development and test do not generate metrics.
+#
+# CURRENTLY NOT IN USE!
+librato:
+  deployment:
+    username:   deployment@bountyhill.com
+    apikey:     d903064769ddf800ce3d8b7b7dcb64c368d9b7d02ebd6c24b03c57b3ff90049b
+  production:
+    username:   deployment@bountyhill.com
+    apikey:     d903064769ddf800ce3d8b7b7dcb64c368d9b7d02ebd6c24b03c57b3ff90049b
+  staging:
+    username:   deployment@bountyhill.com
+    apikey:     d903064769ddf800ce3d8b7b7dcb64c368d9b7d02ebd6c24b03c57b3ff90049b
+
+#
+# Twitter authentication keys. Authentication needs consumer_* and access_token* values;
+# urls are for reference purposes only and denote the twitter app URL. They are currently
+# set on default. While this is good for bountytick, bountytwirl instances must be run 
+# via separate applications.
+twitter:
+  default:
+    test:
+      url:                  https://dev.twitter.com/apps/2982201
+      consumer_key:         c6cvEkq8dHMaTa9F2y2w
+      consumer_secret:      6UdPXY4Wx9AgXH9YL65Ev3gCZgZ0lEop8ylsVRXjGE
+      access_token:         744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI
+      access_token_secret:  IhoMD0O9VRLZTwYkBPJT9jRcvd0K5kgVgVPmH5sQ
+    bountytwirl1:
+      url:                  https://dev.twitter.com/apps/2982201
+      consumer_key:         c6cvEkq8dHMaTa9F2y2w
+      consumer_secret:      6UdPXY4Wx9AgXH9YL65Ev3gCZgZ0lEop8ylsVRXjGE
+      access_token:         744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI
+      access_token_secret:  IhoMD0O9VRLZTwYkBPJT9jRcvd0K5kgVgVPmH5sQ
+    bountytwirl2:
+      url:                  https://dev.twitter.com/apps/2982201
+      consumer_key:         hucvNtFL6gDA6t5XjlD1A
+      consumer_secret:      YotJBuBSLTaP8IUhbkUU46nKPtCmcI6BFL53oaRQQI
+      access_token:         744854762-0AOIW3nminJYWUZrThOQGpJvQYb30BeAMCLJp06S
+      access_token_secret:  mnmcR4RWhR6xvMxu6yzJ3NGRf3jzdvOUQzn22Ndo
+    #
+    # Note: bountyclerk1 uses the same twitter account as bountytwirl2, for now.
+    # This is ok during development.
+    bountyclerk1:
+      url:                  https://dev.twitter.com/apps/2982201
+      consumer_key:         hucvNtFL6gDA6t5XjlD1A
+      consumer_secret:      YotJBuBSLTaP8IUhbkUU46nKPtCmcI6BFL53oaRQQI
+      access_token:         744854762-0AOIW3nminJYWUZrThOQGpJvQYb30BeAMCLJp06S
+      access_token_secret:  mnmcR4RWhR6xvMxu6yzJ3NGRf3jzdvOUQzn22Ndo
+    bountytick:
+      url:                  https://dev.twitter.com/apps/2982207
+      consumer_key:         auDWHPRoc7egQgHsMbUjg
+      consumer_secret:      9qFMRghFa5F0s06CxYvFn22mXNpmrzzrBhbrzO7FA7M
+      access_token:         744854762-zImMVMa47UrGbmvfjHz5w3gTXeYgtMeO44GFEnMZ
+      access_token_secret:  FetfXPlK0dyRhQUd98OoFDC7CQI1s17FjlGpJwRXDQ
+
+#
+# Tweets to track. In addition to these entries bountytwirl tracks the
+# twitter_app.tag hashtag.
+tracking:
+  default:   
+    - Berlin
+    - "@big_ben_clock"
+
+#
+# The twitter app configuration for http://bountyhill.com. 
+# Note: most of the settings below are for reference only; important
+# settings are user, consumer_* and access_token_*
+#
+# - twitter_app.user: The "public" twitter account. This is the account
+#   owning the bountyhill twitter application.
+# - twitter_app.tag: The hash tag used to mark bounties. The twirl agent
+#   is configured to follow this hash tag in addition to the hash tags
+#   defined in the twirl_tags settings above.
+#
+twitter_app:
+  default:
+    user:                 bhstaging
+    tag:                  "#bhstaging"
+    email:                staging@bountyhill.com
+    password:             0cc7dbc46f19f6738fda47621653c51f
+    url:                  https://dev.twitter.com/apps/3258822/show
+    callback_url:         http://bountyhill-staging-web1.heroku.com/twauth
+    consumer_key:         hpouSAo1rpoHofACKhzU4w
+    consumer_secret:      PNXFsQWQT8Jpm5yBtGDP5NMjSAIP3n5At9NvGgeY2UY
+    access_token:         834028045-4bLR1B000BqoFxt80OXW9h1xlY9Z9v1ueBO5qbBr
+    access_token_secret:  bJ1Gylrg39y8x9dt7BYXLeuwLpCMNqJHMEYfnIxTU
+  production:
+    user:                 bountyhill
+    tag:                  "#bounty"
+    email:                TODO
+    password:             TODO
+    url:                  TODO
+    consumer_key:         TODO
+    consumer_secret:      TODO
+    access_token:         TODO
+    access_token_secret:  TODO
+
+#
+# This account is used to send messages directly to bountyhill users.
+# This is the account a user will be follow when signing in.
+twitter_notifications:
+  default:
+    user:                 bountyhermes
+    email:                bountyhermes@bountyhill.com
+    password:             7e9447a4f162cd131c1e941cc14f861f
+    url:                  https://dev.twitter.com/apps/3339978/show
+    consumer_key:         5Qwo5csYLfl78duu75jsBg
+    consumer_secret:      RVUc2P6Rn4pje5XlYJwCekivEmbwal2FU4VwALxCrXk
+    access_token:         857751487-DygiKejULjguoQFttG144RpIOqOUvhxp9zlBYQVj
+    access_token_secret:  461RyIGIgXQPMgY9vyLuSWurgXcAhnLLPChSDFohE
+
+#
+# redis connection for fnordmetric statistics.
+fnordmetric:
+  default:
+    redis_url:          redis://localhost:6379
+    redis_prefix:       dev
+  staging:
+    redis_url:          redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
+    redis_prefix:       staging
+  production:
+    redis_url:          redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
+    redis_prefix:       pro
+
+#
+#
+# rules.io config.
+rulesio:
+  default:
+    disabled:           true
+    token:              'yNzTq0l2F2rQxIFwfnufiA'
+
+# The stathat account name.
+stathat:
+  default:              eno@open-lab.org
+
+#
+#
+neo4j:
+  # test:                 http://9e68fcc50:2bb6aea56@291fac8e1.hosted.neo4j.org:7289
+  development:          http://localhost:7474
+  test:                 http://localhost:7474
+  production:           http://9e68fcc50:2bb6aea56@291fac8e1.hosted.neo4j.org:7289
+  # The staging neo4j database stems from the neo4j:test addon on bountyhill-staging-web1
+  staging:              http://66cc3707a:2cb20b949@95da57c56.hosted.neo4j.org:7680
+
+
+#
+# Configuration for transloadit image upload. This includes both S3 storage
+# configuration (bucket, key, secret) and transloadit account information.
+transloadit:
+  default:
+    key:              17d2e6f10126475eb760488225759517
+    secret:           0c3b2954e827002e1d7ac27e964bcd4eb7ad94e2
+    s3_key:           183DWY3TS8SWQQJAAY82
+    s3_secret:        NndG7WPbbBb3cE/X7MB797U/vIZJnxhHjYcvaH1g
+  development:
+    s3_bucket:        bountyhill-dev
+  test:
+    s3_bucket:        bountyhill-test
+  staging:
+    s3_bucket:        bountyhill-staging
+  production:
+    s3_bucket:        bountyhill-production
+
+
+#
+# Admin twitter handles.
+admins:
+  - "@radiospiel"
+  - "@earl_oett"
+
