@@ -76,3 +76,12 @@ class Hash
   end
 end
 
+
+# A better inspect for OpenStruct
+class OpenStruct
+  def inspect
+    @table.map do |k,v|
+      "#{k}: #{v.inspect}"
+    end.sort.join(", ")
+  end
+end
