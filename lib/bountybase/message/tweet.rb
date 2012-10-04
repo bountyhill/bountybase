@@ -31,7 +31,7 @@ class Bountybase::Message::Tweet < Bountybase::Message
       Bountybase::HTTP.resolve(url)
     end.compact.
       tap do |urls| 
-        W "urls resolve to", [ urls ] 
+        W "urls resolve to", urls 
       end
   end
   

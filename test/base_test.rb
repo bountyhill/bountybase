@@ -62,19 +62,42 @@ class BountybaseTest < Test::Unit::TestCase
     end
   end
   
+  #
+  # Test bountyhill URLs. They must all not run through the resolver.
+  def test_bountyhill_quest_urls
+    Bountybase::HTTP.stubs(:resolve).raises("Dont call me")
+    
+    assert_nothing_raised {  
+      assert_equal 23, Bountybase::Graph.quest_id("http://bountyhill.local/quests/23")
+      assert_equal 42, Bountybase::Graph.quest_id("https://www.bountyhill.local/quests/42")
+      assert_equal nil, Bountybase::Graph.quest_id("https://www.bountyhill.local/account/12")
+
+      # These are real bountyhill URLs
+      assert_equal 123, Bountybase::Graph.quest_id("http://bountyhill-staging-web1.herokuapp.com/quests/123")
+      assert_equal 123, Bountybase::Graph.quest_id("http://bountyhill-staging-web1.herokuapp.com/q/123")
+      assert_equal 123, Bountybase::Graph.quest_id("http://bountyhill.herokuapp.com/quests/123")
+      assert_equal 123, Bountybase::Graph.quest_id("http://bountyhill.herokuapp.com/q/123")
+      assert_equal 123, Bountybase::Graph.quest_id("https://bountyhill.com/quests/123")
+      assert_equal 123, Bountybase::Graph.quest_id("https://bountyhill.com/q/123")
+      assert_equal 123, Bountybase::Graph.quest_id("https://www.bountyhill.com/quests/123")
+      assert_equal 123, Bountybase::Graph.quest_id("https://www.bountyhill.com/q/123")
+
+      assert_equal nil, Bountybase::Graph.quest_id("https://bountyhill.com/xyz/123")
+      assert_equal nil, Bountybase::Graph.quest_id("https://www.bountyhill.com")
+    }
+  end
+  
   def test_quest_id
     assert_equal 12, Bountybase::Graph.quest_id(12)
 
-    #
-    # These URLs are bountyhill URLs. They are not resolved, but just tested.
-    assert_equal 23, Bountybase::Graph.quest_id("http://bountyhill.local/quest/23")
-    assert_equal 42, Bountybase::Graph.quest_id("https://www.bountyhill.local/quest/42")
-    assert_equal nil, Bountybase::Graph.quest_id("https://www.bountyhill.local/account/12")
-    
-    Bountybase::HTTP.expects(:resolve).with("http://t.co/ZczESpRE").returns("http://audiohackday.org/")
+    # Test real ids via resolving. Requests and answers are prerecorded
+    # for these tests.
+    Bountybase::HTTP.expects(:resolve).with("http://t.co/ZczESpRE").
+      returns("http://audiohackday.org/")
     assert_equal nil, Bountybase::Graph.quest_id("http://t.co/ZczESpRE")
 
-    Bountybase::HTTP.expects(:resolve).with("http://t.co/jkgha786jhg").returns("https://www.bountyhill.local/account/12")
+    Bountybase::HTTP.expects(:resolve).with("http://t.co/jkgha786jhg").
+      returns("https://www.bountyhill.local/account/12")
     assert_equal nil, Bountybase::Graph.quest_id("http://t.co/jkgha786jhg")
   end
   

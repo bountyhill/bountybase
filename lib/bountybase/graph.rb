@@ -114,11 +114,11 @@ module Bountybase::Graph
     expect! url => [String, Integer]
     
     case url
-    when Integer 
+    when Integer
       url
-    when /^(?:http|https):\/\/[a-z.]*\bbountyhill\.(?:com|local)\/(?:q|quest|quests)\/(\d+)\b/
+    when /^(?:http|https):\/\/[a-z.]*\bbountyhill\b[^\/]+(?:com|local)\/(?:q|quests)\/(\d+)\b/
       Integer($1)
-    when /^(?:http|https):\/\/[a-z.]*\bbountyhill\.(?:com|local)\//
+    when /^(?:http|https):\/\/[a-z.]*\bbountyhill\b[^\/]+(?:com|local)/
       nil
     else
       if allow_resolve
