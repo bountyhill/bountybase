@@ -28,11 +28,7 @@ class Bountybase::Message::Tweet < Bountybase::Message
   # resolve quest URLs.
   def resolved_urls #:nodoc:
     @resolved_urls ||= quest_urls.map do |url|
-      begin
-        Bountybase::HTTP.resolve(url)
-      rescue StandardError
-        $!.log "Cannot resolve url", url
-      end
+      Bountybase::HTTP.resolve(url)
     end.compact.
       tap do |urls| 
         W "urls resolve to", [ urls ] 

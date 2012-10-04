@@ -115,8 +115,15 @@ module Bountybase::HTTP
   # Returns the final URL (i.e. the URL which does not redirect any 
   # longer), or nil.
   def resolve(url, headers = {})
+    # The following is for tests: we assume a bountyhill.local 
+    # URL is always valid and never redirects.
+    return url if url =~ /^http:\/\/bountyhill.local\/.*/
+    
     r = do_request Net::HTTP::Head, url, headers, config.max_redirections, url, Net::HTTP::Head
     r.url
+  rescue SocketError
+    W "Cannot resolve #{url}: #{$!}"
+    nil
   end
 
   # runs a get request and return a HTTP::Response object.
