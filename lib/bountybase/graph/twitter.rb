@@ -114,15 +114,19 @@ module Bountybase::Graph::Twitter
       expect! options => expectations
     }
 
+    W "Twitter.register", options
+    
     # Is this really a quest?
     quest = Graph.quest options[:quest_id]
+    W "quest", quest
     return if quest.nil?
-    
+
     # We don't have to register this tweet twice...
     return if Neo4j::Node.find("tweets", options[:tweet_id])
 
     Neo4j::Node.create("tweets", options[:tweet_id], options)
-
+    W "stored tweet"
+    
     sender = identity(options[:sender_id], options[:sender_name])
 
     # If the sender is not yet connected then we must connect it, preferably via an

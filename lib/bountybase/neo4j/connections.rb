@@ -24,6 +24,8 @@ module Bountybase::Neo4j
     # There must be an even number of remaining arguments.
     expect! args.length.even?
 
+    W "Neo4j.connect", *args, options unless Bountybase.environment == "test"
+    
     # The options hash contains options and connections. Connections
     # are Node => Node; options is everything else.
     connections_from_options, options = options.partition { |k,v| k.is_a?(Node) }
