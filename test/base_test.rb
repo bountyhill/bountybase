@@ -29,9 +29,10 @@ class BountybaseTest < Test::Unit::TestCase
     with_settings "INSTANCE" => "a-b1" do
       assert_equal "b1", Bountybase.instance
       assert_equal "b", Bountybase.role
+      assert_equal "a", Bountybase.environment
 
       # read environment from "RAILS_ENV" or "RACK_ENV", when ste
-      with_settings "RACK_ENV" => "KJH", "RAILS_ENV" => "KJH" do
+      with_settings "RACK_ENV" => "KJH", "RAILS_ENV" => "KJH", "INSTANCE" => nil do
         assert_equal "KJH", Bountybase.environment
       end
 

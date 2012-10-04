@@ -47,12 +47,11 @@ module Bountybase::Attributes
       env = case key
       when :instance  then I.parse_instance.first
       when :default   then "development"
-      else            I.from_environment("RAILS_ENV")
+      else            I.from_environment(key)
       end
       
       next unless env
 
-      STDERR.puts "Read environment (#{env.inspect}) from #{key.inspect}"
       return env
     end
     
