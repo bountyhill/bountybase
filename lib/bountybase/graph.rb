@@ -149,20 +149,48 @@ module Bountybase::Graph
     
     Neo4j.ask(query) || 0
   end
+
+  #
+  # returns all chains for this quest.
+  def chains(quest)
+    quest_id = quest_id!(quest)
+    
+    Neo4j.query <<-CYPHER
+      START quest=node:quests(uid='#{quest_id}')
+      MATCH p = quest-[:forwarded_#{quest_id}*]->target 
+      RETURN p
+    CYPHER
+  end
   
-  # returns the bounty chain from a quest to a (successful) vendor.
+  # returns the bounty chain from a quest to a potentially successful vendor.
   #
-  #   Graph.chain 12, 2345
-  #   Graph.chain "http://bountyhill.com/quests/12", 2345
+  # Example: Returns all nodes in the chain from <tt><quests/610098105></tt> to 
+  # <tt><twitter_identities/11754212></tt>; including the ending node 
+  # (<tt><twitter_identities/11754212></tt>), but omitting the starting
+  # node (<tt><quests/610098105></tt>). (The fetch call fetches node attributes
+  # data for a full inspection)
   #
-  # Returns all nodes in the chain from <tt><quests/12></tt> to 
-  # <tt><twitter_identities/2345></tt>; including the ending node 
-  # (<tt><twitter_identities/2345></tt>), but omitting the starting
-  # node (<tt><quests/12></tt>). 
+  #   Graph.chain(610098105, 11754212).each(&:fetch)
+  #   # => [<twitter_identities/561159199 {followees_updated_at: 1349438582, 
+  #   # screen_name: "sosfunds"}>, <twitter_identities/11754212 {screen_name: "radiospiel"}>]
+  #
+  # Get screen_names in chain:
+  #
+  #   Graph.chain(610098105, 11754212).map(&:attributes).pluck("screen_name")
+  #   # => ["sosfunds", "radiospiel"]
+  #
+  # Get uids in chain:
+  #
+  #   Graph.chain(610098105, 11754212).map(&:attributes).pluck("uid")
+  #   # => [561159199, 11754212]
   # 
   # Note that the +twitter_identity_id+ must be the numerical ID
-  # of the twitter_identity for now. Expect this to change once we
-  # support multiple identity types.
+  # of the twitter_identity:
+  #
+  #   Graph.chain(610098105, "radiospiel")
+  #   # => ArgumentError: "radiospiel" does not meet expectation Integer
+  #
+  # TODO: Add support for twitter handles here.
   def chain(quest, twitter_identity_id)
     expect! twitter_identity_id => Integer
 
