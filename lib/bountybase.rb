@@ -1,6 +1,7 @@
 require "expectation"
 require_relative "kernel/enumerable_ext"
 require_relative "kernel/hash_ext"
+require_relative "kernel/array_ext"
 require_relative "kernel/standard_error_ext"
 require_relative "redis_ext"
 
