@@ -16,9 +16,8 @@ class Bountybase::Message::Tweet < Bountybase::Message
   
   # perform the message
   def perform
-    W "perform", quest_urls
     return unless quest_id
-    I "Quest ##{quest_id}: register tweet", payload[:text]
+    W "Quest ##{quest_id}: register tweet", payload[:text]
 
     Bountybase::Graph::Twitter.register(payload.update(:quest_id => quest_id))
   end
@@ -29,10 +28,7 @@ class Bountybase::Message::Tweet < Bountybase::Message
   def resolved_urls #:nodoc:
     @resolved_urls ||= quest_urls.map do |url|
       Bountybase::HTTP.resolve(url)
-    end.compact.
-      tap do |urls| 
-        W "urls resolve to", urls 
-      end
+    end.compact
   end
   
   def quest_id #:nodoc:
