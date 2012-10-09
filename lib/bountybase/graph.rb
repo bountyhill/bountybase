@@ -162,10 +162,18 @@ module Bountybase::Graph
     CYPHER
   end
   
-  # returns the bounty chain from a quest to a potentially successful vendor.
+  # returns the bounty chain from a quest to a potentially successful 
+  # vendor. The returned chain starts at the quest and continues via 
+  # :forwarded_NN relations. If the quest was not forwarded to the
+  # target, but instead to at least one account that the target account
+  # follows, the last relation in the chain may be a reverse :follows
+  # relation.
   #
-  # Example: Returns all nodes in the chain from <tt><quests/610098105></tt> to 
-  # <tt><twitter_identities/11754212></tt>; including the ending node 
+  # As of now there is no need to return results that can be distinguished
+  # from each other. This might change.
+  #
+  # Example: Returns all nodes in the chain from <tt><quests/610098105></tt> 
+  # to <tt><twitter_identities/11754212></tt>; including the ending node 
   # (<tt><twitter_identities/11754212></tt>), but omitting the starting
   # node (<tt><quests/610098105></tt>). (The fetch call fetches node attributes
   # data for a full inspection)
@@ -191,21 +199,43 @@ module Bountybase::Graph
   #   # => ArgumentError: "radiospiel" does not meet expectation Integer
   #
   # TODO: Add support for twitter handles here.
+  #
+  # 
   def chain(quest, twitter_identity_id)
     expect! twitter_identity_id => Integer
 
     quest_id = self.quest_id!(quest)
-    
-    path = Neo4j.ask <<-CYPHER
-      START quest=node:quests(uid='#{quest_id}'), target=node:twitter_identities(uid='#{twitter_identity_id}')
-      MATCH p = quest-[:forwarded_#{quest_id}*]->target 
-      RETURN p
-    CYPHER
-    
+
+    path = existing_chain_including_quest(quest, twitter_identity_id) ||
+      new_chain_including_quest(quest, twitter_identity_id)
+
     if path
       # The first node in the returned path is the quest itself. 
       # All other nodes form the chain.
       path.nodes[1..-1]
     end
+  end
+  
+  private
+  
+  def existing_chain_including_quest(quest_id, twid)
+    Neo4j.ask <<-CYPHER
+      START quest=node:quests(uid='#{quest_id}'), target=node:twitter_identities(uid='#{twid}')
+      MATCH p = quest-[:forwarded_#{quest_id}*]->target 
+      RETURN p
+    CYPHER
+  end
+  
+  def new_chain_including_quest(quest_id, twid)
+    # Make sure there is a twitter_identity node, which has followees
+    # updated.
+    twitter_identity = Twitter.identity(twid)
+    Twitter.update_followees twitter_identity
+    
+    Neo4j.ask <<-CYPHER
+      START quest=node:quests(uid='#{quest_id}'), target=node:twitter_identities(uid='#{twid}')
+      MATCH p = quest-[:forwarded_#{quest_id}*]->anchor<-[:follows]-target 
+      RETURN p
+    CYPHER
   end
 end
