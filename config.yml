@@ -64,6 +64,12 @@ librato:
 # via separate applications.
 twitter:
   default:
+    development:
+      url:                  https://dev.twitter.com/apps/2982201
+      consumer_key:         c6cvEkq8dHMaTa9F2y2w
+      consumer_secret:      6UdPXY4Wx9AgXH9YL65Ev3gCZgZ0lEop8ylsVRXjGE
+      access_token:         744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI
+      access_token_secret:  IhoMD0O9VRLZTwYkBPJT9jRcvd0K5kgVgVPmH5sQ
     test:
       url:                  https://dev.twitter.com/apps/2982201
       consumer_key:         c6cvEkq8dHMaTa9F2y2w
