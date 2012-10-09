@@ -10,7 +10,11 @@ module Bountybase
   #     Bountybase.config.neo4j!    # => raises exception.
   # 
   def config
-    @config ||= Config.new Config.read
+    @config ||= reread
+  end
+  
+  def reread
+    @config = Config.new Config.read
   end
   
   # A Bountybase configuration returns runtime configuration settings.
