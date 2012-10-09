@@ -32,6 +32,20 @@ module Bountybase
     end
   end
 
+  HEARTBEAT_FREQUENCY = 60
+
+  # Install a heartbeat timer. The heartbeat timer sends a heartbeat metrics
+  # event every minute.
+  def install_heartbeat
+    require "eventmachine"
+    
+    EM.next_tick do
+      EM::PeriodicTimer.new(HEARTBEAT_FREQUENCY) do
+        Bountybase.metrics.heartbeat!
+      end
+    end
+  end
+
   #
   # The API endpoint for the Bountybase metrics object. There is usually
   # a single Metrics instance, which can be accessed via Bountybase.metrics.
