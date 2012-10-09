@@ -36,7 +36,7 @@ module Bountybase
 
   # Install a heartbeat timer. The heartbeat timer sends a heartbeat metrics
   # event every minute.
-  def install_heartbeat
+  def start_heartbeat
     require "eventmachine"
     
     EM.next_tick do
