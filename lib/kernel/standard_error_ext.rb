@@ -6,18 +6,8 @@ class StandardError
       :error
     end
 
-    msg = to_s
-    if args.first
-      msg = "#{args.shift}: #{msg}" 
-    end
-    
-    if Bountybase.environment == "development"
-      def backtrace.inspect
-        "\nfrom  #{$!.backtrace.join("\n      ")}"
-      end
-      args << backtrace
-    end
+    msg = [ args.shift, to_s, "; from\n     #{backtrace.join("\n     ")}" ]
 
-    Event.deliver severity, Bountybase.logger, msg, *args
+    Event.deliver severity, Bountybase.logger, msg
   end
 end
