@@ -32,15 +32,16 @@ module Bountybase
     end
   end
 
+  # The default heartbeat frequency
   HEARTBEAT_FREQUENCY = 60
 
   # Install a heartbeat timer. The heartbeat timer sends a heartbeat metrics
   # event every minute.
-  def start_heartbeat
+  def start_heartbeat(frequency = HEARTBEAT_FREQUENCY)
     require "eventmachine"
     
     EM.next_tick do
-      EM::PeriodicTimer.new(HEARTBEAT_FREQUENCY) do
+      EM::PeriodicTimer.new(frequency) do
         Bountybase.metrics.heartbeat!
       end
     end
