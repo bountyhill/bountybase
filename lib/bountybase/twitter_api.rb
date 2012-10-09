@@ -16,7 +16,7 @@ module Bountybase::TwitterAPI
       bm.message = "Fetching #{r.length} followee_ids"
       r
     end
-  rescue Object
+  rescue StandardError
     $!.log "TwitterAPI.followee_ids"
     []
   end
