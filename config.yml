@@ -191,10 +191,10 @@ neo4j:
   # test:                 http://9e68fcc50:2bb6aea56@291fac8e1.hosted.neo4j.org:7289
   development:          http://localhost:7474
   test:                 http://localhost:7474
-  production:           http://9e68fcc50:2bb6aea56@291fac8e1.hosted.neo4j.org:7289
-  # The staging neo4j database stems from the neo4j:test addon on bountyhill-staging-web1
+  # The production neo4j database is from bountyhill-live-web1's "neo4j:test" addon
+  production:           http://4318f46b1:82af25a3e@95ee2ec62.hosted.neo4j.org:7344
+  # The staging neo4j database is from bountyhill-staging-web1's "neo4j:test" addon
   staging:              http://66cc3707a:2cb20b949@95da57c56.hosted.neo4j.org:7680
-
 
 #
 # Configuration for transloadit image upload. This includes both S3 storage
