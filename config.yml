@@ -6,7 +6,7 @@ syslog:
   deployment:
     - logs.papertrailapp.com
     - 61566
-  production:
+  live:
     - logs.papertrailapp.com
     - 11905
   staging:
@@ -20,10 +20,10 @@ syslog:
 #
 # Note: these URLs should end in "/"
 redis:
-  production:   redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
   staging:      redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
   test:         redis://localhost:6379/
   development:  redis://localhost:6379/
+  live:         redis://:jN3ERLqggaP6UdTLM8RiEP8h8ZUrFwHAR8e1GeiZNf0ASrfcA6Sww8sS5tKzilvN@node-665b5a0c3f6206ab4.openredis.com:10315/
   
 # The resque configuration. This accepts a 
 #
@@ -50,7 +50,7 @@ librato:
   deployment:
     username:   deployment@bountyhill.com
     apikey:     d903064769ddf800ce3d8b7b7dcb64c368d9b7d02ebd6c24b03c57b3ff90049b
-  production:
+  live:
     username:   deployment@bountyhill.com
     apikey:     d903064769ddf800ce3d8b7b7dcb64c368d9b7d02ebd6c24b03c57b3ff90049b
   staging:
@@ -135,7 +135,7 @@ twitter_app:
     consumer_secret:      PNXFsQWQT8Jpm5yBtGDP5NMjSAIP3n5At9NvGgeY2UY
     access_token:         834028045-4bLR1B000BqoFxt80OXW9h1xlY9Z9v1ueBO5qbBr
     access_token_secret:  bJ1Gylrg39y8x9dt7BYXLeuwLpCMNqJHMEYfnIxTU
-  production:
+  live:
     user:                 bountyhill
     tag:                  "#bounty"
     email:                TODO
@@ -169,7 +169,7 @@ fnordmetric:
   staging:
     redis_url:          redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
     redis_prefix:       staging
-  production:
+  live:
     redis_url:          redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
     redis_prefix:       pro
 
@@ -184,6 +184,7 @@ rulesio:
 # The stathat account name.
 stathat:
   default:              eno@open-lab.org
+  live:                 eno@bountyhill.com
 
 #
 #
@@ -191,8 +192,8 @@ neo4j:
   # test:                 http://9e68fcc50:2bb6aea56@291fac8e1.hosted.neo4j.org:7289
   development:          http://localhost:7474
   test:                 http://localhost:7474
-  # The production neo4j database is from bountyhill-live-web1's "neo4j:test" addon
-  production:           http://4318f46b1:82af25a3e@95ee2ec62.hosted.neo4j.org:7344
+  # The live neo4j database is from bountyhill-live-web1's "neo4j:test" addon
+  live:                 http://4318f46b1:82af25a3e@95ee2ec62.hosted.neo4j.org:7344
   # The staging neo4j database is from bountyhill-staging-web1's "neo4j:test" addon
   staging:              http://66cc3707a:2cb20b949@95da57c56.hosted.neo4j.org:7680
 
@@ -211,8 +212,8 @@ transloadit:
     s3_bucket:        bountyhill-test
   staging:
     s3_bucket:        bountyhill-staging
-  production:
-    s3_bucket:        bountyhill-production
+  live:
+    s3_bucket:        bountyhill-live
 
 
 #
