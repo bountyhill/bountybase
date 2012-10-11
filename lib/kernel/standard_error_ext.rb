@@ -6,7 +6,7 @@ class StandardError
       :error
     end
 
-    msg = [ args.shift, to_s, "; from\n     #{backtrace.join("\n     ")}" ]
+    msg = "#{to_s}: #{args.shift.to_s}; from\n     #{backtrace.join("\n     ")}"
 
     Event.deliver severity, Bountybase.logger, msg
   end
