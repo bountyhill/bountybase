@@ -138,13 +138,14 @@ twitter_app:
   live:
     user:                 bountyhill
     tag:                  "#bounty"
-    email:                TODO
-    password:             TODO
-    url:                  TODO
-    consumer_key:         TODO
-    consumer_secret:      TODO
-    access_token:         TODO
-    access_token_secret:  TODO
+    email:                info@bountyhill.com
+    password:             d2fdb2b362aef57eafdf9471ee
+    url:                  https://dev.twitter.com/apps/3414294
+    consumer_key:         QewZfxFwrBA6t8OGU9AqA
+    consumer_secret:      m2EXPHI9MaaIhfZ46CC8Vp1b3EIJr3vSvcwGc0
+    access_token:         610307762-ViszdmxA6yRIAbiUYaJEkHHtrMLxfm5tH1k6dxcs
+    access_token_secret:  uzFmJJvBc89wTU3wLgSTUNItM0Hat5M7k7cpn9v0VA
+
 
 #
 # This account is used to send messages directly to bountyhill users.
