@@ -5,14 +5,21 @@ require "simple_cache"
 # to support IDN (internationized) domain names. If the "idn" gem is installed
 # it will use that for faster, native IDN support.
 module Bountybase
-  def cache
-    @cache ||= begin
-      url = config.redis_for(:cache)
-      SimpleCache.new Redis::Namespace.connect(url)
-    end
-  end 
+  def cached(key, options = {}, &block)
+    expect! options => { :ttl => [ Fixnum, nil ]}
+    
+    initialize_cache
+    
+    ttl = options[:ttl]
+    SimpleCache.cached(key, ttl, &block)
+  end
+
+  private
   
-  def cached(*args, &block)
-    cache.cached(*args, &block)
+  def initialize_cache
+    return if @initialized_cache
+    @initialized_cache = true
+    
+    SimpleCache.url = config.redis_for(:cache)
   end
 end
