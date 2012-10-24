@@ -223,3 +223,8 @@ admins:
   - "@radiospiel"
   - "@earl_oett"
   - "@kaaweh"
+
+# The filepicker.io key.
+filepicker:
+  default:
+    apikey:           A0STGTJHyR52MlIqmc86dz
