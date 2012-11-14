@@ -184,7 +184,7 @@ class Bountybase::Message
     klass.validate! payload
     klass.new(payload, origin).perform
   rescue StandardError
-    $!.log "Cannot perform"
+    $!.log "Cannot perform" unless Bountybase.environment == "test"
     raise
   end
   
