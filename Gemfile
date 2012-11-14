@@ -9,6 +9,10 @@ group :test do
   gem "mocha"
   gem "ruby-debug19"
   gem "test-unit"
+  
+  gem "activerecord"
+  gem "pg"
+  
   gem 'simplecov', :require => false
 end
 

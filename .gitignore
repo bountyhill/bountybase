@@ -48,3 +48,4 @@ pkg
 # For rubinius:
 #*.rbc
 script/watchr
+config/database.yml

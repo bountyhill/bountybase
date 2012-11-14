@@ -1,0 +1,9 @@
+# gem 'pg'
+common: &common
+  adapter: postgresql
+  username: bountyhill
+  password: bountyhill 
+
+test:
+  <<: *common
+  database: bountyhill_test

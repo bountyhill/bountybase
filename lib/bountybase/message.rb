@@ -203,3 +203,4 @@ end
 
 require_relative "message/heartbeat"
 require_relative "message/tweet"
+require_relative "message/reward"
