@@ -44,4 +44,13 @@ class MessageRewardTest < Test::Unit::TestCase
     assert_equal(User["@radiospiel"].points, 36)
     assert_equal(User["@radiospiel"].badges, %w(badge other))
   end
+
+  def test_reward_shortcut
+    Bountybase.reward "@radiospiel", :points => 12
+    assert_equal(User["@radiospiel"].points, 12)
+
+    Bountybase.reward User["@radiospiel"], :points => 12, :badge => "badge"
+    assert_equal(User["@radiospiel"].points, 24)
+    assert_equal(User["@radiospiel"].badges, %w(badge))
+  end
 end
