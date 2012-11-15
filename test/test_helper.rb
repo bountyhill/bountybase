@@ -15,19 +15,6 @@ end
 require 'mocha'
 require 'awesome_print'
 
-SimpleCov.start do
-  add_filter "test/*.rb"
-  # the current setup does not properly measure usage in lib/event. 
-  add_filter "lib/event.rb"
-  add_filter "lib/bountybase/setup.rb"
-  add_filter "lib/bountybase/event.rb"
-end
-
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-require 'bountybase'
-require "forwardable"
-
 # -- Basic VCR configuration
 
 require 'vcr'
@@ -43,12 +30,27 @@ end
 # Neo4j traffic *only* - is not handled via webmock nor vcr.
 WebMock::HttpLibAdapters::CurbAdapter.disable!
 
+
+SimpleCov.start do
+  add_filter "test/*.rb"
+  # the current setup does not properly measure usage in lib/event. 
+  add_filter "lib/event.rb"
+  add_filter "lib/bountybase/setup.rb"
+  add_filter "lib/bountybase/event.rb"
+end
+
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+$LOAD_PATH.unshift(File.dirname(__FILE__))
+require 'bountybase'
+Bountybase.setup
+
 # -- logging configuration. These makes no difference with what Bountybase.setup
 # does, but is added here so that tests that are not run via rake get a valid
 # logging configuration also. 
 
 ::Event::Listeners.add :console
 ::Event.route :all => :console
+::Event.severity = :error
 
 # -- a Bountybase TestCase with some helpers
 
@@ -59,7 +61,9 @@ module Bountybase::TestCase
   delegate :with_environment => Bountybase
 
   def setup
-    Bountybase::Models.delete_all
+    if defined?(Bountybase::Models)
+      Bountybase::Models.delete_all
+    end
   end
   
   # Huh? The timecop gem no longer works with Ruby 1.9??

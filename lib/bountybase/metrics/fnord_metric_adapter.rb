@@ -1,5 +1,7 @@
 class Bountybase::Metrics; end
 
+__END__
+
 class Bountybase::Metrics::FnordMetricAdapter
   # Default event_queue_ttl setting.
   EVENT_QUEUE_DEFAULT_TTL = 20

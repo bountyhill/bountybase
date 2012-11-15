@@ -108,4 +108,13 @@ class BountybaseTest < Test::Unit::TestCase
     s = "baz"
     assert_equal "foo", Bountybase.cached("key") { s }
   end
+  
+  def test_array_ext
+    h = []
+    h.push a: 1
+    h.push a: 3
+    h.push a: 2
+    
+    assert_equal([1, 3, 2], h.pluck(:a))
+  end
 end

@@ -4,6 +4,8 @@ class GraphTest < Test::Unit::TestCase
   include Bountybase::TestCase
 
   def setup
+    super
+    
     Graph::Twitter.stubs(:update_followees!).returns(nil)
     Neo4j.purge!
   end

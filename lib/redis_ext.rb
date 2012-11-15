@@ -9,19 +9,15 @@ class Redis::Namespace
     return nil if !server
 
     if server =~ /redis\:\/\//
-      redis = Redis.connect(:url => server, :thread_safe => true)
+      Redis.connect(:url => server, :thread_safe => true)
     else
       url, namespace = server.split('/', 2)
       host, port, db = server.split(':')
       redis = Redis.new(:host => host, :port => port,
         :thread_safe => true, :db => db)
-    end
 
-    if namespace
-      redis = Redis::Namespace.new(namespace, :redis => redis)
+      Redis::Namespace.new(namespace, :redis => redis)
     end
-    
-    redis
   end
 end
 

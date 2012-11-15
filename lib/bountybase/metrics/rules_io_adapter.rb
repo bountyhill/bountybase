@@ -1,5 +1,7 @@
 class Bountybase::Metrics; end
 
+__END__
+
 class Bountybase::Metrics::RulesIOAdapter
   def background?
     false

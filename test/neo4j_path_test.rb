@@ -125,6 +125,8 @@ CYPHER
     assert_equal(foo1, path.start_node)
     assert_equal(bar2, path.end_node)
     assert_equal([foo1, bar1, bar2], path.nodes)
+    
+    assert path.inspect =~ /<node:\d+ rel:\d+ node:\d+ rel:\d+ node:\d+>/
   end
 
   def test_two_connections
