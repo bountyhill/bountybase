@@ -108,11 +108,8 @@ module Bountybase::Graph::Twitter
     # must be Strings or Fixnums, or else Neo4j could not save those.
     receiver_ids = options.delete(:receiver_ids) || []
     receiver_names = options.delete(:receiver_names) || []
-    
-    expect {
-      expectations = options.keys.inject({}) do |h, key| h.update key => [ String, Fixnum ] end
-      expect! options => expectations
-    }
+
+    expect! receiver_ids.length => receiver_names.length
 
     W "Twitter.register", options
     
@@ -126,10 +123,14 @@ module Bountybase::Graph::Twitter
     Neo4j::Node.create("tweets", options[:tweet_id], options)
     sender = identity(options[:sender_id], options[:sender_name])
 
-    # If the sender is not yet connected then we must connect it, preferably via an
-    # extra source node. If there is no source, then the sender probably knows the
-    # quest directly from the website, and is therefore entitled to a direct
-    # connection to the quest.
+    # If the sender is not yet connected we must connect it to build the
+    # graph. We don't know though how the sender got to know the quest
+    # in the first place. Our best guess: she got it from one of her 
+    # followees.
+    #
+    # If there is no followee with a known followership of the quest
+    # in question we assume the sender got the quest from the website
+    # and we connect her directly to the quest.
     unless connected?(quest, sender)
       Neo4j.connect "known_by", quest, sender, :created_at => Time.now.to_i
 
@@ -137,17 +138,15 @@ module Bountybase::Graph::Twitter
       Neo4j.connect "forwarded_#{quest.uid}", (source || quest) => sender
     end 
 
-    # connect additional receivers
-    receiver_ids = options[:receiver_ids] || []
-    receiver_names = options[:receiver_names] || []
-
+    # connect additional receivers. In this scenario the sender of the tweet
+    # is the one who forwarded a given quest to the additional receivers.
     receiver_ids.each_with_index do |receiver_id, idx|
       receiver_name = receiver_names[idx] 
       receiver = identity(receiver_id, receiver_name) 
       next if connected?(quest, receiver)
       
       Neo4j.connect "known_by", quest, receiver, :created_at => Time.now.to_i
-      Neo4j.connect "forwarded_#{quest.uid}", quest, sender
+      Neo4j.connect "forwarded_#{quest.uid}", sender, receiver
     end
   end
   

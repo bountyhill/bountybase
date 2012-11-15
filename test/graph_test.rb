@@ -15,9 +15,11 @@ class GraphTest < Test::Unit::TestCase
     assert_raise(ArgumentError) do  Graph::Twitter.register({}) end
   end
 
-  def one_tweet
-    register_tweet :sender_id => 456, # The twitter user id of the user sent this tweet 
-      :sender_name => "sender456"
+  def one_tweet(opts = {})
+    opts = opts.merge(:sender_id => 456, # The twitter user id of the user sent this tweet 
+      :sender_name => "sender456")
+
+    register_tweet opts 
   end
 
   def one_tweet_with_source
@@ -48,6 +50,26 @@ class GraphTest < Test::Unit::TestCase
 
     relationships = Neo4j::Relationship.all.map(&:fetch)
     assert_equal 2, relationships.length
+  end
+
+  def test_single_tweet_with_additional_receivers
+    one_tweet(:receiver_ids => [11,12], :receiver_names => %w(receiver11 receiver12))
+
+    n = Neo4j::Node.find("twitter_identities", 456)
+    assert_equal "sender456", n["screen_name"]
+
+    relationships = Neo4j::Relationship.all.map(&:fetch)
+    
+    # we have these relationships:
+    #
+    # - <quests/23 -[:known_by]-> twitter_identities/456>
+    # - <quests/23 -[:forwarded_23]-> twitter_identities/456>
+    # - <quests/23 -[:known_by]-> twitter_identities/11>, 
+    # - <twitter_identities/456 -[:forwarded_23]-> twitter_identities/11>, 
+    # - <quests/23 -[:known_by]-> twitter_identities/12>, 
+    # - <twitter_identities/456 -[:forwarded_23]-> twitter_identities/12>
+    # 
+    assert_equal 6, relationships.length
   end
 
   def test_single_tweet_with_source
