@@ -58,6 +58,12 @@ module Bountybase::TestCase
   delegate :with_settings => Bountybase
   delegate :with_environment => Bountybase
 
+  def setup
+    Bountybase::Identity.delete_all
+    Bountybase::User.delete_all
+    Bountybase::Quest.delete_all
+  end
+  
   # Huh? The timecop gem no longer works with Ruby 1.9??
   def freeze_time(time)
     Time.stubs(:now).returns time
@@ -91,5 +97,13 @@ module Bountybase::TestCase
     @@tweet_id += 1
     
     Graph::Twitter.register TWEET_DEFAULTS.merge(:tweet_id => @@tweet_id).merge(options)
+  end
+
+  # -- helper to perform messages ---------------------------------------------
+
+  MESSAGE_ORIGIN = { :instance => 'test', :environment => 'test', :timestamp => 1344259800 }
+
+  def perform_message(name, payload, origin = MESSAGE_ORIGIN)
+    Bountybase::Message.perform name, payload, origin
   end
 end

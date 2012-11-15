@@ -126,6 +126,16 @@ module Bountybase::HTTP
     nil
   end
 
+  # resolve a number of URLs.
+  def resolved_urls(urls)
+    {}.tap do |hash|
+      urls.each do |url|
+        resolved_url = Bountybase::HTTP.resolve(url) if url
+        hash[url] = resolved_url if resolved_url
+      end
+    end
+  end
+
   # runs a get request and return a HTTP::Response object.
   def get(url, headers = {})
     do_request Net::HTTP::Get, url, headers, config.max_redirections, url

@@ -16,25 +16,42 @@ class Bountybase::Message::Tweet < Bountybase::Message
   
   # perform the message
   def perform
-    return unless quest_id
-    W "Quest ##{quest_id}: register tweet", payload[:text]
-
-    Bountybase::Graph::Twitter.register(payload.update(:quest_id => quest_id))
+    return if quest_ids.empty?
+    
+    # register in AR DB
+    Bountybase::User.transaction do
+      sender_name = payload[:sender_name]
+      account = Bountybase::User["@#{sender_name}"] if sender_name
+      
+      account.register_quest_ids(quest_ids) if account
+    end
+    
+    # register in graph DB
+    quest_ids.each do |quest_id|
+      Bountybase::Graph::Twitter.register(payload.update(:quest_id => quest_id))
+    end
   end
 
   private
-
-  # resolve quest URLs.
-  def resolved_urls #:nodoc:
-    @resolved_urls ||= quest_urls.map do |url|
-      Bountybase::HTTP.resolve(url)
-    end.compact
-  end
   
   def quest_id #:nodoc:
-    @quest_id ||= resolved_urls.
-      map { |url| Bountybase::Graph.quest_id(url) }.
-      compact.first.tap { |quest_id| W "Found quest_id", quest_id }
+    quest_ids.first
+  end
+  
+  def quest_ids #:nodoc:
+    return @quest_ids if @quest_ids
+
+    # resolve quest URLs.
+    @quest_ids = Bountybase::HTTP.resolved_urls(quest_urls).
+      map { |_, resolved_url| Bountybase::Graph.quest_id(resolved_url) }.
+      compact
+    return @quest_ids if @quest_ids.empty? 
+
+    # filter quest URLs via database
+    @quest_ids = Bountybase::Quest.where(:id => quest_ids).all(:select => "id").map(&:id)
+    return @quest_ids if @quest_ids.empty? 
+
+    @quest_ids
   end
 
   def quest_id_for_tests #:nodoc:

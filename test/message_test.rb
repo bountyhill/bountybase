@@ -3,7 +3,6 @@ require_relative 'test_helper'
 class MessageTest < Test::Unit::TestCase
   include Bountybase::TestCase
 
-  ORIGIN =            { :instance => 'test', :environment => 'test', :timestamp => 1344259800 }
   HEARTBEAT_PAYLOAD = {}
 
   def test_resolve
@@ -19,9 +18,9 @@ class MessageTest < Test::Unit::TestCase
             Bountybase::Message,                 # resque target performer
             'Bountybase::Message::Heartbeat',    # message name
             HEARTBEAT_PAYLOAD,                   # message payload
-            ORIGIN                               # message origin
+            MESSAGE_ORIGIN                       # message origin
     
-    Bountybase::Message::Heartbeat.expects(:origin_hash).returns(ORIGIN)
+    Bountybase::Message::Heartbeat.expects(:origin_hash).returns(MESSAGE_ORIGIN)
     Bountybase::Message::Heartbeat.enqueue HEARTBEAT_PAYLOAD
   end
 
@@ -61,7 +60,6 @@ class MessageTest < Test::Unit::TestCase
   
   def test_default_queue
     assert_equal("heartbeat", Bountybase::Message::Heartbeat.default_queue)
-    assert_equal("tweet", Bountybase::Message::Tweet.default_queue)
   end
 
   def test_origin_hash
@@ -75,47 +73,11 @@ class MessageTest < Test::Unit::TestCase
   
   def test_heartbeat_routing
     Bountybase::Message::Heartbeat.any_instance.expects :perform 
-    Bountybase::Message.perform "Heartbeat", HEARTBEAT_PAYLOAD, ORIGIN
+    perform_message "Heartbeat", HEARTBEAT_PAYLOAD
   end
 
   def test_heartbeat
     Bountybase.logger.expects :warn
-    Bountybase::Message.perform "Heartbeat", HEARTBEAT_PAYLOAD, ORIGIN
-  end
-
-  TWEET_PAYLOAD = {
-    :tweet_id => 123,
-    :sender_id => 456,
-    :sender_name => "name",
-    :quest_urls => [ "http://bountyhill.local/quests/23" ],
-    :receiver_ids => [ 1, 2, 3],
-    :receiver_names => [ "receiver1", "receiver2", "receiver3"],
-    :text => "Look what I have seen @receiver1 @receiver2 http://bountybase.local/quest/23",
-    :lang => "en"
-  }
-  
-  def test_tweet_routing
-    Bountybase::Message::Tweet.any_instance.expects :perform 
-    Bountybase::Message.perform "Tweet", TWEET_PAYLOAD, ORIGIN
-  end
-
-  def test_tweet
-    quest_url = TWEET_PAYLOAD[:quest_urls].first
-    expected_payload = TWEET_PAYLOAD.dup
-    expected_payload.update :quest_id => Bountybase::Graph.quest_id(quest_url)
-    expected_payload.delete :quest_urls
-
-    Bountybase::Graph::Twitter.expects(:register).with(expected_payload)
-    Bountybase::Message.perform "Tweet", TWEET_PAYLOAD, ORIGIN
-  end
-  
-  def test_tweet_validation
-    assert_nothing_raised() {  
-      Bountybase::Message::Tweet.enqueue "Tweet", TWEET_PAYLOAD
-    }
-    
-    assert_raise(ArgumentError) {  
-      Bountybase::Message::Tweet.enqueue "Tweet", {}
-    }
+    perform_message "Heartbeat", HEARTBEAT_PAYLOAD
   end
 end
