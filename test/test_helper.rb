@@ -59,9 +59,7 @@ module Bountybase::TestCase
   delegate :with_environment => Bountybase
 
   def setup
-    Bountybase::Identity.delete_all
-    Bountybase::User.delete_all
-    Bountybase::Quest.delete_all
+    Bountybase::Models.delete_all
   end
   
   # Huh? The timecop gem no longer works with Ruby 1.9??

@@ -5,9 +5,8 @@ require "bountybase/models"
 class ModelTest < Test::Unit::TestCase
   include Bountybase::TestCase
 
-  Reward = Bountybase::Message::Reward
-  User = Bountybase::User
-  Identity = Bountybase::Identity
+  User = Bountybase::Models::User
+  Identity = Bountybase::Models::Identity
 
   # -- test connection to test database -------------------------------
   

@@ -5,26 +5,25 @@ require "bountybase/models"
 class MessageRewardTest < Test::Unit::TestCase
   include Bountybase::TestCase
 
-  Message   = Bountybase::Message
-  Reward    = Message::Reward
-  User      = Bountybase::User
-  Identity  = Bountybase::Identity
+  Reward    = Bountybase::Message::Reward
+  User      = Bountybase::Models::User
+  Identity  = Bountybase::Models::Identity
 
   # -- test reward message routing ------------------------------------
   
   def test_reward_routing
-    Message::Reward.any_instance.expects :perform 
+    Reward.any_instance.expects :perform 
     perform_message "Reward", :account => "@radiospiel", :points => 12
   
     Resque::Job.expects(:create).
       with "reward",                                    # name of queue
-        Message,                                        # resque target performer
+        Bountybase::Message,                            # resque target performer
         'Bountybase::Message::Reward',                  # message name
         { :account => "@radiospiel", :points => 12 },   # message payload
         MESSAGE_ORIGIN                                  # message origin
 
-    Message::Reward.expects(:origin_hash).returns(MESSAGE_ORIGIN)
-    Message::Reward.enqueue :account => "@radiospiel", :points => 12
+    Reward.expects(:origin_hash).returns(MESSAGE_ORIGIN)
+    Reward.enqueue :account => "@radiospiel", :points => 12
   end
 
   # -- test reward message performing ---------------------------------

@@ -6,7 +6,7 @@
 #
 class Bountybase::Message::Reward < Bountybase::Message
   def perform
-    return unless account = Bountybase::User[payload[:account]]
+    return unless account = Bountybase::Models::User[payload[:account]]
     
     if badge = payload[:badge]
       account.badges << badge unless account.badges.include?(badge)

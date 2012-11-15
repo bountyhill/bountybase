@@ -19,9 +19,9 @@ class Bountybase::Message::Tweet < Bountybase::Message
     return if quest_ids.empty?
     
     # register in AR DB
-    Bountybase::User.transaction do
+    Bountybase::Models::User.transaction do
       sender_name = payload[:sender_name]
-      account = Bountybase::User["@#{sender_name}"] if sender_name
+      account = Bountybase::Models::User["@#{sender_name}"] if sender_name
       
       account.register_quest_ids(quest_ids) if account
     end
@@ -48,7 +48,7 @@ class Bountybase::Message::Tweet < Bountybase::Message
     return @quest_ids if @quest_ids.empty? 
 
     # filter quest URLs via database
-    @quest_ids = Bountybase::Quest.where(:id => quest_ids).all(:select => "id").map(&:id)
+    @quest_ids = Bountybase::Models::Quest.where(:id => quest_ids).all(:select => "id").map(&:id)
     return @quest_ids if @quest_ids.empty? 
 
     @quest_ids

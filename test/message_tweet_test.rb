@@ -5,6 +5,9 @@ require "bountybase/models"
 class MessageTweetTest < Test::Unit::TestCase
   include Bountybase::TestCase
 
+  Quest = Bountybase::Models::Quest
+  User = Bountybase::Models::User
+
   def test_default_queue
     assert_equal("tweet", Bountybase::Message::Tweet.default_queue)
   end
@@ -43,15 +46,15 @@ class MessageTweetTest < Test::Unit::TestCase
   end
   
   def test_tweet_with_existing_quest
-    quest23 = Bountybase::Quest.new :title => "t", :description => "d", :bounty_in_cents => 0
+    quest23 = Quest.new :title => "t", :description => "d", :bounty_in_cents => 0
     quest23.id = 23
     quest23.save!
-    assert_not_nil(Bountybase::Quest.find(23))
+    assert_not_nil(Quest.find(23))
 
-    quest24 = Bountybase::Quest.new :title => "t", :description => "d", :bounty_in_cents => 0
+    quest24 = Quest.new :title => "t", :description => "d", :bounty_in_cents => 0
     quest24.id = 24
     quest24.save!
-    assert_not_nil(Bountybase::Quest.find(24))
+    assert_not_nil(Quest.find(24))
 
     # As the quest does not exist this tweet will not be registerd.
     perform_message "Tweet", TWEET_PAYLOAD
@@ -68,7 +71,7 @@ class MessageTweetTest < Test::Unit::TestCase
   end
   
   def sender
-    Bountybase::User["@radiospiel"]
+    User["@radiospiel"]
   end
   
   def test_tweet_validation
