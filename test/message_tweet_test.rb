@@ -68,6 +68,11 @@ class MessageTweetTest < Test::Unit::TestCase
 
     # now perform the same quest again
     assert_equal([quest23, quest24], sender.shared_quests.sort_by(&:id))
+
+    # make sure there is a timestamp in the users_quests_sharings table.
+    db = ActiveRecord::Base.connection
+    rec = db.execute("SELECT created_at FROM users_quests_sharings LIMIT 1").first
+    assert_not_nil(rec["created_at"])
   end
   
   def sender
