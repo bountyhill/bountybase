@@ -1,5 +1,10 @@
 module Bountybase
   def reward(account, options)
+    expect! options => {
+      :badge => [ nil, String ],
+      :points => [ nil, Fixnum ]
+    }
+    
     if defined?(ActiveRecord::Base)
       Bountybase::Message.perform "Reward", reward_payload(account, options), {}
     else

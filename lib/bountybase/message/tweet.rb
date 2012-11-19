@@ -24,6 +24,8 @@ class Bountybase::Message::Tweet < Bountybase::Message
       account = Bountybase::Models::User["@#{sender_name}"] if sender_name
       
       account.register_quest_ids(quest_ids) if account
+      
+      Bountybase.reward(account, :points => 1)
     end
     
     # register in graph DB
