@@ -106,10 +106,9 @@ twitter:
 
 #
 # Tweets to track. In addition to these entries bountytwirl tracks the
-# twitter_app.tag hashtag.
+# twitter_app.tag hashtag, i.e."#bhstaging" or "#bounty"
 tracking:
   default:   
-    - Berlin
     - "@big_ben_clock"
 
 #
