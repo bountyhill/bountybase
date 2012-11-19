@@ -5,6 +5,9 @@ module Bountybase::Neo4j
     # Note: To delete a large number of nodes, use the Neo4j.purge method instead.
     def destroy
       Bountybase::Neo4j.connection.delete_node!(url)
+      true
+    rescue Neography::NodeNotFoundException
+      false
     end
 
     def to_s #:nodoc:

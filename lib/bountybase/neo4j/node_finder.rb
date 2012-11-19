@@ -30,6 +30,8 @@ class Bountybase::Neo4j::Node
 
     found = Bountybase::Neo4j.connection.get_node_index(type, "uid", uid)
     Bountybase::Neo4j.build found.first if found
+  rescue Neography::NotFoundException
+    nil
   end
 
   # Find many nodes of the same type.

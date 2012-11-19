@@ -121,11 +121,11 @@ class Neo4jNodeTest < Test::Unit::TestCase
     # --- delete node -------------------------------------------------
 
     assert_equal(1, Neo4j::Node.count)
-    
-    node.destroy
+
+    assert_equal(true, node.destroy)
     assert_equal(0, Neo4j::Node.count)
 
-    node2.destroy
+    assert_equal(false, node2.destroy)
     assert_equal(0, Neo4j::Node.count)
   end
 
