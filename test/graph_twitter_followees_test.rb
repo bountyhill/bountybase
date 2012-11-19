@@ -19,8 +19,8 @@ class GraphTwitterFolloweesTest < Test::Unit::TestCase
       end
 
       # we now have 1 node for identity 11754212 and 220 followee nodes.  
-      assert_equal 221, Neo4j::Node.count
-      assert_equal 220, Neo4j::Relationship.count(:follows)
+      assert_equal 226, Neo4j::Node.count
+      assert_equal 225, Neo4j::Relationship.count(:follows)
     end
   end
 end

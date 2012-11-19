@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.twitter.com/1/friends/ids.json?cursor=-1&screen_name=radiospiel
+    uri: https://api.twitter.com/1.1/friends/ids.json?cursor=-1&screen_name=radiospiel
     body:
       encoding: US-ASCII
       string: ''
@@ -10,107 +10,149 @@ http_interactions:
       Accept:
       - application/json
       User-Agent:
-      - Twitter Ruby Gem 3.7.0
+      - Twitter Ruby Gem 4.2.0
       Authorization:
-      - OAuth oauth_consumer_key="c6cvEkq8dHMaTa9F2y2w", oauth_nonce="c903dd10716472c1723e354327f8a267",
-        oauth_signature="Jx8ANFCp%2BqyJ%2FqJU4EcdJMA7V2Q%3D", oauth_signature_method="HMAC-SHA1",
-        oauth_timestamp="1346148496", oauth_token="744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI",
+      - OAuth oauth_consumer_key="c6cvEkq8dHMaTa9F2y2w", oauth_nonce="1fb2c69b50de4a71cef897730f527f45",
+        oauth_signature="UnEgM8e7jsvZPNvJqHgUP1t8P4E%3D", oauth_signature_method="HMAC-SHA1",
+        oauth_timestamp="1353330374", oauth_token="744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI",
         oauth_version="1.0"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
     status:
       code: 200
-      message: OK
+      message: !binary |-
+        T0s=
     headers:
-      Date:
-      - Tue, 28 Aug 2012 10:08:17 GMT
-      Status:
-      - 200 OK
-      X-Mid:
-      - 151d12a395fdc0de33075703aee169ebb190922d
-      X-Ratelimit-Limit:
-      - '350'
-      Etag:
-      - ! '"acebb559144d4afc71260b9d80e22705"'
-      Cache-Control:
-      - no-cache, no-store, must-revalidate, pre-check=0, post-check=0
-      Pragma:
-      - no-cache
-      X-Ratelimit-Reset:
-      - '1346150461'
-      X-Runtime:
-      - '0.02457'
-      Expires:
-      - Tue, 31 Mar 1981 05:00:00 GMT
-      Content-Type:
-      - application/json; charset=utf-8
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Ratelimit-Class:
-      - api_identified
-      X-Access-Level:
-      - read
+      !binary "RGF0ZQ==":
+      - !binary |-
+        TW9uLCAxOSBOb3YgMjAxMiAxMzowNjoxNSBHTVQ=
+      !binary "U3RhdHVz":
+      - !binary |-
+        MjAwIE9L
       X-Transaction-Mask:
-      - a6183ffa5f8ca943ff1b53b5644ef114c6e5f0ad
+      - !binary |-
+        YTYxODNmZmE1ZjhjYTk0M2ZmMWI1M2I1NjQ0ZWYxMTRhZjFlZWYwMQ==
+      !binary "RXRhZw==":
+      - !binary |-
+        IjI5YzQ0OWI5ODY2NzYwMzAxZDI0NjkyZWRkNDJjY2ZlIg==
+      !binary "RXhwaXJlcw==":
+      - !binary |-
+        VHVlLCAzMSBNYXIgMTk4MSAwNTowMDowMCBHTVQ=
+      Cache-Control:
+      - !binary |-
+        bm8tY2FjaGUsIG5vLXN0b3JlLCBtdXN0LXJldmFsaWRhdGUsIHByZS1jaGVj
+        az0wLCBwb3N0LWNoZWNrPTA=
+      X-Runtime:
+      - !binary |-
+        MC4wMzE1Nw==
+      X-Frame-Options:
+      - !binary |-
+        U0FNRU9SSUdJTg==
+      X-Access-Level:
+      - !binary |-
+        cmVhZA==
+      !binary "UHJhZ21h":
+      - !binary |-
+        bm8tY2FjaGU=
+      X-Warning:
+      - !binary |-
+        SW52YWxpZCBPQXV0aCBjcmVkZW50aWFscyBkZXRlY3RlZA==
       X-Transaction:
-      - 57f49d288e7bdb39
+      - !binary |-
+        ZTQ1ZjI5Y2NlOGZhMDdiNg==
+      X-Mid:
+      - !binary |-
+        NTkzNjJmZmQ5ZjY0YTc0MWE4NzA3NGM1MjhhOWE2ZWYzOGQyZDRjOQ==
       Last-Modified:
-      - Tue, 28 Aug 2012 10:08:17 GMT
-      X-Ratelimit-Remaining:
-      - '335'
+      - !binary |-
+        TW9uLCAxOSBOb3YgMjAxMiAxMzowNjoxNSBHTVQ=
+      Content-Type:
+      - !binary |-
+        YXBwbGljYXRpb24vanNvbjsgY2hhcnNldD11dGYtOA==
       Set-Cookie:
-      - _twitter_sess=BAh7CCIKZmxhc2hJQzonQWN0aW9uQ29udHJvbGxlcjo6Rmxhc2g6OkZsYXNo%250ASGFzaHsABjoKQHVzZWR7ADoPY3JlYXRlZF9hdGwrCMz5s2w5AToHaWQiJWUz%250AYzJlMTNjNDZkNGFjYjFmODBkZTkzZTcxMzg0MTli--486567789aa83fe6a4dcfb4b2377879d176b1af7;
-        domain=.twitter.com; path=/; HttpOnly
-      - dnt=; domain=.twitter.com; path=/; expires=Thu, 01-Jan-1970 00:00:00 GMT
-      - guest_id=v1%3A134614849785875257; domain=.twitter.com; path=/; expires=Thu,
-        28-Aug-2014 22:08:17 GMT
-      - k=10.35.34.113.1346148497854944; path=/; expires=Tue, 04-Sep-12 10:08:17 GMT;
-        domain=.twitter.com
-      - lang=en; path=/
-      - twid=u%3D744854762%7COeXM8LGbGRk5fFtaG2A4gH0VeFs%3D; domain=.twitter.com;
-        path=/; secure
-      Vary:
-      - Accept-Encoding
+      - !binary |-
+        X3R3aXR0ZXJfc2Vzcz1CQWg3Q0NJS1pteGhjMmhKUXpvblFXTjBhVzl1UTI5
+        dWRISnZiR3hsY2pvNlJteGhjMmc2T2tac1lYTm8lMjUwQVNHRnphSHNBQmpv
+        S1FIVnpaV1I3QURvSGFXUWlKVEExTkRNeU5XWmxZV0pqTVRFM01UUm1ZV0ps
+        WVRJNSUyNTBBTWpabE5UUTROVGMyT2c5amNtVmhkR1ZrWDJGMGJDc0lCNzNH
+        R0RzQi0tZmRjOTZjN2UxNDQ2ZmE0YTk4ZTM0YmNjODQ0NGQxMzY2ZTM0YThm
+        MjsgZG9tYWluPS50d2l0dGVyLmNvbTsgcGF0aD0vOyBIdHRwT25seQ==
+      - !binary |-
+        ZG50PTsgZG9tYWluPS50d2l0dGVyLmNvbTsgcGF0aD0vOyBleHBpcmVzPVRo
+        dSwgMDEtSmFuLTE5NzAgMDA6MDA6MDAgR01U
+      - !binary |-
+        Z3Vlc3RfaWQ9djElM0ExMzUzMzMwMzc1OTMwNDYxNTM7IGRvbWFpbj0udHdp
+        dHRlci5jb207IHBhdGg9LzsgZXhwaXJlcz1UaHUsIDIwLU5vdi0yMDE0IDAx
+        OjA2OjE1IEdNVA==
+      - !binary |-
+        az0xMC4zNi42Ny4xMjYuMTM1MzMzMDM3NTkyNzk4MTsgcGF0aD0vOyBleHBp
+        cmVzPU1vbiwgMjYtTm92LTEyIDEzOjA2OjE1IEdNVDsgZG9tYWluPS50d2l0
+        dGVyLmNvbQ==
+      - !binary |-
+        bGFuZz1lbjsgcGF0aD0v
+      - !binary |-
+        bGFuZz1lbjsgcGF0aD0v
+      - !binary |-
+        bGFuZz1lbjsgcGF0aD0v
+      - !binary |-
+        dHdpZD11JTNENzQ0ODU0NzYyJTdDT2VYTThMR2JHUms1ZkZ0YUcyQTRnSDBW
+        ZUZzJTNEOyBkb21haW49LnR3aXR0ZXIuY29tOyBwYXRoPS87IHNlY3VyZQ==
+      !binary "VmFyeQ==":
+      - !binary |-
+        QWNjZXB0LUVuY29kaW5n
       Content-Encoding:
-      - gzip
+      - !binary |-
+        Z3ppcA==
       Content-Length:
-      - '1105'
-      Server:
-      - tfe
+      - !binary |-
+        MTEyNw==
+      X-Rate-Limit-Limit:
+      - !binary |-
+        MTU=
+      X-Rate-Limit-Remaining:
+      - !binary |-
+        MTA=
+      X-Rate-Limit-Reset:
+      - !binary |-
+        MTM1MzMzMTE2Mw==
+      !binary "U2VydmVy":
+      - !binary |-
+        dGZl
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        H4sIAAAAAAAAA12VyY5lRQxE/+Wtc+EpPfSvINQL6EVvaFTVICTEv3N8CyGE
-        Snp1lYMzHBG2/3z9+vbl96/ffnv//NNvb+/f3j6/f397fXrJ67x++fLH939W
-        X5/kvL7+/P769INGm6jm0SiJkMuHVLfykSkZ4ex1toY3a+2SxuLJsbppe8pC
-        Z+8V5/KeG9JXUoPTbZaTx2Ky7aZz/LKQcso0zY+lV5pddlxA4nZq+CDMrQ7J
-        0mNeXmHNknN2oo9eE1fnQ7zKBxwm6Vp2osr6Vh0CA8nAakGAYuOoLlgdPxzh
-        hYrjBki1SwZy2R8FSxBOrwLKPQB4Sm9E95xwrzt6fIQA3cc7qp+HZzqenLSB
-        dOME2UqMHK1ZJge8fcmkxHfNG1DHZkhMYimcUkQgpiu5zpCEqOUNOFTZVSPs
-        AhD+oGplSxTiV27DHpwnjzcKQbTK4uqUMr4qWrprIOR67YdyIER7tYp1QMLR
-        lRq7duyW25JsFUgt8Gd6sy+UEd0Udo/7E+FworPICMho3siWGSaSq1HDH9jq
-        hnMWgsJIlYxhNQEL0xCAe2ANKXi9+mBCXRfJoAoSl+AZ/HpwKHyZzrmt/oEC
-        iTfkuVPVWHIpqWYfzlM4neuaioWEaDGIXhcbNv6BcPPbtlIFLEU+mo3Aw8Fq
-        CdGLerifWEDWcrZLN3BR6EmgDjgPNocJO+l4tbZQyOIxaCdA9pJgmKotC3Bp
-        OYJPOvxSHz4UGBfhHDS5p53cfVcmb6HlKmTLKfJ5i2MsSsMd496nIHgexxrV
-        cBOrIAQBPsyHR2Tvhch9nuEuJUW5ITY38T5P9VK4vGHmJgIVghghs/VuQ4oQ
-        Q1hYbYp566sxCCJWpOrjQiTeruC2rtyCo6qLSntAXMNxYQ497d3Ud8KTL5XY
-        hTKCBgqyru5ZwurW7+JetywDAgiOrF6NFL2Ci4ivzSECA69zABOxde8rHpWI
-        icywQLI5WzMSBwHyARagvvKY0lXXOJtnLICgXZAtmZLrpUzP9qp1/PYUR/11
-        ivLAPo6cUPcAp7NQfQeKWZuIx4NwSgCyxwR6kBDh06iCpZXgsPVYtWcbM9ak
-        qFe+GIwkgmjcIzEu+dN6QLxNm2u0jXXZmTvjsTv0kubO1heddbGIbevckl9r
-        BdfIe+ppe2vN7YRUvH04hQHgmyV9yy+mhRQb2w8iNqJP3PHVXNHpKfPLfxrL
-        rNao7ztLZraJP2/CG3oj2nbBns1332awcH5BkDKX0QsGNoedOtQYoqRu6w2a
-        Ps4+vaH0I31/ipc2wO+9O25klZmdOUXs3hEFa0275g1sFPVoDlajpmPl/3AR
-        Biw6Ul/L2HmEdnQkodkwuzArPYbZB7OHOrFi3pynDuhstKMAIVJf2xzWSQxB
-        xgctaTsXmgOPSgm2dbsB/YKar21hcEPb2ylGw14m8PVdzwCDGTCEH2bySbo4
-        Kv54/j/un8H+n0H/7/j/62+Gh1TyGggAAA==
-    http_version: !!null 
-  recorded_at: Tue, 28 Aug 2012 10:08:18 GMT
+        H4sIAAAAAAAAA12WzY4fRQzE3+V/7oPb386rIJQD5JALQdkEISHePT/PcgAU
+        aTM70+0uV5Wr96/X718//fH5y/e3j798//r25evrg5zXb5/+/PbP7x/fvvHu
+        Ja/z/5X/+vL517fXh5+u37ijfTor80rUibw35s6cjqq43nXurfAyPW0u2uJx
+        9F5VG96xQuXe5KHEXYIHqe7LQ6aku/Gts69b865NUnl5crQidVep39l9xbqM
+        Ey4dktdZ3ao5edQnWyON5cGLlFN6U+1oWqVq8MUEJECq4YEyUe2SdY9aWTl9
+        Rhhrx/vcULFrPIhV2YBDJe2WHq/Sbf5QGEgKVqX9Kj7AxYK9Y8sPJ5QfU0Be
+        DTqQ4PtcsDjlIBdQZg7AUzfcu+e4WcHwsREKdB9rr34Onml/eroNpPDjdCs+
+        cm7NMjng7aCTEtt31oA6OkNjK8v1qYsIVJA2eqTEHib8g5aVKFGDnxK94nUn
+        BzVqQOqVxdAppTyVt3TX0HxY7cNlgcvt1cVX7YSPkBoNPRo4ZAnVcmQVuNIb
+        2QE9VNcLk8fsqXBYgeVAD8fo20iU6SqSq0fDFdgwnbEWMlxpi+5gMAELqzSL
+        U2AI2jm9sDBsr2NkUAA5S/AH3jy4EW70zom+9o5i3UzJE1PV2G8pqeY7/Kaw
+        Otch5QsJgXwQuALLNV5BMLVoXVkcljwffUbg4WCrhOhFPexP5Ja1l+6rcBzj
+        9yRQB5wHS8OEnjR8WTsUdPGYsRMgu0kwR9WOALhuMYFn0uCXWWAA0VNhukCT
+        u9ro3fbNZBRarkK6nCKftRgmYgzMMGk85ud43Kk4PxKrIAQF3o2GR2T3uUg8
+        x7CX8WG0EJud+Jyjeilc3jBuU4FpQAyX2dnWoUWIoSysNoO7s9QYBBHLCZvH
+        hUi8CWC6rtzhYoKLqXpAhOI4V4Oetm5mOeHJlkrswshAA8NHWO1ayt6d1cW9
+        blkGBBAsWb0aKXoFFxFbm0MEBl7nAMZ9Z9xWPKYOE6ligeTj7MyIHwTIB5iD
+        OuQxpd27xtk+PZ5EhB6nZ6fXYCTP5tI6fvPDcjOXjRywhyMn1D3ASRGm70Ax
+        78b98SCcUoDuMcE9SIjwqUzB0kpx2Hqs2rMhjDUZ6pXPByOJIBr7aIxN9sQM
+        iDeg2XbD1mVnYsZ8vxgMs2fnixRdLKIbkzvyay1nG31PPRG31tzUY+L13SmE
+        vW2XZJQFpoUUHd0HKjaij8fYas6lcp8xD/4nWGa1Rn3be2NmA/s5E97QG9E2
+        8Xq23z2bS4T1C4KW2YxeMLA97A3DjCFK3o1ZJ+Bx9uktdd/bt2d4iQF+RuzV
+        IqvM7P1S1O69jmCtiWbOwEZej+ZgVWbaV/53F2HAIpE6NH3vHrQjkYSw4Z7C
+        rGQM9xzMHuZEi7vlPHNAshFHDkKkDt0e1klceFwVRNImF5oDj0lxPt9NA/KC
+        ma+NMLgh9vbGIrCXCXwd6xlgJK6j/HD/niTFUfHn//yRwB8Nf/8AYSovoEoI
+        AAA=
+    http_version: 
+  recorded_at: Mon, 19 Nov 2012 13:06:16 GMT
 - request:
     method: get
-    uri: https://api.twitter.com/1/friends/ids.json?cursor=0&screen_name=radiospiel
+    uri: https://api.twitter.com/1.1/friends/ids.json?cursor=0&screen_name=radiospiel
     body:
       encoding: US-ASCII
       string: ''
@@ -118,79 +160,120 @@ http_interactions:
       Accept:
       - application/json
       User-Agent:
-      - Twitter Ruby Gem 3.7.0
+      - Twitter Ruby Gem 4.2.0
       Authorization:
-      - OAuth oauth_consumer_key="c6cvEkq8dHMaTa9F2y2w", oauth_nonce="a83a0c577de7b03e4a6d3a13dcf577e7",
-        oauth_signature="6TArcJxlvyH7BqiofgGPVYwlDQ0%3D", oauth_signature_method="HMAC-SHA1",
-        oauth_timestamp="1346148498", oauth_token="744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI",
+      - OAuth oauth_consumer_key="c6cvEkq8dHMaTa9F2y2w", oauth_nonce="556a69c7880b81130b8b88be6e3a495c",
+        oauth_signature="7hW8gpuZ7jgJPFBwviSGp74czVw%3D", oauth_signature_method="HMAC-SHA1",
+        oauth_timestamp="1353330376", oauth_token="744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI",
         oauth_version="1.0"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
     status:
       code: 200
-      message: OK
+      message: !binary |-
+        T0s=
     headers:
-      Date:
-      - Tue, 28 Aug 2012 10:08:19 GMT
-      Status:
-      - 200 OK
-      X-Frame-Options:
-      - SAMEORIGIN
-      Etag:
-      - ! '"514a3ebeaf1da1e1fbc27ec44f00ceee"'
-      X-Transaction-Mask:
-      - a6183ffa5f8ca943ff1b53b5644ef114c6e5f0ad
-      X-Access-Level:
-      - read
-      Pragma:
-      - no-cache
-      Content-Type:
-      - application/json; charset=utf-8
+      !binary "RGF0ZQ==":
+      - !binary |-
+        TW9uLCAxOSBOb3YgMjAxMiAxMzowNjoxNyBHTVQ=
+      !binary "U3RhdHVz":
+      - !binary |-
+        MjAwIE9L
+      !binary "RXhwaXJlcw==":
+      - !binary |-
+        VHVlLCAzMSBNYXIgMTk4MSAwNTowMDowMCBHTVQ=
       X-Mid:
-      - b0e0a7b665dffdacbca5107b161edb8daf997214
-      X-Transaction:
-      - afaecb8aba634401
-      X-Ratelimit-Reset:
-      - '1346150461'
-      Last-Modified:
-      - Tue, 28 Aug 2012 10:08:19 GMT
-      X-Ratelimit-Limit:
-      - '350'
+      - !binary |-
+        MDA1NjJlNjhmM2FlMzU0NjU1NzdhOGIwZjYxMTliYmEyMTQ3MTE4Mg==
+      X-Transaction-Mask:
+      - !binary |-
+        YTYxODNmZmE1ZjhjYTk0M2ZmMWI1M2I1NjQ0ZWYxMTRhZjFlZWYwMQ==
+      !binary "UHJhZ21h":
+      - !binary |-
+        bm8tY2FjaGU=
+      X-Warning:
+      - !binary |-
+        SW52YWxpZCBPQXV0aCBjcmVkZW50aWFscyBkZXRlY3RlZA==
       Cache-Control:
-      - no-cache, no-store, must-revalidate, pre-check=0, post-check=0
-      X-Ratelimit-Class:
-      - api_identified
+      - !binary |-
+        bm8tY2FjaGUsIG5vLXN0b3JlLCBtdXN0LXJldmFsaWRhdGUsIHByZS1jaGVj
+        az0wLCBwb3N0LWNoZWNrPTA=
+      X-Access-Level:
+      - !binary |-
+        cmVhZA==
+      Last-Modified:
+      - !binary |-
+        TW9uLCAxOSBOb3YgMjAxMiAxMzowNjoxNyBHTVQ=
+      X-Transaction:
+      - !binary |-
+        NTM5NWM4N2FmMjAwMTUxNA==
+      Content-Type:
+      - !binary |-
+        YXBwbGljYXRpb24vanNvbjsgY2hhcnNldD11dGYtOA==
       X-Runtime:
-      - '0.02726'
-      Expires:
-      - Tue, 31 Mar 1981 05:00:00 GMT
-      X-Ratelimit-Remaining:
-      - '334'
+      - !binary |-
+        MC4wMzAwMA==
+      !binary "RXRhZw==":
+      - !binary |-
+        Ijc4NGQ4ZTg1ZmU5MjMyODE2MjY5MDhlMzZkYmVkMDc2Ig==
+      X-Frame-Options:
+      - !binary |-
+        U0FNRU9SSUdJTg==
       Set-Cookie:
-      - _twitter_sess=BAh7CCIKZmxhc2hJQzonQWN0aW9uQ29udHJvbGxlcjo6Rmxhc2g6OkZsYXNo%250ASGFzaHsABjoKQHVzZWR7ADoPY3JlYXRlZF9hdGwrCBAAtGw5AToHaWQiJTQz%250AZmNlOTczODAxZDliODNlZjVmNGM0MDllODFlMzUw--aa3d4903b98ca4333984a06d1cf0ecb799280a9d;
-        domain=.twitter.com; path=/; HttpOnly
-      - dnt=; domain=.twitter.com; path=/; expires=Thu, 01-Jan-1970 00:00:00 GMT
-      - guest_id=v1%3A134614849945916477; domain=.twitter.com; path=/; expires=Thu,
-        28-Aug-2014 22:08:19 GMT
-      - k=10.36.23.106.1346148499455217; path=/; expires=Tue, 04-Sep-12 10:08:19 GMT;
-        domain=.twitter.com
-      - lang=en; path=/
-      - twid=u%3D744854762%7COeXM8LGbGRk5fFtaG2A4gH0VeFs%3D; domain=.twitter.com;
-        path=/; secure
-      Vary:
-      - Accept-Encoding
+      - !binary |-
+        X3R3aXR0ZXJfc2Vzcz1CQWg3Q0NJS1pteGhjMmhKUXpvblFXTjBhVzl1UTI5
+        dWRISnZiR3hsY2pvNlJteGhjMmc2T2tac1lYTm8lMjUwQVNHRnphSHNBQmpv
+        S1FIVnpaV1I3QURvSGFXUWlKVFV4WkRVMk5HSXdNekZqTXpWaVlUUTVZVEV4
+        WVRVMiUyNTBBWWpJd1ptRmtZemszT2c5amNtVmhkR1ZrWDJGMGJDc0l1c0hH
+        R0RzQi0tODU3ZjJhOTllMzc1YjcxNGU0NTY4ZTg5YTc0NWM2Nzk3MWNiOTEy
+        MzsgZG9tYWluPS50d2l0dGVyLmNvbTsgcGF0aD0vOyBIdHRwT25seQ==
+      - !binary |-
+        ZG50PTsgZG9tYWluPS50d2l0dGVyLmNvbTsgcGF0aD0vOyBleHBpcmVzPVRo
+        dSwgMDEtSmFuLTE5NzAgMDA6MDA6MDAgR01U
+      - !binary |-
+        Z3Vlc3RfaWQ9djElM0ExMzUzMzMwMzc3MTM0NDUwMTU7IGRvbWFpbj0udHdp
+        dHRlci5jb207IHBhdGg9LzsgZXhwaXJlcz1UaHUsIDIwLU5vdi0yMDE0IDAx
+        OjA2OjE3IEdNVA==
+      - !binary |-
+        az0xMC4zNi42Mi4xMTguMTM1MzMzMDM3NzEzMDk0MzsgcGF0aD0vOyBleHBp
+        cmVzPU1vbiwgMjYtTm92LTEyIDEzOjA2OjE3IEdNVDsgZG9tYWluPS50d2l0
+        dGVyLmNvbQ==
+      - !binary |-
+        bGFuZz1lbjsgcGF0aD0v
+      - !binary |-
+        bGFuZz1lbjsgcGF0aD0v
+      - !binary |-
+        bGFuZz1lbjsgcGF0aD0v
+      - !binary |-
+        dHdpZD11JTNENzQ0ODU0NzYyJTdDT2VYTThMR2JHUms1ZkZ0YUcyQTRnSDBW
+        ZUZzJTNEOyBkb21haW49LnR3aXR0ZXIuY29tOyBwYXRoPS87IHNlY3VyZQ==
+      !binary "VmFyeQ==":
+      - !binary |-
+        QWNjZXB0LUVuY29kaW5n
       Content-Encoding:
-      - gzip
+      - !binary |-
+        Z3ppcA==
       Content-Length:
-      - '76'
-      Server:
-      - tfe
+      - !binary |-
+        NzM=
+      X-Rate-Limit-Limit:
+      - !binary |-
+        MTU=
+      X-Rate-Limit-Remaining:
+      - !binary |-
+        OQ==
+      X-Rate-Limit-Reset:
+      - !binary |-
+        MTM1MzMzMTE2Mw==
+      !binary "U2VydmVy":
+      - !binary |-
+        dGZl
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        H4sIAAAAAAAAA6tWKihKLcvMLy2OTy4tKs4vii8uKVKyUjJQ0lHKS60ogYoq
-        WRnoKGWmFCtZRcfqoGsBSyIphhtRCwDfvxtXXgAAAA==
-    http_version: !!null 
-  recorded_at: Tue, 28 Aug 2012 10:08:20 GMT
+        H4sIAAAAAAAAA6tWKihKLcvMLy2OTy4tKs4vUrIy0FHKS60ogfLji0uAYkoG
+        SjroKpFkMlOKlayiY1E0Ag2qBQBN6molXgAAAA==
+    http_version: 
+  recorded_at: Mon, 19 Nov 2012 13:06:17 GMT
 recorded_with: VCR 2.2.4
