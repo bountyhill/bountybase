@@ -3,14 +3,42 @@ require "active_record"
 # The Bountybase::Models namespoace contains a trimmed down version
 # of Bountyhill's models - just enough to record rewards and such.
 module Bountybase::Models
+  extend self
+  
+  private
+  
+  def config_from_database_yml
+    config_path = File.join(File.dirname(__FILE__), "../../config/database.yml")
+    config = YAML.load_file(config_path)
+    config["test"] or raise("Missing 'test' entry in database.yml file.")
+  end
 
+  def database_url
+    ENV["DATABASE_URL"] || Bountybase.config.database || raise("Missing database config.yml entry")
+  end
+  
+  def config
+    if Bountybase.environment == "test"
+      config_from_database_yml
+    else
+      uri = URI.parse(database_url)
+      { 
+        adapter: "postgresql", database: uri.path.gsub(/^\/+/, ""),
+        username: uri.user, password: uri.password, host: uri.host, port: uri.port
+      }
+    end
+  end
+  
   # set up a connection to the ActiveRecord database
   def self.setup
     @setup_active_record ||= begin
-      config_path = File.join(File.dirname(__FILE__), "../../config/database.yml")
-      config = config_path && YAML.load_file(config_path)
-      connection = config["test"] || raise("Please add database.yml at #{config}")
-      ActiveRecord::Base.establish_connection(connection)
+      ActiveRecord::Base.establish_connection(config)
+      user, host, port, database = config.values_at(:user, :host, :port, :database)
+
+      Bountybase.logger.benchmark :warn, "Connecting to postgres at", "#{user}@#{host}:#{port}", :min => 0 do
+        ActiveRecord::Base.connection.execute "SELECT 1"
+      end
+
       true
     end
   end

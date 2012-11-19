@@ -24,6 +24,18 @@ redis:
   test:         redis://localhost:6379/
   development:  redis://localhost:6379/
   live:         redis://:jN3ERLqggaP6UdTLM8RiEP8h8ZUrFwHAR8e1GeiZNf0ASrfcA6Sww8sS5tKzilvN@node-665b5a0c3f6206ab4.openredis.com:10315/
+
+# The database URL for use with bountybase/models. Note that the database URL
+# is not read from here, but
+#
+# - from bountyhill's config/database.yml file in "bountyhill" (the entire
+#   bountybase/models part will not be used then), and
+# - from bountybase's config/database.yml file during bountybase tests
+#
+database:
+  live:         postgres://gymwlmyhwlzxcp:9dpZP-nW80R0ozq1fouvkQ-4Kg@ec2-54-243-237-247.compute-1.amazonaws.com:5432/deplol8l2rnhkb
+  staging:      postgres://xfyhqfoxnpvaig:d8tYBsSKaz62fptqYXU4luFhKl@ec2-107-22-165-100.compute-1.amazonaws.com:5432/d9mdidpvdt48bj
+  development:  postgres://bountyhill:bountyhill@localhost:5432/bountyhill
   
 # The resque configuration. This accepts a 
 #
