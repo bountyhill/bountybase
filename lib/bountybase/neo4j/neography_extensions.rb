@@ -10,7 +10,7 @@ class Neography::Connection
 
   def ping
     ping = evaluate_response HTTParty.get(url,  merge_options({}))
-    return ping if ping.is_a?(Hash) && ping.key?("data")
+    return ping if ping.is_a?(Hash)
 
     Bountybase.logger.error "Cannot ping neo4j database at #{url}" 
     {}
