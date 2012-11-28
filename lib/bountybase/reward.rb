@@ -5,7 +5,9 @@ module Bountybase
       :points => [ nil, Fixnum ]
     }
     
-    if defined?(ActiveRecord::Base)
+    # Perform the Reward message locally if possible. That means a running
+    # worker process is not required in that case.
+    if Bountybase::Message::Reward.locally_performable?
       Bountybase::Message.perform "Reward", reward_payload(account, options), {}
     else
       # enqueue reward message when no local database exists. 

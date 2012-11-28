@@ -6,6 +6,8 @@
 #
 class Bountybase::Message::Reward < Bountybase::Message
   def perform
+    require "bountybase/models"
+    
     return unless account = Bountybase::Models::User[payload[:account]]
     
     if badge = payload[:badge]
@@ -25,5 +27,11 @@ class Bountybase::Message::Reward < Bountybase::Message
     expect! payload => {  :account => /^(@|user:)./,
                           :badge => [String, nil],
                           :points => [Integer,nil] }
+  end
+
+  # If there is a AR::B connection, the Reward action can be performed
+  # in this process and need not be queued.
+  def self.locally_performable?
+    defined?(ActiveRecord::Base) && ActiveRecord::Base.connected?
   end
 end

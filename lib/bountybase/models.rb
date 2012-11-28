@@ -31,19 +31,18 @@ module Bountybase::Models
   
   # set up a connection to the ActiveRecord database
   def self.setup
-    @setup_active_record ||= begin
-      ActiveRecord::Base.establish_connection(config)
-      user, host, port, database = config.values_at(:user, :host, :port, :database)
+    return if ActiveRecord::Base.connected?
 
-      Bountybase.logger.benchmark :warn, "Connecting to postgres at", "#{user}@#{host}:#{port}", :min => 0 do
-        ActiveRecord::Base.connection.execute "SELECT 1"
-      end
+    ActiveRecord::Base.establish_connection(config)
+    user, host, port, database = config.values_at(:user, :host, :port, :database)
 
-      true
+    Bountybase.logger.benchmark :warn, "Connecting to postgres at", "#{user}@#{host}:#{port}", :min => 0 do
+      ActiveRecord::Base.connection.execute "SELECT 1"
     end
   end
   
-  # Delete all Bountybase objects; this is needed during tests only. 
+  
+  # Delete all Bountybase objects; needed during tests. 
   def self.delete_all #:nodoc:
     db = ActiveRecord::Base.connection
 
