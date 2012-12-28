@@ -23,13 +23,26 @@ class Bountybase::Message::Tweet < Bountybase::Message
     # register in AR DB
     Bountybase::Models::User.transaction do
       sender_name = payload[:sender_name]
-      account = Bountybase::Models::User["@#{sender_name}"] if sender_name
+      sender = Bountybase::Models::User["@#{sender_name}"] if sender_name
       
-      account.register_quest_ids(quest_ids) if account
+      next unless sender
+
+      # register sender
+      sender.register_quest_ids(quest_ids)
       
-      Bountybase.reward(account, :points => 1)
+      # give out reward
+      Bountybase.reward(sender, :points => 1)
+
+      # register Forward in AR DB
+      quest_ids.each do |quest_id|
+        Bountybase::Graph::Forward.register(:quest_id => quest_id, 
+          :sender_id => sender.id, 
+          :text => payload[:text],
+          :original_data => payload
+        )
+      end
     end
-    
+
     # register in graph DB
     quest_ids.each do |quest_id|
       Bountybase::Graph::Twitter.register(payload.update(:quest_id => quest_id))

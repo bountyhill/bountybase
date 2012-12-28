@@ -41,7 +41,9 @@ class Bountybase::Models::User < ActiveRecord::Base
     else                raise "Invalid account name #{account_uri.inspect}"
     end
   end
-  
+
+  # TODO: remove me! The Forward model replaces the users_quests_sharings table
+  # completely!
   def register_quest_id(quest_id)
     # Why SQL? Why not just self.shared_quests << Quest.find(quest_id)? 
     # It turns out that with an unique index on [quest_id, user_id] Rails
@@ -62,4 +64,32 @@ class Bountybase::Models::User < ActiveRecord::Base
 end
 
 class Bountybase::Models::Quest < ActiveRecord::Base
+end
+
+
+class Bountybase::Models::Forward < ActiveRecord::Base
+  # t.integer :quest_id           # the id of the quest
+  # t.integer :sender_id          # the id of the sender
+  # t.text    :text               # the text of the forward
+  # t.text    :original_data      # the original data, serialized as JSON
+
+  def register(data)
+    expect! data => {
+      :quest_id => Numeric,
+      :sender_id => Numeric,
+      :text => String,
+      :original_data => Hash
+    }
+
+    #
+    # Register only the first tweet for a user/quest combination. 
+    quest_id, sender_id = data.values_at(:quest_id, :sender_id)
+    return if where(quest_id: quest_id, sender_id: sender_id).first
+
+    #
+    # the original_data entry is for jsonized data.
+    data[:original_data] = data[:original_data].to_json
+
+    create! data
+  end
 end
