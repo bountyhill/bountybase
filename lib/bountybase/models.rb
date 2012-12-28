@@ -34,9 +34,7 @@ module Bountybase::Models
     return if ActiveRecord::Base.connected?
 
     ActiveRecord::Base.establish_connection(config)
-    user, host, port, database = config.values_at(:user, :host, :port, :database)
-
-    Bountybase.logger.benchmark :warn, "Connecting to postgres at", "#{user}@#{host}:#{port}", :min => 0 do
+    Bountybase.logger.benchmark :warn, "Connecting to postgres at #{database_url}", :min => 0 do
       ActiveRecord::Base.connection.execute "SELECT 1"
     end
   end
