@@ -3,6 +3,8 @@ Dir.glob( __FILE__.gsub(/\.rb$/, "/*_adapter.rb" )).each do |file|
 end
 
 module Bountybase
+  class Metrics; end
+  
   #
   # Returns the global Metrics object. It is used to update counters - 
   # the name ends in a bang - and set gauges:
@@ -19,15 +21,18 @@ module Bountybase
   # not configured here, but is part of the +bountystats+ application.
   def metrics
     @metrics ||= begin
-      adapter = if config = Bountybase.config.stathat
-        Metrics::StatHatAdapter.new(config)
-      elsif false && (config = Bountybase.config.rulesio) && !config["disabled"]
-        Metrics::RulesIOAdapter.new(config)
-      elsif (config = Bountybase.config.fnordmetric) && !config["disabled"]
-        Metrics::FnordMetricAdapter.new(config) 
+      adapter = case Bountybase.config.metrics
+      when "stathat"
+        Metrics::StatHatAdapter.new(Bountybase.config.stathat)
+      when "rulesio"
+        Metrics::RulesIOAdapter.new(Bountybase.config.rulesio)
+      when "fnordmetric"
+        Metrics::FnordMetricAdapter.new(Bountybase.config.fnordmetric) 
+      else
+        Metrics::DummyAdapter.new
       end
-      
-      Bountybase.logger.info "Connected to metrics adapter", adapter.class
+
+      Bountybase.logger.info "metrics: using adapter", adapter.class
       Metrics.new adapter
     end
   end

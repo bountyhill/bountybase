@@ -54,6 +54,13 @@ resque:
 cache:
   default:      bountycache
 
+#
+# choose the metrics adapter.
+metrics:
+  default:      stathat
+  development:  dummy
+  test:         dummy
+
 # The librato metrics credentials. Even though they are the same we cannot use a "default"
 # setting because development and test do not generate metrics.
 #
