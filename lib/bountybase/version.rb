@@ -5,5 +5,5 @@ module Bountybase
   # Bountybase code base you could just use
   #
   #   require_relative "vendor/bountybase/version"
-  VERSION = "0.3"
+  VERSION = "0.3.1"
 end

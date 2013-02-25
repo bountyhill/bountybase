@@ -4,17 +4,18 @@
 # a) to work around a heroku limitation which makes it hard to install private code outside of the app repo, and
 # b) to allow local development without having to push every small change and to update all local repos.
 #
-STDERR.puts "Loading bountybase package from #{File.dirname(__FILE__)}"
 
 bountybased = File.join(File.dirname(__FILE__), "..", "bountybased")
 
 bountybase = if File.directory?(bountybased)
-  STDERR.puts "*** Warning: Using local copy of bountybase development repository"
   bountybased
 else
   bountybased = nil
   File.dirname(__FILE__)
 end
+
+STDERR.puts "*** Loading bountybase package from #{bountybase}"
+STDERR.puts "*** Warning: Using local copy of bountybase development repository" if bountybased
 
 $: << File.join(bountybase, "lib")
 
