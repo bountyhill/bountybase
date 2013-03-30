@@ -1,8 +1,7 @@
 module Bountybase
-  def reward(account, options)
+  def reward(account, options={})
     expect! options => {
-      :badge => [ nil, String ],
-      :points => [ nil, Fixnum ]
+      :badge => [ nil, String ]
     }
     
     # Perform the Reward message locally if possible. That means a running
@@ -17,7 +16,7 @@ module Bountybase
 
   private
   
-  def reward_payload(account, options)
+  def reward_payload(account, options={})
     # when run in the context of Bountyhill with a User account, 
     # encode the account as user:<no>
     if defined?(ActiveRecord::Base) && account.is_a?(ActiveRecord::Base)

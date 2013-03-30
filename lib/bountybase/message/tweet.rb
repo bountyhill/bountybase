@@ -31,7 +31,7 @@ class Bountybase::Message::Tweet < Bountybase::Message
       sender.register_quest_ids(quest_ids)
       
       # give out reward
-      Bountybase.reward(sender, :points => 1)
+      Bountybase.reward(sender)
 
       # register Forward in AR DB
       quest_ids.each do |quest_id|

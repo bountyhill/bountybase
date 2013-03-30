@@ -2,7 +2,7 @@
 # is to be assigned to a specific user.
 #
 # The message contains the receiving account or identity - either "@<id>" 
-# or "user:<id>", the badge, if any, and the number of points.
+# or "user:<id>", the badge, if any.
 #
 class Bountybase::Message::Reward < Bountybase::Message
   def perform
@@ -14,10 +14,6 @@ class Bountybase::Message::Reward < Bountybase::Message
       account.badges << badge unless account.badges.include?(badge)
     end
     
-    if payload[:points]
-      account.points += payload[:points] 
-    end
-    
     account.save!
   end
 
@@ -25,8 +21,7 @@ class Bountybase::Message::Reward < Bountybase::Message
   
   def self.validate!(payload)
     expect! payload => {  :account => /^(@|user:)./,
-                          :badge => [String, nil],
-                          :points => [Integer,nil] }
+                          :badge => [String, nil] }
   end
 
   # If there is a AR::B connection, the Reward action can be performed

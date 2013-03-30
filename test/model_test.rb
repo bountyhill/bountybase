@@ -22,7 +22,6 @@ class ModelTest < Test::Unit::TestCase
 
     radiospiel = User["@radiospiel"]
     assert_kind_of(User, radiospiel)
-    assert_equal(radiospiel.points, 0)
     assert_equal(radiospiel.badges, [])
 
     # make sure the type column is set right. This is important to
