@@ -35,7 +35,7 @@ class Bountybase::Message::Tweet < Bountybase::Message
 
       # register Forward in AR DB
       quest_ids.each do |quest_id|
-        Bountybase::Graph::Forward.register(:quest_id => quest_id, 
+        Bountybase::Models::Forward.register(:quest_id => quest_id, 
           :sender_id => sender.id, 
           :text => payload[:text],
           :original_data => payload
