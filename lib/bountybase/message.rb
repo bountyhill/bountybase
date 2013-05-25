@@ -175,8 +175,8 @@ class Bountybase::Message
     
     klass = @@message_klasses[klassname]
 
-    W klass.name, payload
-    I "from", origin
+    # W klass.name, payload
+    # I "from", origin
 
     payload = payload.with_symbolized_keys
     origin = origin.with_symbolized_keys
