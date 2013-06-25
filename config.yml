@@ -147,6 +147,7 @@ twitter_app:
     user:                 bhstaging
     tag:                  "#bhstaging"
     email:                staging@bountyhill.com
+    identifier:           bhstaging
     password:             0cc7dbc46f19f6738fda47621653c51f
     url:                  https://dev.twitter.com/apps/3258822/show
     callback_url:         http://bountyhill-staging-web1.heroku.com/twauth
@@ -158,6 +159,7 @@ twitter_app:
     user:                 bountyhill
     tag:                  "#bounty"
     email:                info@bountyhill.com
+    identifier:           bountyhill
     password:             d2fdb2b362aef57eafdf9471ee
     url:                  https://dev.twitter.com/apps/3414294
     consumer_key:         QewZfxFwrBA6t8OGU9AqA
@@ -173,6 +175,7 @@ twitter_notifications:
   default:
     user:                 bountyhermes
     email:                bountyhermes@bountyhill.com
+    identifier:           bountyhermes
     password:             7e9447a4f162cd131c1e941cc14f861f
     url:                  https://dev.twitter.com/apps/3339978/show
     consumer_key:         5Qwo5csYLfl78duu75jsBg
