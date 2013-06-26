@@ -252,14 +252,15 @@ transloadit:
   live:
     s3_bucket:        bountyhill-live
 
+#
+# Admin twitter uids.
+# TODO: add missing uids!
+admins:
+  - "34037675"    # earl_oett
+  - "radiospiel"  # radiospiel
+  - "kaaweh"      # kaaweh
 
 #
-# Admin twitter handles.
-admins:
-  - "radiospiel"
-  - "earl_oett"
-  - "kaaweh"
-
 # The filepicker.io key.
 filepicker:
   default:
