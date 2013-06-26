@@ -256,9 +256,9 @@ transloadit:
 #
 # Admin twitter handles.
 admins:
-  - "@radiospiel"
-  - "@earl_oett"
-  - "@kaaweh"
+  - "radiospiel"
+  - "earl_oett"
+  - "kaaweh"
 
 # The filepicker.io key.
 filepicker:
