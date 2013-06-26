@@ -77,51 +77,51 @@ librato:
     apikey:     d903064769ddf800ce3d8b7b7dcb64c368d9b7d02ebd6c24b03c57b3ff90049b
 
 #
-# Twitter authentication keys. Authentication needs consumer_* and access_token* values;
+# Twitter authentication keys. Authentication needs consumer_* and oauth_token* values;
 # urls are for reference purposes only and denote the twitter app URL. They are currently
 # set on default. While this is good for bountytick, bountytwirl instances must be run 
 # via separate applications.
 twitter:
   default:
     development:
-      url:                  https://dev.twitter.com/apps/2982201
-      consumer_key:         c6cvEkq8dHMaTa9F2y2w
-      consumer_secret:      6UdPXY4Wx9AgXH9YL65Ev3gCZgZ0lEop8ylsVRXjGE
-      access_token:         744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI
-      access_token_secret:  IhoMD0O9VRLZTwYkBPJT9jRcvd0K5kgVgVPmH5sQ
+      url:              https://dev.twitter.com/apps/2982201
+      consumer_key:     c6cvEkq8dHMaTa9F2y2w
+      consumer_secret:  6UdPXY4Wx9AgXH9YL65Ev3gCZgZ0lEop8ylsVRXjGE
+      oauth_token:      744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI
+      oauth_secret:     IhoMD0O9VRLZTwYkBPJT9jRcvd0K5kgVgVPmH5sQ
     test:
-      url:                  https://dev.twitter.com/apps/2982201
-      consumer_key:         c6cvEkq8dHMaTa9F2y2w
-      consumer_secret:      6UdPXY4Wx9AgXH9YL65Ev3gCZgZ0lEop8ylsVRXjGE
-      access_token:         744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI
-      access_token_secret:  IhoMD0O9VRLZTwYkBPJT9jRcvd0K5kgVgVPmH5sQ
+      url:              https://dev.twitter.com/apps/2982201
+      consumer_key:     c6cvEkq8dHMaTa9F2y2w
+      consumer_secret:  6UdPXY4Wx9AgXH9YL65Ev3gCZgZ0lEop8ylsVRXjGE
+      oauth_token:      744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI
+      oauth_secret:     IhoMD0O9VRLZTwYkBPJT9jRcvd0K5kgVgVPmH5sQ
     twirl1:
-      url:                  https://dev.twitter.com/apps/2982201
-      consumer_key:         c6cvEkq8dHMaTa9F2y2w
-      consumer_secret:      6UdPXY4Wx9AgXH9YL65Ev3gCZgZ0lEop8ylsVRXjGE
-      access_token:         744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI
-      access_token_secret:  IhoMD0O9VRLZTwYkBPJT9jRcvd0K5kgVgVPmH5sQ
+      url:              https://dev.twitter.com/apps/2982201
+      consumer_key:     c6cvEkq8dHMaTa9F2y2w
+      consumer_secret:  6UdPXY4Wx9AgXH9YL65Ev3gCZgZ0lEop8ylsVRXjGE
+      oauth_token:      744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI
+      oauth_secret:     IhoMD0O9VRLZTwYkBPJT9jRcvd0K5kgVgVPmH5sQ
     twirl2:
-      url:                  https://dev.twitter.com/apps/2982201
-      consumer_key:         hucvNtFL6gDA6t5XjlD1A
-      consumer_secret:      YotJBuBSLTaP8IUhbkUU46nKPtCmcI6BFL53oaRQQI
-      access_token:         744854762-0AOIW3nminJYWUZrThOQGpJvQYb30BeAMCLJp06S
-      access_token_secret:  mnmcR4RWhR6xvMxu6yzJ3NGRf3jzdvOUQzn22Ndo
+      url:              https://dev.twitter.com/apps/2982201
+      consumer_key:     hucvNtFL6gDA6t5XjlD1A
+      consumer_secret:  YotJBuBSLTaP8IUhbkUU46nKPtCmcI6BFL53oaRQQI
+      oauth_token:      744854762-0AOIW3nminJYWUZrThOQGpJvQYb30BeAMCLJp06S
+      oauth_secret:     mnmcR4RWhR6xvMxu6yzJ3NGRf3jzdvOUQzn22Ndo
     #
     # Note: bountyclerk1 uses the same twitter account as bountytwirl2, for now.
     # This is ok during development.
     clerk1:
-      url:                  https://dev.twitter.com/apps/2982201
-      consumer_key:         hucvNtFL6gDA6t5XjlD1A
-      consumer_secret:      YotJBuBSLTaP8IUhbkUU46nKPtCmcI6BFL53oaRQQI
-      access_token:         744854762-0AOIW3nminJYWUZrThOQGpJvQYb30BeAMCLJp06S
-      access_token_secret:  mnmcR4RWhR6xvMxu6yzJ3NGRf3jzdvOUQzn22Ndo
+      url:              https://dev.twitter.com/apps/2982201
+      consumer_key:     hucvNtFL6gDA6t5XjlD1A
+      consumer_secret:  YotJBuBSLTaP8IUhbkUU46nKPtCmcI6BFL53oaRQQI
+      oauth_token:      744854762-0AOIW3nminJYWUZrThOQGpJvQYb30BeAMCLJp06S
+      oauth_secret:     mnmcR4RWhR6xvMxu6yzJ3NGRf3jzdvOUQzn22Ndo
     tick:
-      url:                  https://dev.twitter.com/apps/2982207
-      consumer_key:         auDWHPRoc7egQgHsMbUjg
-      consumer_secret:      9qFMRghFa5F0s06CxYvFn22mXNpmrzzrBhbrzO7FA7M
-      access_token:         744854762-zImMVMa47UrGbmvfjHz5w3gTXeYgtMeO44GFEnMZ
-      access_token_secret:  FetfXPlK0dyRhQUd98OoFDC7CQI1s17FjlGpJwRXDQ
+      url:              https://dev.twitter.com/apps/2982207
+      consumer_key:     auDWHPRoc7egQgHsMbUjg
+      consumer_secret:  9qFMRghFa5F0s06CxYvFn22mXNpmrzzrBhbrzO7FA7M
+      oauth_token:      744854762-zImMVMa47UrGbmvfjHz5w3gTXeYgtMeO44GFEnMZ
+      oauth_secret:     FetfXPlK0dyRhQUd98OoFDC7CQI1s17FjlGpJwRXDQ
 
 #
 # Tweets to track. In addition to these entries bountytwirl tracks the
@@ -134,7 +134,7 @@ tracking:
 #
 # The twitter app configuration for http://bountyhill.com. 
 # Note: most of the settings below are for reference only; important
-# settings are user, consumer_* and access_token_*
+# settings are user, consumer_* and oauth_token_*
 #
 # - twitter_app.user: The "public" twitter account. This is the account
 #   owning the bountyhill twitter application.
@@ -144,28 +144,28 @@ tracking:
 #
 twitter_app:
   default:
-    user:                 bhstaging
-    tag:                  "#bhstaging"
-    email:                staging@bountyhill.com
-    identifier:           bhstaging
-    password:             0cc7dbc46f19f6738fda47621653c51f
-    url:                  https://dev.twitter.com/apps/3258822/show
-    callback_url:         http://bountyhill-staging-web1.heroku.com/twauth
-    consumer_key:         hpouSAo1rpoHofACKhzU4w
-    consumer_secret:      PNXFsQWQT8Jpm5yBtGDP5NMjSAIP3n5At9NvGgeY2UY
-    access_token:         834028045-4bLR1B000BqoFxt80OXW9h1xlY9Z9v1ueBO5qbBr
-    access_token_secret:  bJ1Gylrg39y8x9dt7BYXLeuwLpCMNqJHMEYfnIxTU
+    user:             bhstaging
+    tag:              "#bhstaging"
+    email:            staging@bountyhill.com
+    identifier:       bhstaging
+    password:         0cc7dbc46f19f6738fda47621653c51f
+    url:              https://dev.twitter.com/apps/3258822/show
+    callback_url:     http://bountyhill-staging-web1.heroku.com/twauth
+    consumer_key:     hpouSAo1rpoHofACKhzU4w
+    consumer_secret:  PNXFsQWQT8Jpm5yBtGDP5NMjSAIP3n5At9NvGgeY2UY
+    oauth_token:      834028045-4bLR1B000BqoFxt80OXW9h1xlY9Z9v1ueBO5qbBr
+    oauth_secret:     bJ1Gylrg39y8x9dt7BYXLeuwLpCMNqJHMEYfnIxTU
   live:
-    user:                 bountyhill
-    tag:                  "#bounty"
-    email:                info@bountyhill.com
-    identifier:           bountyhill
-    password:             d2fdb2b362aef57eafdf9471ee
-    url:                  https://dev.twitter.com/apps/3414294
-    consumer_key:         QewZfxFwrBA6t8OGU9AqA
-    consumer_secret:      m2EXPHI9MaaIhfZ46CC8Vp1b3EIJr3vSvcwGc0
-    access_token:         610307762-ViszdmxA6yRIAbiUYaJEkHHtrMLxfm5tH1k6dxcs
-    access_token_secret:  uzFmJJvBc89wTU3wLgSTUNItM0Hat5M7k7cpn9v0VA
+    user:             bountyhill
+    tag:              "#bounty"
+    email:            info@bountyhill.com
+    identifier:       bountyhill
+    password:         d2fdb2b362aef57eafdf9471ee
+    url:              https://dev.twitter.com/apps/3414294
+    consumer_key:     QewZfxFwrBA6t8OGU9AqA
+    consumer_secret:  m2EXPHI9MaaIhfZ46CC8Vp1b3EIJr3vSvcwGc0
+    oauth_token:      610307762-ViszdmxA6yRIAbiUYaJEkHHtrMLxfm5tH1k6dxcs
+    oauth_secret:     uzFmJJvBc89wTU3wLgSTUNItM0Hat5M7k7cpn9v0VA
 
 
 #
@@ -173,15 +173,15 @@ twitter_app:
 # This is the account a user will be follow when signing in.
 twitter_notifications:
   default:
-    user:                 bountyhermes
-    email:                bountyhermes@bountyhill.com
-    identifier:           bountyhermes
-    password:             7e9447a4f162cd131c1e941cc14f861f
-    url:                  https://dev.twitter.com/apps/3339978/show
-    consumer_key:         5Qwo5csYLfl78duu75jsBg
-    consumer_secret:      RVUc2P6Rn4pje5XlYJwCekivEmbwal2FU4VwALxCrXk
-    access_token:         857751487-DygiKejULjguoQFttG144RpIOqOUvhxp9zlBYQVj
-    access_token_secret:  461RyIGIgXQPMgY9vyLuSWurgXcAhnLLPChSDFohE
+    user:             bountyhermes
+    email:            bountyhermes@bountyhill.com
+    identifier:       bountyhermes
+    password:         7e9447a4f162cd131c1e941cc14f861f
+    url:              https://dev.twitter.com/apps/3339978/show
+    consumer_key:     5Qwo5csYLfl78duu75jsBg
+    consumer_secret:  RVUc2P6Rn4pje5XlYJwCekivEmbwal2FU4VwALxCrXk
+    oauth_token:      857751487-DygiKejULjguoQFttG144RpIOqOUvhxp9zlBYQVj
+    oauth_secret:     461RyIGIgXQPMgY9vyLuSWurgXcAhnLLPChSDFohE
 
 #
 # The facebook app configuration for http://bountyhill.com. 
@@ -201,38 +201,38 @@ facebook_app:
 # redis connection for fnordmetric statistics.
 fnordmetric:
   default:
-    redis_url:          redis://localhost:6379
-    redis_prefix:       dev
+    redis_url:        redis://localhost:6379
+    redis_prefix:     dev
   staging:
-    redis_url:          redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
-    redis_prefix:       staging
+    redis_url:        redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
+    redis_prefix:     staging
   live:
-    redis_url:          redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
-    redis_prefix:       pro
+    redis_url:        redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
+    redis_prefix:     pro
 
 #
 #
 # rules.io config.
 rulesio:
   default:
-    disabled:           true
-    token:              'yNzTq0l2F2rQxIFwfnufiA'
+    disabled:         true
+    token:            'yNzTq0l2F2rQxIFwfnufiA'
 
 # The stathat account name.
 stathat:
-  default:              eno@open-lab.org
-  live:                 eno@bountyhill.com
+  default:            eno@open-lab.org
+  live:               eno@bountyhill.com
 
 #
 #
 neo4j:
-  # test:                 http://9e68fcc50:2bb6aea56@291fac8e1.hosted.neo4j.org:7289
-  development:          http://localhost:7474
-  test:                 http://localhost:7474
+  # test:               http://9e68fcc50:2bb6aea56@291fac8e1.hosted.neo4j.org:7289
+  development:        http://localhost:7474
+  test:               http://localhost:7474
   # The live neo4j database is from bountyhill-live-web1's "neo4j:test" addon
-  live:                 http://680a4d34c:e5b816c6c@a065d9bef.hosted.neo4j.org:7261
+  live:               http://680a4d34c:e5b816c6c@a065d9bef.hosted.neo4j.org:7261
   # The staging neo4j database is from bountyhill-staging-web1's "neo4j:test" addon
-  staging:              http://080d38637:9acfd4e44@a77c2239e.hosted.neo4j.org:7292
+  staging:            http://080d38637:9acfd4e44@a77c2239e.hosted.neo4j.org:7292
 
 #
 # Configuration for transloadit image upload. This includes both S3 storage

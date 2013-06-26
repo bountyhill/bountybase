@@ -40,10 +40,10 @@ module Bountybase::TwitterAPI
   # threadsafe there is one Twitter::Client per thread. 
   def client #:nodoc:
     Thread.current[:twitter_client] ||= Twitter::Client.new(
-      consumer_key:       oauth["consumer_key"],
-      consumer_secret:    oauth["consumer_secret"],
-      oauth_token:        oauth["access_token"],
-      oauth_token_secret: oauth["access_token_secret"]
+      :consumer_key     => oauth["consumer_key"],
+      :consumer_secret  => oauth["consumer_secret"],
+      :oauth_token      => oauth["oauth_token"],
+      :oauth_secret     => oauth["oauth_secret"]
     )
   end
   
