@@ -185,7 +185,6 @@ twitter_notifications:
 
 #
 # The facebook app configuration for http://bountyhill.com. 
-#
 facebook_app:
   default:
     consumer_key:     440694306012436
@@ -196,7 +195,15 @@ facebook_app:
   live:
     consumer_key:     504115192986139
     consumer_secret:  f30a99860690df7d270d3dfd1ecc1de4
-    
+
+#
+# The email identity for bountyhill's draft user
+email_draft:
+  default:
+    email:                  draft@bountyhill.com
+    password:               kjhb234cdx56öjsd89wew87sfg4fc287n443gcnr3xr2
+    password_confirmation:  kjhb234cdx56öjsd89wew87sfg4fc287n443gcnr3xr2
+
 #
 # redis connection for fnordmetric statistics.
 fnordmetric:
