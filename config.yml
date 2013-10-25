@@ -197,6 +197,19 @@ facebook_app:
     consumer_secret:  f30a99860690df7d270d3dfd1ecc1de4
 
 #
+# The google+ app configuration for http://bountyhill.com. 
+google_app:
+  default:
+    consumer_key:     51315874974-jekf92glah32b5gngimbfe0bbq9tu9jq.apps.googleusercontent.com
+    consumer_secret:  Fp2N7ace2dNGdbMYqSyDGdbG
+  staging:
+    consumer_key:     278792493980.apps.googleusercontent.com
+    consumer_secret:  WOglU7FHfWO33flL8___Tzq3
+  live:
+    consumer_key:     751090992775.apps.googleusercontent.com
+    consumer_secret:  Z0gN7gJjY45U-79brv-yTTjD
+
+#
 # The email identity for bountyhill's draft user
 email_draft:
   default:
