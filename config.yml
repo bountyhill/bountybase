@@ -210,6 +210,21 @@ google_app:
     consumer_secret:  Z0gN7gJjY45U-79brv-yTTjD
 
 #
+# The linkedin app configuration for http://bountyhill.com. 
+
+linkedin_app:
+  default:
+    consumer_key:     1em5l9vq6p0d
+    consumer_secret:  NitR187uTe5AYdYU
+  staging:
+    consumer_key:     72tkeaux4puz
+    consumer_secret:  Df0ySq4yuWR8UWX9
+  live:
+    consumer_key:     gc4f48gsk6bj
+    consumer_secret:  Cd7yi7pGARijTzEB
+
+
+#
 # The email identity for bountyhill's draft user
 email_draft:
   default:
