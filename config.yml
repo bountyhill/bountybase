@@ -197,14 +197,17 @@ twitter_notifications:
 # The facebook app configuration
 facebook_app:
   default:
-    url:              "#"
+    page_id:          389358064530268
+    url:              http://www.facebook.com/pages/Bhdevelopment/389358064530268
     consumer_key:     440694306012436
     consumer_secret:  d70a1037d08802b21648dd3269d60e47
   staging:
-    url:              "#"
+    page_id:          1402962513275114
+    url:              http://www.facebook.com/bhstaging
     consumer_key:     551612581545364
     consumer_secret:  4fb957ab281d55935b010a9219ebd95c
   live:
+    page_id:          388308247883918
     url:              http://facebook.com/bountyhill
     consumer_key:     504115192986139
     consumer_secret:  f30a99860690df7d270d3dfd1ecc1de4
