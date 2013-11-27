@@ -216,14 +216,17 @@ facebook_app:
 # The google+ app configuration
 google_app:
   default:
-    url:              "#"
+    page_id:          113771683784910912848
+    url:              http://plus.google.com/113771683784910912848
     consumer_key:     51315874974-jekf92glah32b5gngimbfe0bbq9tu9jq.apps.googleusercontent.com
     consumer_secret:  Fp2N7ace2dNGdbMYqSyDGdbG
   staging:
-    url:              "#"
+    page_id:          114340468587665009234
+    url:              http://plus.google.com/114340468587665009234
     consumer_key:     278792493980.apps.googleusercontent.com
     consumer_secret:  WOglU7FHfWO33flL8___Tzq3
   live:
+    page_id:          112820322074000009163
     url:              http://plus.google.com/112820322074000009163
     consumer_key:     751090992775.apps.googleusercontent.com
     consumer_secret:  Z0gN7gJjY45U-79brv-yTTjD
