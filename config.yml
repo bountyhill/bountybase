@@ -235,15 +235,18 @@ google_app:
 # The linkedin app configuration
 linkedin_app:
   default:
-    page_url:         "#"
+    page_id:          
+    page_url:         
     consumer_key:     1em5l9vq6p0d
     consumer_secret:  NitR187uTe5AYdYU
   staging:
-    page_url:         "#"
+    page_id:          
+    page_url:         
     consumer_key:     72tkeaux4puz
     consumer_secret:  Df0ySq4yuWR8UWX9
   live:
-    page_url:         "#"
+    page_id:          bountyhill
+    page_url:         http://www.linkedin.com/company/bountyhill
     consumer_key:     gc4f48gsk6bj
     consumer_secret:  Cd7yi7pGARijTzEB
 
@@ -251,14 +254,17 @@ linkedin_app:
 # The xing app configuration
 xing_app:
   default:
-    page_url:         "#"
+    page_id:          
+    page_url:         
     consumer_key:     556ab78c6089fe294956
     consumer_secret:  b23ac101bb9a04739e874ec8fc5b8a3eed6036e0
   staging:
-    page_url:         "#"
+    page_id:          
+    page_url:         
     consumer_key:     9de884023481e64b2f6f # test key only
     consumer_secret:  a7debfe7d31a795a0970f027d504b75414b2936a
   live:
+    page_id:          bountyhill
     page_url:         http://www.xing.com/companies/bountyhill
     consumer_key:     b35a83598a280f29192a # test key only
     consumer_secret:  6924d622daa2d25cefe0fd1801829494853a5e9b
