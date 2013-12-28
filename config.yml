@@ -195,20 +195,24 @@ twitter_notifications:
 
 #
 # The facebook app configuration
+# check settings with https://developers.facebook.com/tools/explorer
 facebook_app:
   default:
     page_id:          389358064530268
     page_url:         http://www.facebook.com/pages/Bhdevelopment/389358064530268
+    page_token:       CAAHKfXcAZBhsBAJ4QayZBRCeFOeVdbY124gfCnH2DYPKaASWu1SrGISCwG93ZBmOAaZAvoXu7OkoL9X4mFGFjvxaEPtvBeae7sEoLZBa4u0mz7mxz36RRjhi7nuL6c1x3ZATEK2HxLc7YrJ6TmN1naPWoXy8h8yvEyIk3TI4LdVEwK4P1Jc9jgtwa1LslTBFpTVREwuTh2XgZDZD
     consumer_key:     440694306012436
     consumer_secret:  d70a1037d08802b21648dd3269d60e47
   staging:
     page_id:          1402962513275114
     page_url:         http://www.facebook.com/bhstaging
+    page_token:       CAAHKfXcAZBhsBAO35EIx8wYXUvEMqWoivDx04wjdkrZC560IlHbsmM4Ro7zMMRdyDvugZCS3KYDDIZBm5OuDFfix1fXOqaZBrYCrGS7fsppFJ1cMuhnhh3oVNuv3wdZCxjOTMFsqA22iGuDYyhLyjulMoVndFF4utJRuXg8eCdD1q2SRoj09agHAo8DSqZCl0cZD
     consumer_key:     551612581545364
     consumer_secret:  4fb957ab281d55935b010a9219ebd95c
   live:
     page_id:          388308247883918
-    url:              http://facebook.com/bountyhill
+    page_url:         http://facebook.com/bountyhill
+    page_token:       CAAHKfXcAZBhsBANLdD1bulHZAgaiz7aLWvFLJZB5rrSlMxDig5c5UEpbhmyifAD2YM8ZCcZB2sF52jbXo9ca80r3zhCNkVhPliuUCnDPmZBPkBwGTjjnw3I8Ob8dqTMfaKe4nFeFIORZBIIdwt920kSm9awrlTQxOSnlLDxUuuTdzAWLc5OLj8SNFemPwNCD78ZD
     consumer_key:     504115192986139
     consumer_secret:  f30a99860690df7d270d3dfd1ecc1de4
 
