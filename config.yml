@@ -237,22 +237,33 @@ google_app:
 
 #
 # The linkedin app configuration
+# pls. note that for test and staging we use linkedin's general test company
+# when posting to this company, no special rights are required otherwise we
+# have to obtain the 'rw_company_admin' permission which is given to the linkedin user
+# 'admin@bountyhill.com' within his oauth_token and oauth_secret below
+# see: http://developer.linkedin.com/creating-company-shares
 linkedin_app:
   default:
-    page_id:          
-    page_url:         
+    page_id:          2414183
+    page_url:         http://www.linkedin.com/company/devtestco
     consumer_key:     1em5l9vq6p0d
     consumer_secret:  NitR187uTe5AYdYU
+    oauth_token:      3128144d-f392-4a83-89e1-1b251a8fbb49
+    oauth_secret:     11f8a2f0-e026-4dc9-91f2-43fe68fb82ad
   staging:
-    page_id:          
-    page_url:         
+    page_id:          2414183
+    page_url:         http://www.linkedin.com/company/devtestco
     consumer_key:     72tkeaux4puz
     consumer_secret:  Df0ySq4yuWR8UWX9
+    oauth_token:      3128144d-f392-4a83-89e1-1b251a8fbb49
+    oauth_secret:     11f8a2f0-e026-4dc9-91f2-43fe68fb82ad
   live:
-    page_id:          bountyhill
+    page_id:          3549235
     page_url:         http://www.linkedin.com/company/bountyhill
     consumer_key:     gc4f48gsk6bj
     consumer_secret:  Cd7yi7pGARijTzEB
+    oauth_token:      3128144d-f392-4a83-89e1-1b251a8fbb49
+    oauth_secret:     11f8a2f0-e026-4dc9-91f2-43fe68fb82ad
 
 #
 # The xing app configuration
