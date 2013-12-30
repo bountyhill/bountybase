@@ -273,20 +273,26 @@ linkedin_app:
 # The xing app configuration
 xing_app:
   default:
-    page_id:          
-    page_url:         
-    consumer_key:     556ab78c6089fe294956
+    page_id:          bountyhill
+    page_url:         http://www.xing.com/companies/bountyhill
+    consumer_key:     556ab78c6089fe294956 # test key only
     consumer_secret:  b23ac101bb9a04739e874ec8fc5b8a3eed6036e0
+    oauth_token:      
+    oauth_secret:     
   staging:
-    page_id:          
-    page_url:         
+    page_id:          bountyhill
+    page_url:         http://www.xing.com/companies/bountyhill
     consumer_key:     9de884023481e64b2f6f # test key only
     consumer_secret:  a7debfe7d31a795a0970f027d504b75414b2936a
+    oauth_token:      
+    oauth_secret:     
   live:
     page_id:          bountyhill
     page_url:         http://www.xing.com/companies/bountyhill
-    consumer_key:     b35a83598a280f29192a # test key only
-    consumer_secret:  6924d622daa2d25cefe0fd1801829494853a5e9b
+    consumer_key:     4e2ed6e32f2b01ee1400
+    consumer_secret:  e7b0acaaa4792b5c6fafe068fe53ce91fd0b92a0
+    oauth_token:      
+    oauth_secret:     
 
 #
 # The email identity for bountyhill's draft user
