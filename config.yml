@@ -200,7 +200,7 @@ facebook_app:
   default:
     page_id:          389358064530268
     page_url:         http://www.facebook.com/pages/Bhdevelopment/389358064530268
-    page_token:       CAAHKfXcAZBhsBAJ4QayZBRCeFOeVdbY124gfCnH2DYPKaASWu1SrGISCwG93ZBmOAaZAvoXu7OkoL9X4mFGFjvxaEPtvBeae7sEoLZBa4u0mz7mxz36RRjhi7nuL6c1x3ZATEK2HxLc7YrJ6TmN1naPWoXy8h8yvEyIk3TI4LdVEwK4P1Jc9jgtwa1LslTBFpTVREwuTh2XgZDZD
+    page_token:       CAAGQzyOQfRQBALCrIPBHNgZBoBc3W60psF9lx8N5dy9k5ZBxuLVOuSMu17LG8TTIxwfNeVe1kuWn3Am24hXBkjom3Hha2fAuRPpYTWBmt7ygZCOsevvPAabhySZA7DufXpUOKJ5yOCIiV6ucD1c4yC36zsHnFPyiYcQ3VWrH7jIftXzGa2MULSov2Hd4wk0ZD
     consumer_key:     440694306012436
     consumer_secret:  d70a1037d08802b21648dd3269d60e47
   staging:
