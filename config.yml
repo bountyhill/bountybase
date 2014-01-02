@@ -218,18 +218,24 @@ facebook_app:
 
 #
 # The google+ app configuration
+# for API access see: https://developers.google.com/oauthplayground
+# for token information call: https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=<token>
 google_app:
   default:
+    name:             bhdevelopment
     page_id:          113771683784910912848
     page_url:         http://plus.google.com/113771683784910912848
+    activity:         http://schemas.google.com/AddActivity
     consumer_key:     51315874974-jekf92glah32b5gngimbfe0bbq9tu9jq.apps.googleusercontent.com
     consumer_secret:  Fp2N7ace2dNGdbMYqSyDGdbG
   staging:
+    name:             bhstaging
     page_id:          114340468587665009234
     page_url:         http://plus.google.com/114340468587665009234
     consumer_key:     278792493980.apps.googleusercontent.com
     consumer_secret:  WOglU7FHfWO33flL8___Tzq3
   live:
+    name:             bountyhill
     page_id:          112820322074000009163
     page_url:         http://plus.google.com/112820322074000009163
     consumer_key:     751090992775.apps.googleusercontent.com
@@ -271,6 +277,8 @@ linkedin_app:
 
 #
 # The xing app configuration
+# TODO: add admin user's oauth credentials once it's possible to 
+# post messages to company pages via the XING API
 xing_app:
   default:
     page_id:          bountyhill
