@@ -6,7 +6,7 @@ module Bountybase
   def self.setup
     Bountybase::Setup.logging
     Bountybase::Setup.resque
-    Bountybase::Setup.neo4j
+    # Bountybase::Setup.neo4j
 
     W "Prepared Bountybase Version #{Bountybase::VERSION}/#{Bountybase.environment}"
   end
