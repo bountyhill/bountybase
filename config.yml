@@ -84,25 +84,25 @@ librato:
 twitter:
   default:
     development:
-      url:              https://dev.twitter.com/apps/2982201
+      url:              https://apps.twitter.com/app/6061072
       consumer_key:     c6cvEkq8dHMaTa9F2y2w
       consumer_secret:  6UdPXY4Wx9AgXH9YL65Ev3gCZgZ0lEop8ylsVRXjGE
       oauth_token:      744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI
       oauth_secret:     IhoMD0O9VRLZTwYkBPJT9jRcvd0K5kgVgVPmH5sQ
     test:
-      url:              https://dev.twitter.com/apps/2982201
+      url:              https://apps.twitter.com/app/2982201
       consumer_key:     c6cvEkq8dHMaTa9F2y2w
       consumer_secret:  6UdPXY4Wx9AgXH9YL65Ev3gCZgZ0lEop8ylsVRXjGE
       oauth_token:      744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI
       oauth_secret:     IhoMD0O9VRLZTwYkBPJT9jRcvd0K5kgVgVPmH5sQ
     twirl1:
-      url:              https://dev.twitter.com/apps/2982201
+      url:              https://apps.twitter.com/app/2982201
       consumer_key:     c6cvEkq8dHMaTa9F2y2w
       consumer_secret:  6UdPXY4Wx9AgXH9YL65Ev3gCZgZ0lEop8ylsVRXjGE
       oauth_token:      744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI
       oauth_secret:     IhoMD0O9VRLZTwYkBPJT9jRcvd0K5kgVgVPmH5sQ
     twirl2:
-      url:              https://dev.twitter.com/apps/2982201
+      url:              https://apps.twitter.com/app/2982201
       consumer_key:     hucvNtFL6gDA6t5XjlD1A
       consumer_secret:  YotJBuBSLTaP8IUhbkUU46nKPtCmcI6BFL53oaRQQI
       oauth_token:      744854762-0AOIW3nminJYWUZrThOQGpJvQYb30BeAMCLJp06S
@@ -111,13 +111,13 @@ twitter:
     # Note: bountyclerk1 uses the same twitter account as bountytwirl2, for now.
     # This is ok during development.
     clerk1:
-      url:              https://dev.twitter.com/apps/2982201
+      url:              https://apps.twitter.com/app/2982201
       consumer_key:     hucvNtFL6gDA6t5XjlD1A
       consumer_secret:  YotJBuBSLTaP8IUhbkUU46nKPtCmcI6BFL53oaRQQI
       oauth_token:      744854762-0AOIW3nminJYWUZrThOQGpJvQYb30BeAMCLJp06S
       oauth_secret:     mnmcR4RWhR6xvMxu6yzJ3NGRf3jzdvOUQzn22Ndo
     tick:
-      url:              https://dev.twitter.com/apps/2982207
+      url:              https://apps.twitter.com/app/2982207
       consumer_key:     auDWHPRoc7egQgHsMbUjg
       consumer_secret:  9qFMRghFa5F0s06CxYvFn22mXNpmrzzrBhbrzO7FA7M
       oauth_token:      744854762-zImMVMa47UrGbmvfjHz5w3gTXeYgtMeO44GFEnMZ
@@ -150,10 +150,10 @@ twitter_app:
     identifier:       bh_tester
     password:         3341f0d226051ece165ec0183f861714
     page_url:         http://twitter.com/bh_tester
-    consumer_key:     c6cvEkq8dHMaTa9F2y2w
-    consumer_secret:  6UdPXY4Wx9AgXH9YL65Ev3gCZgZ0lEop8ylsVRXjGE
-    oauth_token:      744854762-wp6aXWnaRE6XLnD7pCy8qAyj4qo3ZYL3fy2nleI
-    oauth_secret:     IhoMD0O9VRLZTwYkBPJT9jRcvd0K5kgVgVPmH5sQ
+    consumer_key:     rMpkTLPQSBzAU8bDAMpDJ6LFz
+    consumer_secret:  GdrUkXYMTghJeztlRsafPWQMeOMy5sxhO01AyhhExr6FAWdKrw
+    oauth_token:      1334657684-zDByTyhtcWO3YYCPtqA8NfikXoShOQW8OoS9aa4
+    oauth_secret:     s4lJPp8UsxyH8lWfGhSpWYGkPm8rYgZNNtZuYy0u8i0DW
   staging:
     user:             bhstaging
     tag:              "#bhstaging"
