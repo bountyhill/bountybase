@@ -290,8 +290,8 @@ xing_app:
   staging:
     page_id:          bountyhill
     page_url:         http://www.xing.com/companies/bountyhill
-    consumer_key:     9de884023481e64b2f6f # test key only
-    consumer_secret:  a7debfe7d31a795a0970f027d504b75414b2936a
+    consumer_key:     e8b1e1090cdf84189ca0
+    consumer_secret:  979cc400e84233b8494906f23c6321957715180a
     oauth_token:      
     oauth_secret:     
   live:
