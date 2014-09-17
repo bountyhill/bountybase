@@ -267,7 +267,7 @@ linkedin_app:
     consumer_secret:  Df0ySq4yuWR8UWX9
     oauth_token:      d129e758-e262-4e5b-9c83-a451b584b827
     oauth_secret:     b7e131f2-7135-47ed-8b62-76b3a069f778
-  default:
+  live:
     page_id:          3549235
     page_url:         http://www.linkedin.com/company/bountyhill
     consumer_key:     gc4f48gsk6bj
