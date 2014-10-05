@@ -12,7 +12,7 @@ class Test::Unit::UI::Console::TestRunner
   def guess_color_availability; true; end
 end
 
-require 'mocha'
+require 'mocha/setup'
 require 'awesome_print'
 
 # -- Basic VCR configuration
