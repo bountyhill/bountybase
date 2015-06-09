@@ -23,7 +23,7 @@ redis:
   staging:      redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
   test:         redis://localhost:6379/
   development:  redis://localhost:6379/
-  live:         redis://bountyhill:a23ce5d624321312f670e51455522f47@50.30.35.9:3690/
+  live:         redis://redistogo:a232a48ecc36e3de4af7e72cbca239da@soapfish.redistogo.com:9768/
 
 # The database URL for use with bountybase/models. Note that the database URL
 # is not read from here, but
@@ -320,7 +320,7 @@ fnordmetric:
     redis_url:        redis://bountyhill:8e7e2d80025989f1e163c94597437764@koi.redistogo.com:9617/
     redis_prefix:     staging
   live:
-    redis_url:        redis://bountyhill:a23ce5d624321312f670e51455522f47@50.30.35.9:3690/
+    redis_url:        redis://redistogo:a232a48ecc36e3de4af7e72cbca239da@soapfish.redistogo.com:9768/
     redis_prefix:     live
 
 #
